@@ -14,8 +14,8 @@
     {{-- Open Graph / Facebook --}}
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url()->current() }}">
-    <meta property="og:title" content="@yield('og_title', '@yield('title', 'RISMENT - Fulfillment для маркетплейсов')')">
-    <meta property="og:description" content="@yield('og_description', '@yield('description', 'Профессиональный фулфилмент для маркетплейсов Узбекистана')')">
+    <meta property="og:title" content="@yield('title', 'RISMENT - Fulfillment для маркетплейсов Узбекистана')">
+    <meta property="og:description" content="@yield('description', 'Профессиональный фулфилмент для маркетплейсов Узбекистана. FBS, FBO, DBS услуги. Хранение, сборка, доставка. Работаем с Uzum, Wildberries, Ozon.')">
     <meta property="og:image" content="@yield('og_image', asset('images/og-image.jpg'))">
     <meta property="og:locale" content="{{ app()->getLocale() === 'ru' ? 'ru_RU' : 'uz_UZ' }}">
     <meta property="og:site_name" content="RISMENT">
@@ -23,8 +23,8 @@
     {{-- Twitter Card --}}
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="{{ url()->current() }}">
-    <meta name="twitter:title" content="@yield('og_title', '@yield('title', 'RISMENT - Fulfillment для маркетплейсов')')">
-    <meta name="twitter:description" content="@yield('og_description', '@yield('description', 'Профессиональный фулфилмент для маркетплейсов Узбекистана')')">
+    <meta name="twitter:title" content="@yield('title', 'RISMENT - Fulfillment для маркетплейсов Узбекистана')">
+    <meta name="twitter:description" content="@yield('description', 'Профессиональный фулфилмент для маркетплейсов Узбекистана. FBS, FBO, DBS услуги.')">
     <meta name="twitter:image" content="@yield('og_image', asset('images/og-image.jpg'))">
     
     {{-- Google Analytics --}}

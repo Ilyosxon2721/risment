@@ -18,6 +18,7 @@ use App\Http\Controllers\Cabinet\TicketController;
 use App\Http\Controllers\Cabinet\ProfileController;
 use App\Http\Controllers\Cabinet\SubscriptionController;
 use App\Http\Controllers\Cabinet\FinanceController;
+use App\Http\Controllers\Cabinet\InvoicePaymentController;
 use App\Http\Middleware\SetLocale;
 use App\Http\Middleware\EnsureUserHasCompany;
 use Illuminate\Support\Facades\Route;
@@ -78,7 +79,6 @@ Route::prefix('cabinet')->name('cabinet.')->middleware(['auth', \App\Http\Middle
     Route::get('/finance/payments', [FinanceController::class, 'payments'])->name('finance.payments');
     
     // Invoice payment routes
-    use App\Http\Controllers\Cabinet\InvoicePaymentController;
     Route::get('/finance/invoices/{invoice}/pay', [InvoicePaymentController::class, 'pay'])->name('finance.invoices.pay');
     Route::post('/finance/invoices/{invoice}/pay/click', [InvoicePaymentController::class, 'initiateClick'])->name('finance.invoices.pay.click');
     Route::post('/finance/invoices/{invoice}/pay/payme', [InvoicePaymentController::class, 'initiatePayme'])->name('finance.invoices.pay.payme');
