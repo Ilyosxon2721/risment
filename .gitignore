@@ -28,3 +28,7 @@ Thumbs.db
 /node_modules/
 /storage/logs/
 /public/storage
+
+# Deployment archives
+risment-production.zip
+*.sql
