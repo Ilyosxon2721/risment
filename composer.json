@@ -9,7 +9,7 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.3",
+        "php": "^8.2",
         "bezhansalleh/filament-language-switch": "^3.1",
         "filament/filament": "^3.2",
         "laravel/framework": "^12.0",
