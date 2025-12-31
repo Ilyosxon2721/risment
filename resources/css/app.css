@@ -1,0 +1,92 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --color-brand: #CB4FE4;
+        --color-brand-dark: #8E2BC6;
+        --color-bg: #FFFFFF;
+        --color-bg-soft: #F6F7FB;
+        --color-text: #0B0B10;
+        --color-text-muted: #5E6278;
+        --color-border: #E9ECF2;
+    }
+
+    body {
+        @apply font-body text-text bg-bg;
+    }
+}
+
+@layer components {
+
+    /* Buttons */
+    .btn {
+        @apply px-6 py-3 rounded-btn font-semibold transition duration-200 inline-block text-center;
+    }
+
+    .btn-primary {
+        @apply bg-brand text-white hover:bg-brand-dark;
+    }
+
+    .btn-secondary {
+        @apply border-2 border-brand text-brand hover:bg-brand/5;
+    }
+
+    .btn-ghost {
+        @apply text-brand hover:bg-brand/5;
+    }
+
+    /* Cards */
+    .card {
+        @apply bg-white p-6 rounded-card shadow-card;
+    }
+
+    /* Containers */
+    .container-risment {
+        @apply max-w-container mx-auto px-4;
+    }
+
+    /* Gradients */
+    .gradient-brand {
+        @apply bg-gradient-to-r from-brand to-brand-dark;
+    }
+
+    /* Form Inputs */
+    .input {
+        @apply w-full px-4 py-3 rounded-btn border border-brand-border focus:border-brand focus:ring-2 focus:ring-brand/20 transition;
+    }
+
+    .select {
+        @apply input;
+    }
+
+    /* Badges */
+    .badge {
+        @apply inline-block px-3 py-1 rounded-full text-body-s font-semibold;
+    }
+
+    .badge-success {
+        @apply bg-success/10 text-success;
+    }
+
+    .badge-warning {
+        @apply bg-warning/10 text-warning;
+    }
+
+    .badge-error {
+        @apply bg-error/10 text-error;
+    }
+
+    .badge-info {
+        @apply bg-info/10 text-info;
+    }
+}
+
+@layer utilities {
+    .text-gradient {
+        @apply bg-clip-text text-transparent;
+    }
+}

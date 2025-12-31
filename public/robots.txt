@@ -1,0 +1,17 @@
+# Robots.txt for RISMENT
+# Updated: 2024-12-31
+
+User-agent: *
+Allow: /
+
+# Disallow private areas
+Disallow: /cabinet/
+Disallow: /admin/
+Disallow: /api/
+
+# Disallow temporary/cache
+Disallow: /storage/
+Disallow: /*.json$
+
+# Sitemap location
+Sitemap: https://risment.uz/sitemap.xml
