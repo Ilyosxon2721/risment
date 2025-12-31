@@ -403,5 +403,9 @@
     "Limitdan oshsa ortiqcha to'lovlar": "Доплаты при превышении лимитов",
     "FBS jo'natmalar limiti oshsa": "При превышении лимита FBS отправок",
     "Saqlash limiti oshsa": "При превышении лимита хранения",
-    "Qabul (inbound) limiti oshsa": "При превышении лимита приемки (inbound)"
+    "Qabul (inbound) limiti oshsa": "При превышении лимита приемки (inbound)",
+    "so'm/jo'natma": "сум/отправка",
+    "so'm/korob/oy": "сум/короб/мес",
+    "so'm/qop/oy": "сум/мешок/мес",
+    "so'm/korob": "сум/короб"
 }
