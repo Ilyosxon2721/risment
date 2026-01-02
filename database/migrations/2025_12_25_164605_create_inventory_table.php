@@ -10,13 +10,15 @@ return new class extends Migration
     {
         Schema::create('inventory', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('company_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('sku_id')->constrained()->cascadeOnDelete();
+            $table->unsignedBigInteger('company_id');
+            $table->unsignedBigInteger('sku_id');
             $table->integer('qty_total')->default(0);
             $table->integer('qty_reserved')->default(0);
             $table->string('location_code')->nullable();
             $table->timestamps();
             
+            $table->index('company_id');
+            $table->index('sku_id');
             $table->unique(['company_id', 'sku_id']);
         });
     }

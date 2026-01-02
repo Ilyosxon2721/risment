@@ -10,10 +10,12 @@ return new class extends Migration
     {
         Schema::create('plan_overage_rules', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('plan_id')->constrained('subscription_plans')->onDelete('cascade');
-            $table->foreignId('overage_rule_id')->constrained('overage_rules')->onDelete('cascade');
+            $table->unsignedBigInteger('plan_id');
+            $table->unsignedBigInteger('overage_rule_id');
             $table->timestamps();
             
+            $table->index('plan_id');
+            $table->index('overage_rule_id');
             $table->unique(['plan_id', 'overage_rule_id']);
         });
     }

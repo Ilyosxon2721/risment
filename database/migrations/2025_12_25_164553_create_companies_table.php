@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('email');
             $table->text('address')->nullable();
             $table->enum('status', ['active', 'inactive'])->default('active');
-            $table->foreignId('manager_user_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->unsignedBigInteger('manager_user_id')->nullable();
             $table->timestamps();
             
             $table->index('status');

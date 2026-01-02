@@ -10,12 +10,13 @@ return new class extends Migration
     {
         Schema::create('shipment_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('shipment_id')->constrained('shipments_fbo')->cascadeOnDelete();
-            $table->foreignId('sku_id')->constrained()->cascadeOnDelete();
+            $table->unsignedBigInteger('shipment_id');
+            $table->unsignedBigInteger('sku_id');
             $table->integer('qty');
             $table->timestamps();
             
             $table->index('shipment_id');
+            $table->index('sku_id');
         });
     }
 

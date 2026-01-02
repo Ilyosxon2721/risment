@@ -10,11 +10,13 @@ return new class extends Migration
     {
         Schema::create('company_user', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('company_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->unsignedBigInteger('company_id');
+            $table->unsignedBigInteger('user_id');
             $table->enum('role_in_company', ['owner', 'manager', 'viewer'])->default('viewer');
             $table->timestamps();
             
+            $table->index('company_id');
+            $table->index('user_id');
             $table->unique(['company_id', 'user_id']);
         });
     }

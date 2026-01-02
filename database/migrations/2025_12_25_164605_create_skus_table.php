@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('skus', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('company_id')->constrained()->cascadeOnDelete();
+            $table->unsignedBigInteger('company_id');
             $table->string('sku_code')->index();
             $table->string('barcode')->nullable();
             $table->string('title');

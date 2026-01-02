@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('plan_limits', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('plan_id')->constrained('subscription_plans')->onDelete('cascade');
+            $table->unsignedBigInteger('plan_id');
             $table->integer('included_shipments')->default(0);
             $table->integer('included_boxes')->default(0);
             $table->integer('included_bags')->default(0);

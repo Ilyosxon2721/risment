@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('inbound_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('inbound_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('sku_id')->constrained()->cascadeOnDelete();
+            $table->unsignedBigInteger('inbound_id');
+            $table->unsignedBigInteger('sku_id');
             $table->integer('qty_planned')->default(0);
             $table->integer('qty_received')->nullable();
             $table->integer('qty_diff')->nullable();
@@ -19,6 +19,7 @@ return new class extends Migration
             $table->timestamps();
             
             $table->index('inbound_id');
+            $table->index('sku_id');
         });
     }
 

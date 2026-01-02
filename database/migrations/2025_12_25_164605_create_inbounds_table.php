@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('inbounds', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('company_id')->constrained()->cascadeOnDelete();
+            $table->unsignedBigInteger('company_id');
             $table->string('reference');
             $table->dateTime('planned_at')->nullable();
             $table->enum('status', ['draft', 'submitted', 'processing', 'received', 'issue', 'closed'])->default('draft');

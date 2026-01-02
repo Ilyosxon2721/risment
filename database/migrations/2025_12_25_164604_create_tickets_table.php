@@ -10,13 +10,15 @@ return new class extends Migration
     {
         Schema::create('tickets', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('company_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->unsignedBigInteger('company_id');
+            $table->unsignedBigInteger('user_id');
             $table->string('subject');
             $table->enum('status', ['open', 'in_progress', 'closed'])->default('open');
             $table->enum('priority', ['low', 'medium', 'high'])->default('medium');
             $table->timestamps();
             
+            $table->index('company_id');
+            $table->index('user_id');
             $table->index(['company_id', 'status']);
         });
     }

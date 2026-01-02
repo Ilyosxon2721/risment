@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('tariff_audit_logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->string('entity_type', 100); // App\Models\PricingRate
             $table->unsignedBigInteger('entity_id');
             $table->json('before_json')->nullable();

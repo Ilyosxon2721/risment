@@ -13,8 +13,10 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('company_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('invoice_id')->nullable()->constrained()->nullOnDelete();
+            $table->unsignedBigInteger('company_id');
+            $table->unsignedBigInteger('invoice_id')->nullable();
+            $table->index('company_id');
+            $table->index('invoice_id');
             $table->decimal('amount', 12, 2);
             $table->date('payment_date');
             $table->enum('method', ['cash', 'bank_transfer', 'card', 'payme', 'click'])->default('bank_transfer');

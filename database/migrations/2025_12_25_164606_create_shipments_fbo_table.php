@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('shipments_fbo', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('company_id')->constrained()->cascadeOnDelete();
+            $table->unsignedBigInteger('company_id');
             $table->enum('marketplace', ['uzum', 'wb', 'ozon', 'yandex']);
             $table->string('warehouse_name');
             $table->dateTime('planned_at')->nullable();

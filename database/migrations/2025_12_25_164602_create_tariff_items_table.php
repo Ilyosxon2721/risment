@@ -10,8 +10,10 @@ return new class extends Migration
     {
         Schema::create('tariff_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('plan_id')->constrained('tariff_plans')->cascadeOnDelete();
-            $table->foreignId('category_id')->constrained('tariff_categories')->cascadeOnDelete();
+            $table->unsignedBigInteger('plan_id');
+            $table->unsignedBigInteger('category_id');
+            $table->index('plan_id');
+            $table->index('category_id');
             $table->enum('marketplace', ['uzum', 'wb', 'ozon', 'yandex', 'all'])->nullable();
             $table->enum('scheme', ['fbo', 'fbs', 'dbs', 'edbs', 'all'])->nullable();
             $table->string('name_ru');

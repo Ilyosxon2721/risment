@@ -14,9 +14,11 @@ return new class extends Migration
         Schema::create('payment_transactions', function (Blueprint $table) {
             $table->id();
             
-            // Foreign keys
-            $table->foreignId('invoice_id')->nullable()->constrained('invoices')->onDelete('set null');
-            $table->foreignId('company_id')->constrained('companies')->onDelete('cascade');
+            // Foreign keys (no constraints for hosting compatibility)
+            $table->unsignedBigInteger('invoice_id')->nullable();
+            $table->unsignedBigInteger('company_id');
+            $table->index('invoice_id');
+            $table->index('company_id');
             
             // Payment details
             $table->string('gateway', 20); // 'click' or 'payme'

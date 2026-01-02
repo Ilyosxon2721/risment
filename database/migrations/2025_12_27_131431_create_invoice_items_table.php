@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('invoice_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('invoice_id')->constrained()->cascadeOnDelete();
+            $table->unsignedBigInteger('invoice_id');
+            $table->index('invoice_id');
             $table->string('description'); // e.g., "FBS Shipments (MGT)"
             $table->integer('quantity');
             $table->decimal('unit_price', 10, 2);

@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('invoices', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('company_id')->constrained()->cascadeOnDelete();
+            $table->unsignedBigInteger('company_id');
+            $table->index('company_id');
             $table->string('invoice_number')->unique(); // INV-2024-001
             $table->enum('status', ['draft', 'sent', 'paid', 'overdue', 'cancelled'])->default('draft');
             $table->date('issue_date');
