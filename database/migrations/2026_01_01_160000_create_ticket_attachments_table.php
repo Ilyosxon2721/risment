@@ -13,14 +13,18 @@ return new class extends Migration
     {
         Schema::create('ticket_attachments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('ticket_id')->constrained()->onDelete('cascade');
-            $table->foreignId('ticket_message_id')->nullable()->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('ticket_id');
+            $table->unsignedBigInteger('ticket_message_id')->nullable();
             $table->string('filename');
             $table->string('original_name');
             $table->string('mime_type');
             $table->unsignedBigInteger('size');
             $table->string('path');
             $table->timestamps();
+            
+            // Foreign keys without constraints for compatibility
+            $table->index('ticket_id');
+            $table->index('ticket_message_id');
         });
     }
 
