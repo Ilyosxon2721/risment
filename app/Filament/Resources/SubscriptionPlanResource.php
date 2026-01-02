@@ -207,6 +207,27 @@ class SubscriptionPlanResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('recalculateFee')
+                    ->label('Пересчитать')
+                    ->icon('heroicon-o-calculator')
+                    ->color('warning')
+                    ->requiresConfirmation()
+                    ->modalHeading('Пересчитать рекомендованную цену')
+                    ->modalDescription('Цена будет рассчитана на основе включённых лимитов и текущих базовых тарифов. Вы уверены?')
+                    ->action(function ($record) {
+                        $pricingService = app(\App\Services\PricingService::class);
+                        $recommended = $pricingService->calculateRecommendedMonthlyFee($record);
+                        
+                        $record->recommended_price_month = $recommended;
+                        $record->save();
+                        
+                        \Filament\Notifications\Notification::make()
+                            ->success()
+                            ->title('Рекомендованная цена пересчитана')
+                            ->body('Новая цена: ' . number_format($recommended, 0, '', ' ') . ' сум')
+                            ->send();
+                    })
+                    ->visible(fn ($record) => !$record->is_custom),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

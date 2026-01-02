@@ -38,9 +38,9 @@
                                 </div>
                                 @endif
                                 
-                                <div class="text-h4 font-heading mb-2">Штучный тариф</div>
+                                <div class="text-h4 font-heading mb-2">Разовый тариф</div>
                                 <div class="text-body-s text-text-muted mb-3">
-                                    Без абонплаты
+                                    Без абонплаты, с надбавкой
                                 </div>
                                 <div class="text-h3 {{ $result['recommended'] === 'per_item' ? 'text-success' : 'text-brand' }}">
                                     {{ number_format($comparison['total'], 0, '', ' ') }}
@@ -65,7 +65,7 @@
             
             <!-- Detailed Breakdown -->
             <div>
-                <h3 class="text-h3 font-heading mb-4">Детализация штучного тарифа</h3>
+                <h3 class="text-h3 font-heading mb-4">Детализация разового тарифа</h3>
                 
                 <div class="bg-white rounded-btn p-6 space-y-3">
                     <div class="flex justify-between items-center">
