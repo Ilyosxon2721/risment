@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('monthly_usages', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('company_id')->constrained()->cascadeOnDelete();
+            $table->unsignedBigInteger('company_id');
             $table->string('month', 7); // YYYY-MM format
             
             // Usage counters
@@ -23,6 +23,7 @@ return new class extends Migration
             
             $table->unique(['company_id', 'month']);
             $table->index('month');
+            $table->index('company_id');
         });
     }
 
