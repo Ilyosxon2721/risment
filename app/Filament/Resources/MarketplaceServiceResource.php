@@ -14,12 +14,11 @@ class MarketplaceServiceResource extends Resource
 {
     protected static ?string $model = MarketplaceService::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    public static function shouldRegisterNavigation(): bool { return false; }
+    protected static ?string $navigationIcon = 'heroicon-o-shopping-bag';
     
-    protected static ?string $navigationGroup = 'Settings';
+    protected static ?string $navigationGroup = 'Тарифы';
     
-    protected static ?string $navigationLabel = 'Marketplace Services';
+    protected static ?string $navigationLabel = 'Маркетплейс услуги';
     
     protected static ?int $navigationSort = 3;
 
