@@ -357,6 +357,54 @@
     </div>
 </section>
 
+<!-- Bundle Discounts -->
+@php
+    $bundleDiscounts = \App\Models\BundleDiscount::where('type', 'management')
+        ->where('is_active', true)
+        ->orderBy('marketplaces_count')
+        ->get();
+@endphp
+
+@if($bundleDiscounts->count() > 0)
+<section class="py-12 bg-gradient-to-r from-brand/5 to-brand/10">
+    <div class="container-risment">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-h3 font-heading text-center mb-2">
+                {{ app()->getLocale() === 'ru' ? 'Скидки при подключении нескольких маркетплейсов' : 'Bir nechta marketpleys ulashda chegirmalar' }}
+            </h2>
+            <p class="text-body-m text-text-muted text-center mb-8">
+                {{ app()->getLocale() === 'ru' ? 'Чем больше маркетплейсов — тем выгоднее' : 'Qancha ko\'p marketpleys — shuncha foydali' }}
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                @foreach($bundleDiscounts as $discount)
+                <div class="card bg-white text-center {{ $discount->marketplaces_count == 4 ? 'border-2 border-brand' : '' }}">
+                    @if($discount->marketplaces_count == 4)
+                    <div class="inline-block px-3 py-1 bg-brand text-white text-body-s rounded-full mb-3">
+                        {{ app()->getLocale() === 'ru' ? 'Все 4 маркетплейса' : 'Barcha 4 marketpleys' }}
+                    </div>
+                    @endif
+                    <div class="text-h2 font-heading text-brand mb-2">–{{ intval($discount->discount_percent) }}%</div>
+                    <div class="text-body-m font-semibold mb-1">
+                        {{ $discount->marketplaces_count }} {{ app()->getLocale() === 'ru' ? 'площадки' : 'ta maydon' }}
+                    </div>
+                    <div class="text-body-s text-text-muted">
+                        {{ app()->getLocale() === 'ru' ? 'от ежемесячной абонплаты' : 'oylik abonent to\'lovidan' }}
+                    </div>
+                </div>
+                @endforeach
+            </div>
+            
+            <p class="text-body-s text-text-muted text-center mt-6">
+                {{ app()->getLocale() === 'ru' 
+                    ? '* Скидка применяется только к абонплате за управление. Разовые услуги, инфографика и рекламный бюджет не дисконтируются.' 
+                    : '* Chegirma faqat boshqaruv abonent to\'loviga qo\'llaniladi. Bir martalik xizmatlar, infografika va reklama byudjeti chegirilmaydi.' }}
+            </p>
+        </div>
+    </div>
+</section>
+@endif
+
 <!-- CTA -->
 <section class="py-16 bg-bg-soft">
     <div class="container-risment text-center">

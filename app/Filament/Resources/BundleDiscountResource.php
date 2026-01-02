@@ -22,7 +22,7 @@ class BundleDiscountResource extends Resource
     
     protected static ?string $pluralModelLabel = 'Скидки за маркетплейсы';
     
-    protected static ?string $navigationGroup = 'Ценообразование';
+    protected static ?string $navigationGroup = 'Тарифы';
     
     protected static ?int $navigationSort = 4;
 
