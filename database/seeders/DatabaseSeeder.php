@@ -14,53 +14,45 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Create admin role
-        $adminRole = Role::create(['name' => 'admin']);
+        // Create admin role (skip if already exists)
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
         
-        // Create admin user
-        $admin = User::factory()->create([
-            'name' => 'Admin',
-            'email' => 'admin@risment.uz',
-            'phone' => '+998901234567',
-            'is_active' => true,
-        ]);
+        // Create admin user (skip if already exists)
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@risment.uz'],
+            [
+                'name' => 'Admin',
+                'phone' => '+998901234567',
+                'password' => bcrypt('admin123'),
+                'is_active' => true,
+            ]
+        );
         $admin->assignRole($adminRole);
         
         // Seed subscription plans
         $this->call(SubscriptionPlanSeeder::class);
         
         // Create size categories (MGT/SGT/KGT) with prices
-        SizeCategory::create([
-            'code' => 'mgt',
-            'sum_min' => 0,
-            'sum_max' => 60,
-            'price' => 5000.00,
-            'is_active' => true,
-        ]);
+        SizeCategory::firstOrCreate(
+            ['code' => 'mgt'],
+            ['sum_min' => 0, 'sum_max' => 60, 'price' => 5000.00, 'is_active' => true]
+        );
         
-        SizeCategory::create([
-            'code' => 'sgt',
-            'sum_min' => 61,
-            'sum_max' => 170,
-            'price' => 8000.00,
-            'is_active' => true,
-        ]);
+        SizeCategory::firstOrCreate(
+            ['code' => 'sgt'],
+            ['sum_min' => 61, 'sum_max' => 170, 'price' => 8000.00, 'is_active' => true]
+        );
         
-        SizeCategory::create([
-            'code' => 'kgt',
-            'sum_min' => 171,
-            'sum_max' => null, // unlimited
-            'price' => 20000.00,
-            'is_active' => true,
-        ]);
+        SizeCategory::firstOrCreate(
+            ['code' => 'kgt'],
+            ['sum_min' => 171, 'sum_max' => null, 'price' => 20000.00, 'is_active' => true]
+        );
         
         // Create default tariff plan
-        $defaultPlan = TariffPlan::create([
-            'name' => 'Standart',
-            'description' => 'Default pricing plan for RISMENT services',
-            'is_default' => true,
-            'is_active' => true,
-        ]);
+        TariffPlan::firstOrCreate(
+            ['name' => 'Standart'],
+            ['description' => 'Default pricing plan for RISMENT services', 'is_default' => true, 'is_active' => true]
+        );
         
         // Create tariff categories
         $categories = [
@@ -76,7 +68,10 @@ class DatabaseSeeder extends Seeder
         ];
         
         foreach ($categories as $index => $cat) {
-            TariffCategory::create(array_merge($cat, ['sort' => $index * 10]));
+            TariffCategory::firstOrCreate(
+                ['code' => $cat['code']],
+                array_merge($cat, ['sort' => $index * 10])
+            );
         }
     }
 }
