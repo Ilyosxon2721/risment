@@ -40,11 +40,26 @@ Route::get('/register', function () {
 // Client Cabinet (NO locale prefix, uses user's saved locale preference)
 // IMPORTANT: Must be defined BEFORE {locale} routes to prevent wildcard capture
 Route::prefix('cabinet')->name('cabinet.')->middleware(['auth', \App\Http\Middleware\SetCabinetLocale::class, EnsureUserHasCompany::class])->group(function () {
+    // Company management (must be before dashboard for users without company)
+    Route::get('/company/create', [\App\Http\Controllers\Cabinet\CompanyController::class, 'create'])->name('company.create');
+    Route::post('/company', [\App\Http\Controllers\Cabinet\CompanyController::class, 'store'])->name('company.store');
+    Route::get('/company', [\App\Http\Controllers\Cabinet\CompanyController::class, 'show'])->name('company.show');
+    Route::get('/company/edit', [\App\Http\Controllers\Cabinet\CompanyController::class, 'edit'])->name('company.edit');
+    Route::put('/company', [\App\Http\Controllers\Cabinet\CompanyController::class, 'update'])->name('company.update');
+    
     // Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     
     // Inventory
     Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
+    
+    // SKUs (Products)
+    Route::get('/skus', [\App\Http\Controllers\Cabinet\SkuController::class, 'index'])->name('skus.index');
+    Route::get('/skus/create', [\App\Http\Controllers\Cabinet\SkuController::class, 'create'])->name('skus.create');
+    Route::post('/skus', [\App\Http\Controllers\Cabinet\SkuController::class, 'store'])->name('skus.store');
+    Route::get('/skus/{sku}/edit', [\App\Http\Controllers\Cabinet\SkuController::class, 'edit'])->name('skus.edit');
+    Route::put('/skus/{sku}', [\App\Http\Controllers\Cabinet\SkuController::class, 'update'])->name('skus.update');
+    Route::delete('/skus/{sku}', [\App\Http\Controllers\Cabinet\SkuController::class, 'destroy'])->name('skus.destroy');
     
     // Inbounds (ASN)
     Route::get('/inbounds', [InboundController::class, 'index'])->name('inbounds.index');
@@ -86,6 +101,7 @@ Route::prefix('cabinet')->name('cabinet.')->middleware(['auth', \App\Http\Middle
     // Profile
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
     Route::put('/profile/locale', [ProfileController::class, 'updateLocale'])->name('profile.locale');
     Route::post('/profile/switch-company/{company}', [ProfileController::class, 'switchCompany'])->name('profile.switch-company');
 });
@@ -112,6 +128,7 @@ Route::prefix('{locale}')->middleware(SetLocale::class)->group(function () {
     Route::get('/pricing', [PricingController::class, 'index'])->name('pricing');
     Route::get('/calculator', [CalculatorController::class, 'index'])->name('calculator');
     Route::post('/calculator', [CalculatorController::class, 'calculate'])->name('calculator.calculate');
+    Route::post('/calculator/clear-history', [CalculatorController::class, 'clearHistory'])->name('calculator.clear-history');
     
     // Content Pages
     Route::get('/sla', [PageController::class, 'sla'])->name('sla');

@@ -15,7 +15,7 @@
     </div>
 </div>
 
-<form action="{{ route('cabinet.tickets.store') }}" method="POST">
+<form action="{{ route('cabinet.tickets.store') }}" method="POST" enctype="multipart/form-data">
     @csrf
     
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -78,6 +78,30 @@
                         required
                     >{{ old('message') }}</textarea>
                     @error('message')
+                        <p class="text-error text-body-s mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                
+                <!-- Attachments -->
+                <div class="mb-6">
+                    <label for="attachments" class="block text-body-m font-semibold text-brand-dark mb-2">
+                        {{ __('Attachments') }}
+                    </label>
+                    <input 
+                        type="file" 
+                        id="attachments" 
+                        name="attachments[]" 
+                        multiple
+                        accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx,.txt,.zip"
+                        class="block w-full text-body-m text-text-muted
+                               file:mr-4 file:py-2 file:px-4
+                               file:rounded-btn file:border-0
+                               file:bg-brand file:text-white
+                               hover:file:bg-brand-dark
+                               cursor-pointer"
+                    >
+                    <p class="text-body-s text-text-muted mt-2">{{ __('Max 5 files, 10MB each. Allowed: images, PDF, DOC, XLS, TXT, ZIP') }}</p>
+                    @error('attachments.*')
                         <p class="text-error text-body-s mt-1">{{ $message }}</p>
                     @enderror
                 </div>

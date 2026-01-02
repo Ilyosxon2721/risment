@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Cabinet;
 use App\Http\Controllers\Controller;
 use App\Models\Ticket;
 use App\Models\TicketMessage;
+use App\Models\TicketAttachment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class TicketController extends Controller
 {
@@ -33,6 +35,8 @@ class TicketController extends Controller
             'subject' => 'required|string|max:255',
             'priority' => 'required|in:low,medium,high',
             'message' => 'required|string',
+            'attachments' => 'nullable|array|max:5',
+            'attachments.*' => 'file|max:10240|mimes:jpg,jpeg,png,gif,pdf,doc,docx,xls,xlsx,txt,zip',
         ]);
         
         $ticket = Ticket::create([
@@ -43,12 +47,29 @@ class TicketController extends Controller
             'status' => 'open',
         ]);
         
-        TicketMessage::create([
+        $ticketMessage = TicketMessage::create([
             'ticket_id' => $ticket->id,
             'user_id' => auth()->id(),
             'message' => $validated['message'],
             'is_internal' => false,
         ]);
+        
+        // Handle file uploads
+        if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $file) {
+                $path = $file->store('tickets/' . $ticket->id, 'public');
+                
+                TicketAttachment::create([
+                    'ticket_id' => $ticket->id,
+                    'ticket_message_id' => $ticketMessage->id,
+                    'filename' => basename($path),
+                    'original_name' => $file->getClientOriginalName(),
+                    'mime_type' => $file->getMimeType(),
+                    'size' => $file->getSize(),
+                    'path' => $path,
+                ]);
+            }
+        }
         
         return redirect()->route('cabinet.tickets.show', $ticket)
             ->with('success', __('Ticket created successfully'));
@@ -62,12 +83,12 @@ class TicketController extends Controller
             abort(403);
         }
         
-        $ticket->load('messages.user');
+        $ticket->load(['messages.user', 'messages.attachments']);
         
         return view('cabinet.tickets.show', compact('ticket'));
     }
     
-    public function addMessage(Request $request, Ticket $ticket)
+    public function reply(Request $request, Ticket $ticket)
     {
         $company = $request->attributes->get('currentCompany');
         
@@ -77,14 +98,33 @@ class TicketController extends Controller
         
         $validated = $request->validate([
             'message' => 'required|string',
+            'attachments' => 'nullable|array|max:5',
+            'attachments.*' => 'file|max:10240|mimes:jpg,jpeg,png,gif,pdf,doc,docx,xls,xlsx,txt,zip',
         ]);
         
-        TicketMessage::create([
+        $ticketMessage = TicketMessage::create([
             'ticket_id' => $ticket->id,
             'user_id' => auth()->id(),
             'message' => $validated['message'],
             'is_internal' => false,
         ]);
+        
+        // Handle file uploads
+        if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $file) {
+                $path = $file->store('tickets/' . $ticket->id, 'public');
+                
+                TicketAttachment::create([
+                    'ticket_id' => $ticket->id,
+                    'ticket_message_id' => $ticketMessage->id,
+                    'filename' => basename($path),
+                    'original_name' => $file->getClientOriginalName(),
+                    'mime_type' => $file->getMimeType(),
+                    'size' => $file->getSize(),
+                    'path' => $path,
+                ]);
+            }
+        }
         
         // Reopen ticket if closed
         if ($ticket->status === 'closed') {

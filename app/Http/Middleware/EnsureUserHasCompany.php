@@ -19,10 +19,15 @@ class EnsureUserHasCompany
             return redirect()->route('login', ['locale' => 'ru']);
         }
         
+        // Allow access to company creation routes without having a company
+        if ($request->routeIs('cabinet.company.*')) {
+            return $next($request);
+        }
+        
         // Check if user has at least one company
         if ($user->companies()->count() === 0) {
-            return redirect('/ru')
-                ->with('error', __('You need to be assigned to a company to access the cabinet.'));
+            return redirect()->route('cabinet.company.create')
+                ->with('info', __('Please create a company to continue.'));
         }
         
         // Set current company in session if not set

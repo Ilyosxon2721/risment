@@ -124,6 +124,17 @@
     </div>
 </div>
 
+<!-- Activity Chart -->
+<div class="card mb-8">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-h3 font-heading">{{ __('Activity Overview') }}</h2>
+        <span class="text-body-s text-text-muted">{{ __('Last 6 months') }}</span>
+    </div>
+    <div class="h-64">
+        <canvas id="activityChart"></canvas>
+    </div>
+</div>
+
 <!-- Recent Activity -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
     <!-- Recent Inbounds -->
@@ -197,4 +208,56 @@
         <p class="text-body-s text-text-muted">{{ __('Contact support') }}</p>
     </a>
 </div>
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('activityChart');
+    if (ctx) {
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: @json($chartData['labels']),
+                datasets: [
+                    {
+                        label: '{{ __("Shipments") }}',
+                        data: @json($chartData['shipments']),
+                        backgroundColor: 'rgba(99, 102, 241, 0.8)',
+                        borderColor: 'rgb(99, 102, 241)',
+                        borderWidth: 1,
+                        borderRadius: 6,
+                    },
+                    {
+                        label: '{{ __("Inbounds") }}',
+                        data: @json($chartData['inbounds']),
+                        backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                        borderColor: 'rgb(16, 185, 129)',
+                        borderWidth: 1,
+                        borderRadius: 6,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+    }
+});
+</script>
+@endpush
 @endsection

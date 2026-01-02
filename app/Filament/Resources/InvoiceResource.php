@@ -59,43 +59,55 @@ class InvoiceResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('company.name')
-                    ->numeric()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('invoice_number')
-                    ->searchable(),
+                    ->label('Номер счёта')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('company.name')
+                    ->label('Компания')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('status')
-                    ->searchable(),
+                    ->label('Статус')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'paid' => 'success',
+                        'pending' => 'warning',
+                        'overdue' => 'danger',
+                        'cancelled' => 'gray',
+                        default => 'info',
+                    })
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'paid' => 'Оплачен',
+                        'pending' => 'Ожидает',
+                        'overdue' => 'Просрочен',
+                        'cancelled' => 'Отменён',
+                        default => $state,
+                    }),
                 Tables\Columns\TextColumn::make('issue_date')
-                    ->date()
+                    ->label('Дата выставления')
+                    ->date('d.m.Y')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('due_date')
-                    ->date()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('subtotal')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('tax')
-                    ->numeric()
+                    ->label('Срок оплаты')
+                    ->date('d.m.Y')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total')
+                    ->label('Сумма')
                     ->numeric()
+                    ->money('UZS')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('deleted_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('created_at', 'desc')
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('status')
+                    ->label('Статус')
+                    ->options([
+                        'pending' => 'Ожидает',
+                        'paid' => 'Оплачен',
+                        'overdue' => 'Просрочен',
+                        'cancelled' => 'Отменён',
+                    ]),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

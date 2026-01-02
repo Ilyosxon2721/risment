@@ -10,6 +10,7 @@ use App\Models\Ticket;
 use App\Models\MonthlyUsage;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -64,6 +65,32 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
         
-        return view('cabinet.dashboard', compact('stats', 'recentInbounds', 'recentShipments', 'plan', 'usage', 'overageEstimate'));
+        // Chart data: Shipments per month (last 6 months)
+        $chartLabels = [];
+        $chartShipments = [];
+        $chartInbounds = [];
+        
+        for ($i = 5; $i >= 0; $i--) {
+            $date = Carbon::now()->subMonths($i);
+            $chartLabels[] = $date->translatedFormat('M Y');
+            
+            $chartShipments[] = ShipmentFbo::where('company_id', $company->id)
+                ->whereYear('created_at', $date->year)
+                ->whereMonth('created_at', $date->month)
+                ->count();
+            
+            $chartInbounds[] = Inbound::where('company_id', $company->id)
+                ->whereYear('created_at', $date->year)
+                ->whereMonth('created_at', $date->month)
+                ->count();
+        }
+        
+        $chartData = [
+            'labels' => $chartLabels,
+            'shipments' => $chartShipments,
+            'inbounds' => $chartInbounds,
+        ];
+        
+        return view('cabinet.dashboard', compact('stats', 'recentInbounds', 'recentShipments', 'plan', 'usage', 'overageEstimate', 'chartData'));
     }
 }

@@ -9,9 +9,16 @@
             <h1 class="text-h1 font-heading">{{ __('Invoice') }} {{ $invoice->invoice_number }}</h1>
             <p class="text-body-m text-text-muted mt-2">{{ __('Invoice details') }}</p>
         </div>
-        <a href="{{ route('cabinet.finance.invoices') }}" class="btn btn-secondary">
-            ← {{ __('Back') }}
-        </a>
+        <div class="flex gap-3">
+            @if($invoice->status !== 'paid')
+            <a href="{{ route('cabinet.finance.invoices.pay', $invoice) }}" class="btn btn-primary">
+                {{ __('Pay Invoice') }}
+            </a>
+            @endif
+            <a href="{{ route('cabinet.finance.invoices') }}" class="btn btn-secondary">
+                ← {{ __('Back') }}
+            </a>
+        </div>
     </div>
 </div>
 

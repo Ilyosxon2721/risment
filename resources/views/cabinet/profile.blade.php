@@ -92,6 +92,71 @@
                 </div>
             </form>
         </div>
+        
+        <!-- Password Change -->
+        <div class="card mt-6">
+            <h2 class="text-h3 font-heading mb-6">{{ __('Change Password') }}</h2>
+            
+            <form action="{{ route('cabinet.profile.password') }}" method="POST">
+                @csrf
+                @method('PUT')
+                
+                <!-- Current Password -->
+                <div class="mb-6">
+                    <label for="current_password" class="block text-body-m font-semibold text-brand-dark mb-2">
+                        {{ __('Current Password') }}
+                    </label>
+                    <input 
+                        type="password" 
+                        id="current_password" 
+                        name="current_password" 
+                        class="input w-full @error('current_password') border-error @enderror"
+                        required
+                    >
+                    @error('current_password')
+                        <p class="text-error text-body-s mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                
+                <!-- New Password -->
+                <div class="mb-6">
+                    <label for="password" class="block text-body-m font-semibold text-brand-dark mb-2">
+                        {{ __('New Password') }}
+                    </label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        class="input w-full @error('password') border-error @enderror"
+                        required
+                    >
+                    @error('password')
+                        <p class="text-error text-body-s mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                
+                <!-- Confirm Password -->
+                <div class="mb-6">
+                    <label for="password_confirmation" class="block text-body-m font-semibold text-brand-dark mb-2">
+                        {{ __('Confirm New Password') }}
+                    </label>
+                    <input 
+                        type="password" 
+                        id="password_confirmation" 
+                        name="password_confirmation" 
+                        class="input w-full"
+                        required
+                    >
+                </div>
+                
+                <!-- Submit Button -->
+                <div class="flex justify-end">
+                    <button type="submit" class="btn btn-primary">
+                        {{ __('Update Password') }}
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
     
     <!-- Company Info Sidebar -->

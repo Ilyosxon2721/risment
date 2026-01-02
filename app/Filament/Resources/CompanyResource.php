@@ -103,7 +103,20 @@ class CompanyResource extends Resource
                     ->sortable(),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('status')
+                    ->label('Статус')
+                    ->options([
+                        'active' => 'Активный',
+                        'inactive' => 'Неактивный',
+                        'suspended' => 'Приостановлен',
+                    ]),
+                Tables\Filters\SelectFilter::make('plan_status')
+                    ->label('Статус тарифа')
+                    ->options([
+                        'active' => 'Активный',
+                        'trial' => 'Пробный',
+                        'expired' => 'Истёк',
+                    ]),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -118,7 +131,7 @@ class CompanyResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\UsersRelationManager::class,
         ];
     }
 

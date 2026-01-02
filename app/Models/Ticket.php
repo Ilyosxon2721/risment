@@ -7,12 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 class Ticket extends Model
 {
     protected $fillable = [
-        'company_id', 'user_id', 'subject', 'status', 'priority'
+        'company_id', 'user_id', 'subject', 'priority', 'status',
     ];
     
-    public function company()
+    public function messages()
     {
-        return $this->belongsTo(Company::class);
+        return $this->hasMany(TicketMessage::class);
+    }
+    
+    public function attachments()
+    {
+        return $this->hasMany(TicketAttachment::class);
     }
     
     public function user()
@@ -20,8 +25,8 @@ class Ticket extends Model
         return $this->belongsTo(User::class);
     }
     
-    public function messages()
+    public function company()
     {
-        return $this->hasMany(TicketMessage::class);
+        return $this->belongsTo(Company::class);
     }
 }
