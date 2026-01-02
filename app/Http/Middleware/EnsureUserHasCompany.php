@@ -20,7 +20,7 @@ class EnsureUserHasCompany
         }
         
         // Allow access to company creation routes without having a company
-        if ($request->routeIs('cabinet.company.*')) {
+        if ($request->routeIs('cabinet.company.create') || $request->routeIs('cabinet.company.store')) {
             return $next($request);
         }
         
