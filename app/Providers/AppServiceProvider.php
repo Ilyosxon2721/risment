@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Schema;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,6 +21,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Fix for shared hosting - disable foreign key constraints
+        Schema::defaultStringLength(191);
+        
         // Register tariff audit observers
         \App\Models\PricingRate::observe(\App\Observers\PricingRateObserver::class);
         
