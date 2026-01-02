@@ -26,6 +26,9 @@ class DatabaseSeeder extends Seeder
         ]);
         $admin->assignRole($adminRole);
         
+        // Seed subscription plans
+        $this->call(SubscriptionPlanSeeder::class);
+        
         // Create size categories (MGT/SGT/KGT) with prices
         SizeCategory::create([
             'code' => 'mgt',

@@ -3,116 +3,108 @@
 namespace Database\Seeders;
 
 use App\Models\SubscriptionPlan;
-use App\Services\PricingService;
 use Illuminate\Database\Seeder;
 
 class SubscriptionPlanSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     */
     public function run(): void
     {
-        $pricingService = new PricingService();
-        
         $plans = [
             [
-                'code' => 'lite',
-                'name_ru' => 'LITE',
-                'name_uz' => 'LITE',
-                'description_ru' => 'Для начинающих продавцов с небольшим объёмом',
-                'description_uz' => 'Kichik hajmdagi sotuvchilar uchun',
-                'price_month' => 1400000, // Will be recalculated
-                'fbs_shipments_included' => 100,
-                'storage_included_boxes' => 5,
-                'storage_included_bags' => 5,
-                'inbound_included_boxes' => 5,
-                'shipping_included' => true,
-                'schedule_ru' => '3 раза в неделю: Пн/Ср/Пт, cut-off 12:00',
-                'schedule_uz' => 'Haftada 3 marta: Du/Cho/Ju, cut-off 12:00',
-                'over_storage_box_fee' => 18000,
-                'over_storage_bag_fee' => 12000,
-                'over_inbound_box_fee' => 15000,
+                'code' => 'starter',
+                'name_ru' => 'Starter',
+                'name_uz' => 'Starter',
+                'description_ru' => 'Идеально для начинающих продавцов с небольшим объёмом',
+                'description_uz' => 'Kichik hajmli boshlang\'ich sotuvchilar uchun ideal',
+                'price_month' => 490000,
+                'fbs_shipments_included' => 50,
+                'storage_included_boxes' => 20,
+                'storage_included_bags' => 10,
+                'inbound_included_boxes' => 10,
+                'schedule_ru' => '2 раза в неделю (Вт/Пт)',
+                'schedule_uz' => 'Haftada 2 marta (Se/Ju)',
+                'over_fbs_mgt_fee' => 11000,
+                'over_fbs_sgt_fee' => 15000,
+                'over_fbs_kgt_fee' => 27000,
+                'over_storage_box_fee' => 300,
+                'over_storage_bag_fee' => 500,
+                'over_inbound_box_fee' => 3000,
                 'sort' => 1,
+                'is_active' => true,
             ],
             [
-                'code' => 'start',
-                'name_ru' => 'START',
-                'name_uz' => 'START',
-                'description_ru' => 'Для растущего бизнеса со стабильными продажами',
-                'description_uz' => 'Barqaror savdo bilan o\'sib borayotgan biznes uchun',
-                'price_month' => 4250000, // Will be recalculated
-                'fbs_shipments_included' => 300,
-                'storage_included_boxes' => 15,
-                'storage_included_bags' => 15,
-                'inbound_included_boxes' => 15,
-                'shipping_included' => true,
-                'schedule_ru' => '5 раз в неделю: Пн-Пт, cut-off 15:00',
-                'schedule_uz' => 'Haftada 5 marta: Du-Ju, cut-off 15:00',
-                'priority_processing' => true,
-                'over_storage_box_fee' => 18000,
-                'over_storage_bag_fee' => 12000,
-                'over_inbound_box_fee' => 15000,
+                'code' => 'growth',
+                'name_ru' => 'Growth',
+                'name_uz' => 'Growth',
+                'description_ru' => 'Для растущего бизнеса со средним объёмом продаж',
+                'description_uz' => 'O\'rtacha savdo hajmiga ega o\'sib borayotgan biznes uchun',
+                'price_month' => 990000,
+                'recommended_price_month' => 990000,
+                'fbs_shipments_included' => 150,
+                'storage_included_boxes' => 50,
+                'storage_included_bags' => 30,
+                'inbound_included_boxes' => 30,
+                'schedule_ru' => '3 раза в неделю (Пн/Ср/Пт)',
+                'schedule_uz' => 'Haftada 3 marta (Du/Ch/Ju)',
+                'over_fbs_mgt_fee' => 10000,
+                'over_fbs_sgt_fee' => 14000,
+                'over_fbs_kgt_fee' => 25000,
+                'over_storage_box_fee' => 250,
+                'over_storage_bag_fee' => 400,
+                'over_inbound_box_fee' => 2500,
                 'sort' => 2,
+                'is_active' => true,
             ],
             [
                 'code' => 'pro',
-                'name_ru' => 'PRO',
-                'name_uz' => 'PRO',
-                'description_ru' => 'Для профессиональных продавцов с высоким оборотом',
-                'description_uz' => 'Yuqori aylanma bilan professional sotuvchilar uchun',
-                'price_month' => 9840000, // Will be recalculated
-                'fbs_shipments_included' => 600,
-                'storage_included_boxes' => 30,
-                'storage_included_bags' => 30,
-                'inbound_included_boxes' => 30,
-                'shipping_included' => true,
-                'schedule_ru' => 'Ежедневно, cut-off 18:00',
-                'schedule_uz' => 'Har kuni, cut-off 18:00',
+                'name_ru' => 'Pro',
+                'name_uz' => 'Pro',
+                'description_ru' => 'Для профессионалов с высоким объёмом продаж',
+                'description_uz' => 'Yuqori savdo hajmiga ega professionallar uchun',
+                'price_month' => 1990000,
+                'fbs_shipments_included' => 400,
+                'storage_included_boxes' => 150,
+                'storage_included_bags' => 80,
+                'inbound_included_boxes' => 80,
+                'schedule_ru' => '6 раз в неделю (Пн-Сб)',
+                'schedule_uz' => 'Haftada 6 marta (Du-Sha)',
                 'priority_processing' => true,
                 'sla_high' => true,
-                'over_storage_box_fee' => 18000,
-                'over_storage_bag_fee' => 12000,
-                'over_inbound_box_fee' => 15000,
+                'over_fbs_mgt_fee' => 9000,
+                'over_fbs_sgt_fee' => 13000,
+                'over_fbs_kgt_fee' => 23000,
+                'over_storage_box_fee' => 200,
+                'over_storage_bag_fee' => 350,
+                'over_inbound_box_fee' => 2000,
                 'sort' => 3,
+                'is_active' => true,
             ],
             [
-                'code' => 'business',
-                'name_ru' => 'BUSINESS',
-                'name_uz' => 'BUSINESS',
-                'description_ru' => 'Для крупных продавцов с максимальными объёмами',
-                'description_uz' => 'Maksimal hajmli yirik sotuvchilar uchun',
-                'price_month' => 29520000, // Will be recalculated
-                'fbs_shipments_included' => 2000,
-                'storage_included_boxes' => 100,
-                'storage_included_bags' => 100,
-                'inbound_included_boxes' => 100,
-                'shipping_included' => true,
-                'schedule_ru' => 'Ежедневно + выходные, cut-off 20:00',
-                'schedule_uz' => 'Har kuni + dam olish kunlari, cut-off 20:00',
+                'code' => 'enterprise',
+                'name_ru' => 'Enterprise',
+                'name_uz' => 'Enterprise',
+                'description_ru' => 'Индивидуальные условия для крупного бизнеса',
+                'description_uz' => 'Yirik biznes uchun individual shartlar',
+                'price_month' => 0,
+                'is_custom' => true,
+                'schedule_ru' => 'По договорённости',
+                'schedule_uz' => 'Kelishuvga binoan',
                 'priority_processing' => true,
                 'sla_high' => true,
                 'personal_manager' => true,
-                'over_storage_box_fee' => 18000,
-                'over_storage_bag_fee' => 12000,
-                'over_inbound_box_fee' => 15000,
                 'sort' => 4,
+                'is_active' => true,
             ],
         ];
-        
-        foreach ($plans as $planData) {
-            $plan = SubscriptionPlan::updateOrCreate(
-                ['code' => $planData['code']],
-                $planData
+
+        foreach ($plans as $plan) {
+            SubscriptionPlan::updateOrCreate(
+                ['code' => $plan['code']],
+                $plan
             );
-            
-            // Calculate and set recommended price
-            $recommendedPrice = $pricingService->calculateRecommendedMonthlyFee($plan);
-            $plan->update([
-                'recommended_price_month' => $recommendedPrice,
-                'price_month' => $recommendedPrice, // Use recommended as actual
-            ]);
-            
-            $this->command->info("Plan {$plan->code}: price_month = " . number_format($plan->price_month) . " UZS (recommended: " . number_format($recommendedPrice) . " UZS)");
         }
-        
-        $this->command->info('Subscription plans seeded successfully!');
     }
 }
