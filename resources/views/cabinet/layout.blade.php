@@ -17,27 +17,33 @@
             </div>
             
             <!-- Company Selector -->
-            @if(Auth::user()->companies->count() > 1)
-            <div class="p-4 border-b border-brand-border">
-                <label class="text-body-s font-semibold text-text-muted">{{ __('Company') }}</label>
-                <form method="POST" id="company-switch-form">
-                    @csrf
-                    <select name="company_id" onchange="switchCompany(this.value)" class="input mt-2">
-                        @foreach(Auth::user()->companies as $company)
-                            <option value="{{ $company->id }}" {{ $currentCompany->id == $company->id ? 'selected' : '' }}>
-                                {{ $company->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </form>
-            </div>
+            @if(isset($currentCompany) && $currentCompany)
+                @if(Auth::user()->companies->count() > 1)
+                <div class="p-4 border-b border-brand-border">
+                    <label class="text-body-s font-semibold text-text-muted">{{ __('Company') }}</label>
+                    <form method="POST" id="company-switch-form">
+                        @csrf
+                        <select name="company_id" onchange="switchCompany(this.value)" class="input mt-2">
+                            @foreach(Auth::user()->companies as $company)
+                                <option value="{{ $company->id }}" {{ $currentCompany->id == $company->id ? 'selected' : '' }}>
+                                    {{ $company->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </form>
+                </div>
+                @else
+                <div class="p-4 border-b border-brand-border">
+                    <div class="font-semibold">{{ $currentCompany->name }}</div>
+                    <div class="text-body-s text-text-muted">{{ $currentCompany->email }}</div>
+                    <div class="mt-2 text-body-s font-semibold {{ $currentCompany->balance < 0 ? 'text-error' : 'text-success' }}">
+                        {{ __('Balance') }}: {{ $currentCompany->formatted_balance }}
+                    </div>
+                </div>
+                @endif
             @else
             <div class="p-4 border-b border-brand-border">
-                <div class="font-semibold">{{ $currentCompany->name }}</div>
-                <div class="text-body-s text-text-muted">{{ $currentCompany->email }}</div>
-                <div class="mt-2 text-body-s font-semibold {{ $currentCompany->balance < 0 ? 'text-error' : 'text-success' }}">
-                    {{ __('Balance') }}: {{ $currentCompany->formatted_balance }}
-                </div>
+                <div class="font-semibold text-text-muted">{{ __('No company selected') }}</div>
             </div>
             @endif
             
