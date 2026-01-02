@@ -14,12 +14,13 @@ class SubscriptionPlanResource extends Resource
 {
     protected static ?string $model = SubscriptionPlan::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    public static function shouldRegisterNavigation(): bool { return false; }
+    protected static ?string $navigationIcon = 'heroicon-o-credit-card';
     
-    protected static ?string $navigationGroup = 'Settings';
+    protected static ?string $navigationGroup = 'Тарифы';
     
-    protected static ?string $navigationLabel = 'Subscription Plans';
+    protected static ?string $navigationLabel = 'Пакеты подписки';
+    
+    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {

@@ -16,15 +16,15 @@ class PricingRateResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-currency-dollar';
     
-    protected static ?string $navigationLabel = 'Тарифы';
+    protected static ?string $navigationLabel = 'Тарифы услуг';
     
     protected static ?string $modelLabel = 'тариф';
     
     protected static ?string $pluralModelLabel = 'Тарифы';
     
-    protected static ?string $navigationGroup = 'Ценообразование';
+    protected static ?string $navigationGroup = 'Тарифы';
     
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {
