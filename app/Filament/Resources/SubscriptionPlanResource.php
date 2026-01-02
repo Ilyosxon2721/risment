@@ -118,30 +118,39 @@ class SubscriptionPlanResource extends Resource
                 
                 Forms\Components\Section::make('Overage Fees (UZS)')
                     ->schema([
-                        Forms\Components\TextInput::make('over_fbs_shipment_fee')
-                            ->required()
+                        Forms\Components\TextInput::make('over_fbs_mgt_fee')
                             ->numeric()
-                            ->default(25000)
-                            ->label('Per FBS Shipment'),
+                            ->default(11000)
+                            ->label('Per FBS MGT Shipment')
+                            ->helperText('Малогабарит (Pick&Pack + доставка MGT)'),
+                        
+                        Forms\Components\TextInput::make('over_fbs_sgt_fee')
+                            ->numeric()
+                            ->default(15000)
+                            ->label('Per FBS SGT Shipment')
+                            ->helperText('Среднегабарит (Pick&Pack + доставка SGT)'),
+                        
+                        Forms\Components\TextInput::make('over_fbs_kgt_fee')
+                            ->numeric()
+                            ->default(27000)
+                            ->label('Per FBS KGT Shipment')
+                            ->helperText('Крупногабарит (Pick&Pack + доставка KGT)'),
                         
                         Forms\Components\TextInput::make('over_storage_box_fee')
-                            ->required()
                             ->numeric()
-                            ->default(18000)
+                            ->default(300)
                             ->label('Per Storage Box/month'),
                         
                         Forms\Components\TextInput::make('over_storage_bag_fee')
-                            ->required()
                             ->numeric()
-                            ->default(12000)
+                            ->default(500)
                             ->label('Per Storage Bag/month'),
                         
                         Forms\Components\TextInput::make('over_inbound_box_fee')
-                            ->required()
                             ->numeric()
-                            ->default(15000)
+                            ->default(3000)
                             ->label('Per Inbound Box'),
-                    ])->columns(2),
+                    ])->columns(3),
             ]);
     }
 
