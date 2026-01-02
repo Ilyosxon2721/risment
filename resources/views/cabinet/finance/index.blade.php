@@ -59,7 +59,7 @@
     <div class="card">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-h3 font-heading">{{ __('Recent Invoices') }}</h2>
-            <a href="{{ route('cabinet.finance.invoices') }}" class="text-brand hover:underline text-body-s">
+            <a href="{{ route('cabinet.finance.invoices.index') }}" class="text-brand hover:underline text-body-s">
                 {{ __('View All') }} →
             </a>
         </div>
