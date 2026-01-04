@@ -29,19 +29,24 @@ class CalculatorController extends Controller
             'mgt_count' => 'required|integer|min:0',
             'sgt_count' => 'required|integer|min:0',
             'kgt_count' => 'required|integer|min:0',
-            'storage_boxes' => 'required|integer|min:0',
-            'storage_bags' => 'required|integer|min:0',
+            'storage_box_days' => 'required|integer|min:0',
+            'storage_bag_days' => 'required|integer|min:0',
             'inbound_boxes' => 'required|integer|min:0',
+            'avg_items_per_order' => 'nullable|numeric|min:1|max:10',
         ]);
+
+        // Default avg_items_per_order to 1 if not provided
+        $avgItemsPerOrder = $validated['avg_items_per_order'] ?? 1.0;
 
         // Use PricingService for all calculations
         $comparison = $this->pricingService->compareAllOptions(
             $validated['mgt_count'],
             $validated['sgt_count'],
             $validated['kgt_count'],
-            $validated['storage_boxes'],
-            $validated['storage_bags'],
-            $validated['inbound_boxes']
+            $validated['storage_box_days'],
+            $validated['storage_bag_days'],
+            $validated['inbound_boxes'],
+            $avgItemsPerOrder
         );
         
         $result = [
@@ -50,9 +55,10 @@ class CalculatorController extends Controller
                 'sgt_count' => $validated['sgt_count'],
                 'kgt_count' => $validated['kgt_count'],
                 'total_shipments' => $validated['mgt_count'] + $validated['sgt_count'] + $validated['kgt_count'],
-                'storage_boxes' => $validated['storage_boxes'],
-                'storage_bags' => $validated['storage_bags'],
+                'storage_box_days' => $validated['storage_box_days'],
+                'storage_bag_days' => $validated['storage_bag_days'],
                 'inbound_boxes' => $validated['inbound_boxes'],
+                'avg_items_per_order' => $avgItemsPerOrder,
             ],
             'comparison' => $comparison,
         ];

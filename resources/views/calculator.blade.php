@@ -22,40 +22,40 @@
             
             {{-- FBS Delivery Size Breakdown --}}
             <div class="mb-6">
-                <h3 class="text-h3 font-heading mb-2">{{ __('Логистика FBS (по размерам)') }}</h3>
-                <p class="text-body-s text-text-muted mb-4">{{ __('Укажите количество отправок по каждому размеру') }}</p>
+                <h3 class="text-h3 font-heading mb-2">{{ __('Логистика FBS (сборка + доставка)') }}</h3>
+                <p class="text-body-s text-text-muted mb-4">{{ __('Укажите количество отправок по каждому размеру. Цена включает сборку заказа и довоз до ПВЗ маркетплейса.') }}</p>
                 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
                         <label class="block text-body-m font-semibold mb-2">
-                            MGT (≤60 см)
-                            <span class="text-brand ml-2">11 000 {{ __('сум/шт') }}</span>
+                            {{ __('МГТ (≤60 см)') }}
+                            <span class="text-brand ml-2">8 000 {{ __('сум/шт') }}</span>
                         </label>
                         <input type="number" name="mgt_count" class="input" value="{{ old('mgt_count', $result['usage']['mgt_count'] ?? 0) }}" min="0" required>
-                        <p class="text-body-s text-text-muted mt-1">{{ __('Количество малых посылок') }}</p>
+                        <p class="text-body-s text-text-muted mt-1">{{ __('Малые посылки') }} (Д+Ш+В ≤60)</p>
                     </div>
                     
                     <div>
                         <label class="block text-body-m font-semibold mb-2">
-                            SGT (61-120 см)
+                            {{ __('СГТ (61-120 см)') }}
                             <span class="text-brand ml-2">15 000 {{ __('сум/шт') }}</span>
                         </label>
                         <input type="number" name="sgt_count" class="input" value="{{ old('sgt_count', $result['usage']['sgt_count'] ?? 0) }}" min="0" required>
-                        <p class="text-body-s text-text-muted mt-1">{{ __('Количество средних посылок') }}</p>
+                        <p class="text-body-s text-text-muted mt-1">{{ __('Средние посылки') }} (Д+Ш+В 61-120)</p>
                     </div>
                     
                     <div>
                         <label class="block text-body-m font-semibold mb-2">
-                            KGT (>120 см)
-                            <span class="text-brand ml-2">27 000 {{ __('сум/шт') }}</span>
+                            {{ __('КГТ (>120 см)') }}
+                            <span class="text-brand ml-2">35 000 {{ __('сум/шт') }}</span>
                         </label>
                         <input type="number" name="kgt_count" class="input" value="{{ old('kgt_count', $result['usage']['kgt_count'] ?? 0) }}" min="0" required>
-                        <p class="text-body-s text-text-muted mt-1">{{ __('Количество крупных посылок') }}</p>
+                        <p class="text-body-s text-text-muted mt-1">{{ __('Крупные посылки') }} (Д+Ш+В >120)</p>
                     </div>
                 </div>
                 
                 <p class="text-body-s text-text-muted mt-3">
-                    {{ __('L+W+H = длина + ширина + высота в см') }}
+                    💡 {{ __('Д+Ш+В = длина + ширина + высота в см. Цена уже включает сборку заказа и доставку до склада маркетплейса.') }}
                 </p>
             </div>
             
@@ -64,19 +64,21 @@
             {{-- Expected Usage --}}
             <div class="mb-6">
                 <h3 class="text-h3 font-heading mb-4">{{ __('Ожидаемые объёмы в месяц') }}</h3>
-                <p class="text-body-s text-text-muted mb-4">{{ __('Укажите ожидаемое использование хранения и приёмки') }}</p>
+                <p class="text-body-s text-text-muted mb-4">{{ __('Укажите планируемое использование хранения и приёмки товара') }}</p>
                 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
-                        <label class="block text-body-m font-semibold mb-2">{{ __('Коробов на хранении') }}</label>
-                        <input type="number" name="storage_boxes" class="input" value="{{ old('storage_boxes', $result['usage']['storage_boxes'] ?? 0) }}" min="0" required>
-                        <p class="text-body-s text-text-muted mt-1">{{ __('Средний объём 60×40×40') }}</p>
+                        <label class="block text-body-m font-semibold mb-2">{{ __('Короб-дни хранения') }}</label>
+                        <input type="number" name="storage_box_days" class="input" value="{{ old('storage_box_days', $result['usage']['storage_box_days'] ?? 0) }}" min="0" required>
+                        <p class="text-body-s text-text-muted mt-1">{{ __('Коробов 60×40×40 см × дни') }}</p>
+                        <p class="text-body-xs text-text-muted mt-1">{{ __('Например: 10 коробов × 30 дней = 300') }}</p>
                     </div>
                     
                     <div>
-                        <label class="block text-body-m font-semibold mb-2">{{ __('Мешков на хранении') }}</label>
-                        <input type="number" name="storage_bags" class="input" value="{{ old('storage_bags', $result['usage']['storage_bags'] ?? 0) }}" min="0" required>
-                        <p class="text-body-s text-text-muted mt-1">{{ __('Средний объём мешков одежды') }}</p>
+                        <label class="block text-body-m font-semibold mb-2">{{ __('Мешок-дни хранения') }}</label>
+                        <input type="number" name="storage_bag_days" class="input" value="{{ old('storage_bag_days', $result['usage']['storage_bag_days'] ?? 0) }}" min="0" required>
+                        <p class="text-body-s text-text-muted mt-1">{{ __('Мешков одежды × дни') }}</p>
+                        <p class="text-body-xs text-text-muted mt-1">{{ __('Например: 5 мешков × 30 дней = 150') }}</p>
                     </div>
                     
                     <div>
@@ -85,6 +87,16 @@
                         <p class="text-body-s text-text-muted mt-1">{{ __('Поставки в месяц') }}</p>
                     </div>
                 </div>
+                
+                {{-- Advanced option --}}
+                <details class="mt-6">
+                    <summary class="cursor-pointer text-body-m text-brand font-semibold">{{ __('⚙️ Дополнительные параметры') }}</summary>
+                    <div class="mt-4 p-4 bg-bg-soft rounded-btn">
+                        <label class="block text-body-m font-semibold mb-2">{{ __('Среднее количество позиций в заказе') }}</label>
+                        <input type="number" step="0.1" name="avg_items_per_order" class="input max-w-xs" value="{{ old('avg_items_per_order', $result['usage']['avg_items_per_order'] ?? 1.0) }}" min="1.0" max="10.0">
+                        <p class="text-body-s text-text-muted mt-1">{{ __('Если в одном заказе несколько товаров, укажите среднее значение (1.0 - 10.0)') }}</p>
+                    </div>
+                </details>
             </div>
             
             <div class="flex justify-center mt-6">
@@ -104,17 +116,17 @@
                     <div class="space-y-1 text-body-m">
                         <p><strong>{{ $result['usage']['total_shipments'] }} {{ __('FBS отправлений') }}</strong> 
                             @if($result['usage']['mgt_count'] > 0)
-                                ({{ $result['usage']['mgt_count'] }} MGT
+                                ({{ $result['usage']['mgt_count'] }} МГТ
                             @endif
                             @if($result['usage']['sgt_count'] > 0)
-                                @if($result['usage']['mgt_count'] > 0), @endif {{ $result['usage']['sgt_count'] }} SGT
+                                @if($result['usage']['mgt_count'] > 0), @endif {{ $result['usage']['sgt_count'] }} СГТ
                             @endif
                             @if($result['usage']['kgt_count'] > 0)
-                                @if($result['usage']['mgt_count'] > 0 || $result['usage']['sgt_count'] > 0), @endif {{ $result['usage']['kgt_count'] }} KGT
+                                @if($result['usage']['mgt_count'] > 0 || $result['usage']['sgt_count'] > 0), @endif {{ $result['usage']['kgt_count'] }} КГТ
                             @endif)
                         </p>
-                        @if($result['usage']['storage_boxes'] > 0 || $result['usage']['storage_bags'] > 0)
-                        <p><strong>{{ __('Хранение:') }}</strong> {{ $result['usage']['storage_boxes'] }} {{ __('коробов') }} + {{ $result['usage']['storage_bags'] }} {{ __('мешков') }}</p>
+                        @if($result['usage']['storage_box_days'] > 0 || $result['usage']['storage_bag_days'] > 0)
+                        <p><strong>{{ __('Хранение:') }}</strong> {{ $result['usage']['storage_box_days'] }} {{ __('короб-дней') }} + {{ $result['usage']['storage_bag_days'] }} {{ __('мешок-дней') }}</p>
                         @endif
                         @if($result['usage']['inbound_boxes'] > 0)
                         <p><strong>{{ __('Приёмка:') }}</strong> {{ $result['usage']['inbound_boxes'] }} {{ __('коробов') }}</p>
@@ -383,36 +395,36 @@
                 <div class="space-y-3">
                     @if($perUnitOption['breakdown']['mgt']['count'] > 0)
                     <div class="flex justify-between items-center">
-                        <span>MGT: {{ $perUnitOption['breakdown']['mgt']['count'] }} × {{ number_format($perUnitOption['breakdown']['mgt']['rate'], 0, '', ' ') }} {{ __('сум') }}</span>
-                        <span class="font-semibold">{{ number_format($perUnitOption['breakdown']['mgt']['cost'], 0, '', ' ') }} {{ __('сум') }}</span>
+                        <span>МГТ: {{ $perUnitOption['breakdown']['mgt']['count'] }} × {{ number_format($perUnitOption['breakdown']['mgt']['rate_per_shipment'], 0, '', ' ') }} {{ __('сум') }}</span>
+                        <span class="font-semibold">{{ number_format($perUnitOption['breakdown']['mgt']['total'], 0, '', ' ') }} {{ __('сум') }}</span>
                     </div>
                     @endif
                     
                     @if($perUnitOption['breakdown']['sgt']['count'] > 0)
                     <div class="flex justify-between items-center">
-                        <span>SGT: {{ $perUnitOption['breakdown']['sgt']['count'] }} × {{ number_format($perUnitOption['breakdown']['sgt']['rate'], 0, '', ' ') }} {{ __('сум') }}</span>
-                        <span class="font-semibold">{{ number_format($perUnitOption['breakdown']['sgt']['cost'], 0, '', ' ') }} {{ __('сум') }}</span>
+                        <span>СГТ: {{ $perUnitOption['breakdown']['sgt']['count'] }} × {{ number_format($perUnitOption['breakdown']['sgt']['rate_per_shipment'], 0, '', ' ') }} {{ __('сум') }}</span>
+                        <span class="font-semibold">{{ number_format($perUnitOption['breakdown']['sgt']['total'], 0, '', ' ') }} {{ __('сум') }}</span>
                     </div>
                     @endif
                     
                     @if($perUnitOption['breakdown']['kgt']['count'] > 0)
                     <div class="flex justify-between items-center">
-                        <span>KGT: {{ $perUnitOption['breakdown']['kgt']['count'] }} × {{ number_format($perUnitOption['breakdown']['kgt']['rate'], 0, '', ' ') }} {{ __('сум') }}</span>
-                        <span class="font-semibold">{{ number_format($perUnitOption['breakdown']['kgt']['cost'], 0, '', ' ') }} {{ __('сум') }}</span>
+                        <span>КГТ: {{ $perUnitOption['breakdown']['kgt']['count'] }} × {{ number_format($perUnitOption['breakdown']['kgt']['rate_per_shipment'], 0, '', ' ') }} {{ __('сум') }}</span>
+                        <span class="font-semibold">{{ number_format($perUnitOption['breakdown']['kgt']['total'], 0, '', ' ') }} {{ __('сум') }}</span>
                     </div>
                     @endif
                     
-                    @if($result['usage']['storage_boxes'] > 0 || $result['usage']['storage_bags'] > 0)
+                    @if($result['usage']['storage_box_days'] > 0 || $result['usage']['storage_bag_days'] > 0)
                     <div class="flex justify-between items-center">
-                        <span>{{ __('Хранение') }}: {{ $result['usage']['storage_boxes'] }} {{ __('коробов') }} + {{ $result['usage']['storage_bags'] }} {{ __('мешков') }}</span>
-                        <span class="font-semibold">{{ number_format($perUnitOption['breakdown']['storage'], 0, '', ' ') }} {{ __('сум') }}</span>
+                        <span>{{ __('Хранение') }}: {{ $result['usage']['storage_box_days'] }} {{ __('короб-дней') }} + {{ $result['usage']['storage_bag_days'] }} {{ __('мешок-дней') }}</span>
+                        <span class="font-semibold">{{ number_format($perUnitOption['breakdown']['storage']['cost'], 0, '', ' ') }} {{ __('сум') }}</span>
                     </div>
                     @endif
                     
                     @if($result['usage']['inbound_boxes'] > 0)
                     <div class="flex justify-between items-center">
                         <span>{{ __('Приёмка') }}: {{ $result['usage']['inbound_boxes'] }} {{ __('коробов') }}</span>
-                        <span class="font-semibold">{{ number_format($perUnitOption['breakdown']['inbound'], 0, '', ' ') }} {{ __('сум') }}</span>
+                        <span class="font-semibold">{{ number_format($perUnitOption['breakdown']['inbound']['cost'], 0, '', ' ') }} {{ __('сум') }}</span>
                     </div>
                     @endif
                     

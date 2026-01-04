@@ -28,12 +28,14 @@ class SubscriptionPlan extends Model
         'is_custom',
         'min_price_month',
         'fbs_shipments_included',
+        'sku_included',
         'storage_included_boxes',
         'storage_included_bags',
         'inbound_included_boxes',
         'shipping_included',
         'schedule_ru',
         'schedule_uz',
+        'sla_cutoff_time',
         'priority_processing',
         'sla_high',
         'personal_manager',
@@ -127,14 +129,15 @@ class SubscriptionPlan extends Model
 
     /**
      * Calculate overage fees for given usage
-     * Uses per-unit pricing logic: overage per shipment = pick&pack + delivery
+     * Uses base pricing logic: overage per shipment = pick&pack + delivery (NO surcharge)
+     * Storage is calculated per day
      */
     public function calculateOverage(
         int $mgtCount, 
         int $sgtCount, 
         int $kgtCount, 
-        int $storageBoxes, 
-        int $storageBags, 
+        int $storageBoxDays, 
+        int $storageBagDays, 
         int $inboundBoxes
     ): array {
         $totalOverage = 0;
@@ -161,11 +164,11 @@ class SubscriptionPlan extends Model
             $kgtIncluded = min($kgtCount, $remainingIncluded);
             $kgtOver = $kgtCount - $kgtIncluded;
             
-            // Calculate overage fees using per-unit pricing logic
-            // Overage fee = Pick&Pack + Delivery (same as штучный тариф)
-            $mgtFee = $mgtOver * (self::PICK_PACK_FEE + self::DELIVERY_RATES['mgt']);
-            $sgtFee = $sgtOver * (self::PICK_PACK_FEE + self::DELIVERY_RATES['sgt']);
-            $kgtFee = $kgtOver * (self::PICK_PACK_FEE + self::DELIVERY_RATES['kgt']);
+            // Calculate overage fees using base rates (NO surcharge)
+            // Overage fee = Pick&Pack (first) + Delivery
+            $mgtFee = $mgtOver * $this->over_fbs_mgt_fee;
+            $sgtFee = $sgtOver * $this->over_fbs_sgt_fee;
+            $kgtFee = $kgtOver * $this->over_fbs_kgt_fee;
             
             $totalShipmentFee = $mgtFee + $sgtFee + $kgtFee;
             
@@ -181,23 +184,23 @@ class SubscriptionPlan extends Model
             }
         }
 
-        // Storage boxes overage
-        if (!$this->is_custom && $this->storage_included_boxes && $storageBoxes > $this->storage_included_boxes) {
-            $overBoxes = $storageBoxes - $this->storage_included_boxes;
-            $fee = $overBoxes * $this->over_storage_box_fee;
+        // Storage box-days overage
+        if (!$this->is_custom && $this->storage_included_boxes && $storageBoxDays > $this->storage_included_boxes) {
+            $overBoxDays = $storageBoxDays - $this->storage_included_boxes;
+            $fee = $overBoxDays * $this->over_storage_box_fee;
             $breakdown['storage_boxes'] = [
-                'count' => $overBoxes,
+                'days' => $overBoxDays,
                 'fee' => $fee,
             ];
             $totalOverage += $fee;
         }
 
-        // Storage bags overage
-        if (!$this->is_custom && $this->storage_included_bags && $storageBags > $this->storage_included_bags) {
-            $overBags = $storageBags - $this->storage_included_bags;
-            $fee = $overBags * $this->over_storage_bag_fee;
+        // Storage bag-days overage
+        if (!$this->is_custom && $this->storage_included_bags && $storageBagDays > $this->storage_included_bags) {
+            $overBagDays = $storageBagDays - $this->storage_included_bags;
+            $fee = $overBagDays * $this->over_storage_bag_fee;
             $breakdown['storage_bags'] = [
-                'count' => $overBags,
+                'days' => $overBagDays,
                 'fee' => $fee,
             ];
             $totalOverage += $fee;

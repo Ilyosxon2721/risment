@@ -160,20 +160,20 @@
                     <div>
                         <div class="font-semibold mb-1">{{ __('FBS jo\'natmalar limiti oshsa') }}:</div>
                         <ul class="ml-4 space-y-1">
-                            <li>MGT — {{ number_format($overages['shipments']['mgt_fee'], 0, '', ' ') }} {{ __('so\'m/jo\'natma') }}</li>
-                            <li>SGT — {{ number_format($overages['shipments']['sgt_fee'], 0, '', ' ') }} {{ __('so\'m/jo\'natma') }}</li>
-                            <li>KGT — {{ number_format($overages['shipments']['kgt_fee'], 0, '', ' ') }} {{ __('so\'m/jo\'natma') }}</li>
+                            <li>{{ __('МГТ') }} — {{ number_format($overages['shipments']['mgt_fee'], 0, '', ' ') }} {{ __('so\'m/jo\'natma') }}</li>
+                            <li>{{ __('СГТ') }} — {{ number_format($overages['shipments']['sgt_fee'], 0, '', ' ') }} {{ __('so\'m/jo\'natma') }}</li>
+                            <li>{{ __('КГТ') }} — {{ number_format($overages['shipments']['kgt_fee'], 0, '', ' ') }} {{ __('so\'m/jo\'natma') }}</li>
                         </ul>
                     </div>
                     
                     {{-- Storage Overage --}}
                     <div class="flex items-start gap-2">
                         <span class="text-brand">+</span>
-                        <span>{{ __('Saqlash limiti oshsa') }}: {{ number_format($overages['storage']['box_rate'], 0, '', ' ') }} {{ __('so\'m/korob/oy') }}</span>
+                        <span>{{ __('Saqlash limiti oshsa') }}: {{ number_format($overages['storage']['box_rate'], 0, '', ' ') }} {{ __('so\'m/korob/kun') }}</span>
                     </div>
                     <div class="flex items-start gap-2">
                         <span class="text-brand">+</span>
-                        <span>{{ __('Saqlash limiti oshsa') }}: {{ number_format($overages['storage']['bag_rate'], 0, '', ' ') }} {{ __('so\'m/qop/oy') }}</span>
+                        <span>{{ __('Saqlash limiti oshsa') }}: {{ number_format($overages['storage']['bag_rate'], 0, '', ' ') }} {{ __('so\'m/qop/kun') }}</span>
                     </div>
                     
                     {{-- Inbound Overage --}}
@@ -204,54 +204,95 @@
 <!-- Service Pricing Tables -->
 <section class="py-16">
     <div class="container-risment">
-        <!-- Logistics Pricing -->
+        <!-- FBS Shipment Rates by Category -->
         <div class="mb-16">
-            <h2 class="text-h2 font-heading mb-2">{{ __('Logistics (Inbound + Storage)') }}</h2>
-            <p class="text-body-m text-text-muted mb-8">{{ __('Cost depends on product size category') }}</p>
+            <h2 class="text-h2 font-heading mb-2">{{ __('Тарифы FBS (Сборка + Доставка)') }}</h2>
+            <p class="text-body-m text-text-muted mb-8">{{ __('Стоимость зависит от габаритов товара (сумма Д+Ш+В). Цена включает сборку заказа и довоз до склада маркетплейса.') }}</p>
+            
+            @php
+                use App\Services\PricingService;
+                $pricingService = app(PricingService::class);
+                $rates = $pricingService->getPublicRates();
+                
+                $categories = [
+                    [
+                        'code' => __('МГТ'),
+                        'size' => '≤60 см',
+                        'pickpack_first' => $rates['PICKPACK_MGT_FIRST']->value ?? 4000,
+                        'delivery' => $rates['DELIVERY_MGT']->value ?? 4000,
+                    ],
+                    [
+                        'code' => __('СГТ'),
+                        'size' => '61-120 см',
+                        'pickpack_first' => $rates['PICKPACK_SGT_FIRST']->value ?? 7000,
+                        'delivery' => $rates['DELIVERY_SGT']->value ?? 8000,
+                    ],
+                    [
+                        'code' => __('КГТ'),
+                        'size' => '>120 см',
+                        'pickpack_first' => $rates['PICKPACK_KGT_FIRST']->value ?? 15000,
+                        'delivery' => $rates['DELIVERY_KGT']->value ?? 20000,
+                    ],
+                ];
+            @endphp
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                @php
-                    $logistics = [
-                        ['category' => 'MGT', 'size' => '≤60 см', 'price' => '5,000'],
-                        ['category' => 'SGT', 'size' => '61-120 см', 'price' => '7,500'],
-                        ['category' => 'KGT', 'size' => '>120 см', 'price' => '12,000'],
-                    ];
-                @endphp
-                
-                @foreach($logistics as $item)
+                @foreach($categories as $cat)
                 <div class="card">
                     <div class="inline-block px-4 py-2 bg-brand/10 text-brand rounded-btn font-semibold mb-4">
-                        {{ $item['category'] }}
+                        {{ $cat['code'] }}
                     </div>
-                    <div class="text-body-s text-text-muted mb-2">{{ __('Sum of L+W+H') }}</div>
-                    <div class="text-h3 font-heading mb-4">{{ $item['size'] }}</div>
-                    <div class="text-price text-brand">{{ $item['price'] }} UZS</div>
-                    <div class="text-body-s text-text-muted mt-1">{{ __('per unit') }}</div>
+                    <div class="text-body-s text-text-muted mb-2">{{ __('Сумма Д+Ш+В') }}</div>
+                    <div class="text-h3 font-heading mb-4">{{ $cat['size'] }}</div>
+                    
+                    <div class="space-y-2 text-body-s mb-4">
+                        <div class="flex justify-between">
+                            <span class="text-text-muted">{{ __('Сборка') }}:</span>
+                            <span>{{ number_format($cat['pickpack_first'], 0, '', ' ') }} UZS</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-text-muted">{{ __('Довоз') }}:</span>
+                            <span>{{ number_format($cat['delivery'], 0, '', ' ') }} UZS</span>
+                        </div>
+                    </div>
+                    
+                    <div class="border-t border-brand-border pt-3">
+                        <div class="text-price text-brand">{{ number_format($cat['pickpack_first'] + $cat['delivery'], 0, '', ' ') }} UZS</div>
+                        <div class="text-body-s text-text-muted mt-1">{{ __('базовая ставка за позицию') }}</div>
+                    </div>
                 </div>
                 @endforeach
             </div>
+            
+            <div class="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-btn text-body-s">
+                <p class="text-yellow-800">
+                    💡 <strong>{{ __('Важно') }}:</strong> {{ __('Для разового тарифа применяется надбавка +10% (до 300 отправлений) или +20% (более 300). В пакетах надбавки нет.') }}
+                </p>
+            </div>
         </div>
         
-        <!-- Pick & Pack Pricing -->
+        <!-- Storage Rates -->
         <div class="mb-16">
-            <h2 class="text-h2 font-heading mb-2">{{ __('Pick & Pack (Order Assembly)') }}</h2>
-            <p class="text-body-m text-text-muted mb-8">{{ __('Cost per order, regardless of size') }}</p>
+            <h2 class="text-h2 font-heading mb-2">{{ __('Хранение') }}</h2>
+            <p class="text-body-m text-text-muted mb-8">{{ __('Стоимость хранения в день') }}</p>
             
-            <div class="card max-w-2xl">
-                <div class="flex justify-between items-center mb-4">
-                    <div>
-                        <div class="font-semibold text-body-l">{{ __('First item in order') }}</div>
-                        <div class="text-body-s text-text-muted">{{ __('Picking, packing, labeling') }}</div>
-                    </div>
-                    <div class="text-price text-brand">7,000 UZS</div>
+            @php
+                $storageRates = [
+                    ['type' => __('Короб 60×40×40'), 'rate' => $rates['STORAGE_BOX_DAY']->value ?? 500],
+                    ['type' => __('Мешок одежды'), 'rate' => $rates['STORAGE_BAG_DAY']->value ?? 350],
+                    ['type' => __('Паллета'), 'rate' => $rates['STORAGE_PALLET_DAY']->value ?? 4000],
+                    ['type' => __('Кубический метр'), 'rate' => $rates['STORAGE_M3_DAY']->value ?? 7000],
+                ];
+            @endphp
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                @foreach($storageRates as $storage)
+                <div class="card text-center">
+                    <div class="text-body-m font-semibold mb-2">{{ $storage['type'] }}</div>
+                    <div class="text-price text-brand">{{ number_format($storage['rate'], 0, '', ' ') }}</div>
+                    <div class="text-body-s text-text-muted mt-1">{{ __('сум/день') }}</div>
                 </div>
-                <div class="border-t border-brand-border pt-4 flex justify-between items-center">
-                    <div>
-                        <div class="font-semibold text-body-l">{{ __('Each additional item') }}</div>
-                        <div class="text-body-s text-text-muted">{{ __('Additional SKU in same order') }}</div>
-                    </div>
-                    <div class="text-price text-brand">3,000 UZS</div>
-                </div>
+                @endforeach
             </div>
         </div>
         
