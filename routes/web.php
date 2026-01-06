@@ -61,6 +61,9 @@ Route::prefix('cabinet')->name('cabinet.')->middleware(['auth', \App\Http\Middle
     Route::put('/skus/{sku}', [\App\Http\Controllers\Cabinet\SkuController::class, 'update'])->name('skus.update');
     Route::delete('/skus/{sku}', [\App\Http\Controllers\Cabinet\SkuController::class, 'destroy'])->name('skus.destroy');
     
+    // Products (New system with variants)
+    Route::resource('products', \App\Http\Controllers\Cabinet\ProductController::class);
+    
     // Inbounds (ASN)
     Route::get('/inbounds', [InboundController::class, 'index'])->name('inbounds.index');
     Route::get('/inbounds/create', [InboundController::class, 'create'])->name('inbounds.create');
