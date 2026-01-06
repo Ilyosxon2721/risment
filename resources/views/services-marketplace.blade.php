@@ -18,6 +18,7 @@
 <!-- Launch Packages -->
 <section class="section">
     <div class="container-risment">
+        <div class="max-w-5xl mx-auto">
         <h2 class="text-h2 font-heading mb-8 text-center">Запуск аккаунта</h2>
         
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
@@ -46,12 +47,13 @@
             {{ number_format($overageSku->price, 0, '', ' ') }} сум {{ $overageSku->getUnit() }}
         </div>
         @endif
+        </div>
     </div>
 </section>
 
 <!-- Management Pricing Table with Toggle -->
 <section class="section bg-bg-soft">
-    <div class="container max-w-6xl">
+    <div class="container-risment">
         <h2 class="text-h2 font-heading text-center mb-3">Ежемесячное управление</h2>
         <p class="text-body-m text-text-muted text-center mb-8">
             Выберите тип маркетплейса для просмотра цен
@@ -66,14 +68,17 @@
 
 <!-- Showcase Savings -->
 <section class="section bg-gradient-to-br from-success/5 to-bg-soft">
-    <div class="container max-w-5xl">
-        <x-marketplace-showcase-savings />
+    <div class="container-risment">
+        <div class="max-w-4xl mx-auto">
+            <x-marketplace-showcase-savings />
+        </div>
     </div>
 </section>
 
 <!-- Bundle Discounts -->
 <section class="section bg-gradient-to-br from-success/10 to-bg-soft">
-    <div class="container max-w-5xl">
+    <div class="container-risment">
+        <div class="max-w-5xl mx-auto">
         <div class="text-center mb-8">
             <h2 class="text-h2 font-heading mb-3">Скидки при подключении нескольких маркетплейсов</h2>
             <p class="text-body-m text-text-muted">
@@ -125,13 +130,15 @@
                 </div>
             </div>
         </div>
+        </div>
     </div>
 </section>
 
 <!-- Ads Add-on -->
 @if($services['ads_addon'])
 <section class="section">
-    <div class="container max-w-4xl">
+    <div class="container-risment">
+        <div class="max-w-4xl mx-auto">
         <div class="card bg-gradient-to-br from-warning/10 to-bg-soft border-2 border-warning/20">
             <div class="flex items-start gap-6">
                 <div class="w-16 h-16 bg-warning/10 rounded-btn flex items-center justify-center flex-shrink-0">
@@ -154,13 +161,15 @@
                 </div>
             </div>
         </div>
+        </div>
     </div>
 </section>
 @endif
 
 <!-- Infographics -->
 <section class="section bg-bg-soft">
-    <div class="container max-w-4xl">
+    <div class="container-risment">
+        <div class="max-w-4xl mx-auto">
         <h2 class="text-h2 font-heading mb-6 text-center">Инфографика</h2>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -180,12 +189,14 @@
         <div class="p-4 bg-white border border-brand-border rounded-btn text-center text-body-s text-text-muted">
             📸 Клиент предоставляет фото и материалы для создания инфографики
         </div>
+        </div>
     </div>
 </section>
 
 <!-- CTA -->
 <section class="section">
-    <div class="container max-w-3xl text-center">
+    <div class="container-risment">
+        <div class="max-w-3xl mx-auto text-center">
         <h2 class="text-h2 font-heading mb-4">Готовы начать продавать?</h2>
         <p class="text-body-l text-text-muted mb-8">
             Свяжитесь с нами для подбора оптимального пакета услуг
@@ -193,6 +204,7 @@
         <a href="{{ route('contacts', ['locale' => app()->getLocale()]) }}" class="btn btn-primary px-12">
             Связаться с нами
         </a>
+        </div>
     </div>
 </section>
 @endsection

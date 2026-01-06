@@ -31,14 +31,12 @@ class MarketplaceServicesController extends Controller
         $uzumPackages = MarketplaceService::active()
             ->byGroup('management')
             ->where('marketplace', 'uzum')
-            ->where('sku_limit', '>', 0)
             ->orderBy('sort')
             ->get();
 
         $complexPackages = MarketplaceService::active()
             ->byGroup('management')
-            ->where('code', 'LIKE', '%_COMPLEX')
-            ->where('sku_limit', '>', 0)
+            ->where('code', 'LIKE', '%_COMPLEX%')
             ->orderBy('sort')
             ->get();
 
@@ -47,13 +45,42 @@ class MarketplaceServicesController extends Controller
 
     public function calculator()
     {
-        $managementPackages = MarketplaceService::active()
+        // Get Uzum-specific packages
+        $uzumPackages = MarketplaceService::active()
             ->byGroup('management')
+            ->byMarketplace('uzum')
             ->whereNotNull('sku_limit')
             ->orderBy('sort')
             ->get();
+        
+        // Get complex marketplace packages (WB, Ozon, Yandex)
+        // These are marked as 'all' but should exclude Uzum-specific ones
+        $complexPackages = MarketplaceService::active()
+            ->byGroup('management')
+            ->where('marketplace', 'all')
+            ->whereNotNull('sku_limit')
+            ->where('code', 'LIKE', 'MGMT_COMPLEX%') // Filter only complex packages
+            ->orderBy('sort')
+            ->get();
+        
+        // Fallback: if no specific packages, use general management packages
+        if ($uzumPackages->isEmpty()) {
+            $uzumPackages = MarketplaceService::active()
+                ->byGroup('management')
+                ->whereNotNull('sku_limit')
+                ->orderBy('sort')
+                ->get();
+        }
+        
+        if ($complexPackages->isEmpty()) {
+            $complexPackages = MarketplaceService::active()
+                ->byGroup('management')
+                ->whereNotNull('sku_limit')
+                ->orderBy('sort')
+                ->get();
+        }
 
-        return view('marketplace-calculator', compact('managementPackages'));
+        return view('marketplace-calculator', compact('uzumPackages', 'complexPackages'));
     }
 
     public function calculate(Request $request)
@@ -61,83 +88,93 @@ class MarketplaceServicesController extends Controller
         $validated = $request->validate([
             'marketplaces' => 'required|array|min:1|max:4',
             'marketplaces.*' => 'in:uzum,wildberries,ozon,yandex',
-            'package_code' => 'required|string',
-            'sku_count' => 'required|integer|min:0',
-            'ads_addon' => 'boolean',
+            'configs' => 'required|array',
+            'configs.*.package' => 'required|string',
+            'configs.*.sku_count' => 'required|integer|min:0',
+            'configs.*.ads' => 'sometimes',
         ]);
 
-        // Get selected package
-        $package = MarketplaceService::where('code', $validated['package_code'])->first();
+        $selectedMarketplaces = $validated['marketplaces'];
+        $configs = $validated['configs'];
         
-        if (!$package) {
-            return back()->withErrors(['package_code' => 'Invalid package']);
-        }
-
-        $marketplaces = $validated['marketplaces'];
-        $marketplacesCount = count($marketplaces);
-        $skuCount = $validated['sku_count'];
-
-        // 1. Calculate base sum (same price for all marketplaces in MVP)
-        $basePerMarketplace = $package->price;
-        $baseSum = $basePerMarketplace * $marketplacesCount;
-
-        // 2. Get bundle discount
-        $discountPercent = \App\Models\BundleDiscount::getManagementDiscount($marketplacesCount);
-        $discountAmount = $baseSum * ($discountPercent / 100);
-        $discountedSum = $baseSum - $discountAmount;
-
-        // 3. SKU overage (same SKU count applied to all marketplaces in MVP)
-        $skuLimit = $package->sku_limit ?? 100;
-        $overageCount = max(0, $skuCount - $skuLimit);
-        $overagePacks = ceil($overageCount / 10);
-        $overageFeePerMarketplace = $overagePacks * 50000;
-        $totalOverageFee = $overageFeePerMarketplace * $marketplacesCount;
-
-        // 4. Ads add-on (optional, NOT discounted by default)
-        $adsFee = 0;
-        if ($validated['ads_addon'] ?? false) {
-            $adsAddon = MarketplaceService::where('code', 'ADS_ADDON')->first();
-            $adsFee = $adsAddon ? $adsAddon->price * $marketplacesCount : 0;
-        }
-
-        // 5. Total
-        $total = $discountedSum + $totalOverageFee + $adsFee;
-
-        // Marketplace labels
-        $marketplaceLabels = [
-            'uzum' => 'Uzum',
-            'wildberries' => 'Wildberries',
-            'ozon' => 'Ozon',
-            'yandex' => 'Yandex Market',
+        $results = [
+            'items' => [],
+            'base_sum' => 0,
+            'total_overage' => 0,
+            'total_ads' => 0,
+            'total' => 0,
         ];
 
-        $selectedMarketplaces = array_map(fn($m) => $marketplaceLabels[$m] ?? $m, $marketplaces);
+        foreach ($selectedMarketplaces as $mp) {
+            $mpConfig = $configs[$mp] ?? null;
+            if (!$mpConfig) continue;
 
-        return view('marketplace-calculator', [
-            'managementPackages' => MarketplaceService::active()
-                ->byGroup('management')
-                ->whereNotNull('sku_limit')
-                ->orderBy('sort')
-                ->get(),
-            'result' => [
-                'marketplaces' => $marketplaces,
-                'marketplace_labels' => $selectedMarketplaces,
-                'marketplaces_count' => $marketplacesCount,
+            $package = MarketplaceService::where('code', $mpConfig['package'])->first();
+            if (!$package) continue;
+
+            $skuCount = (int)$mpConfig['sku_count'];
+            $hasAds = isset($mpConfig['ads']) && $mpConfig['ads'];
+
+            // 1. Base price
+            $basePrice = $package->price;
+            
+            // 2. Overage
+            $skuLimit = $package->sku_limit ?? 100;
+            $overageCount = max(0, $skuCount - $skuLimit);
+            $overagePacks = ceil($overageCount / 10);
+            $overageFee = $overagePacks * 50000;
+
+            // 3. Ads
+            $adsFee = 0;
+            if ($hasAds) {
+                $adsAddon = MarketplaceService::where('code', 'ADS_ADDON')->first();
+                $adsFee = $adsAddon ? $adsAddon->price : 690000;
+            }
+
+            $mpTotal = $basePrice + $overageFee + $adsFee;
+
+            $results['items'][$mp] = [
+                'name' => ucfirst($mp),
                 'package' => $package,
                 'sku_count' => $skuCount,
-                'base_per_marketplace' => $basePerMarketplace,
-                'base_sum' => $baseSum,
-                'discount_percent' => $discountPercent,
-                'discount_amount' => $discountAmount,
-                'discounted_sum' => $discountedSum,
+                'base_price' => $basePrice,
                 'overage_count' => $overageCount,
-                'overage_packs' => $overagePacks,
-                'overage_fee_per_marketplace' => $overageFeePerMarketplace,
-                'overage_fee' => $totalOverageFee,
-                'ads_addon' => $validated['ads_addon'] ?? false,
+                'overage_fee' => $overageFee,
                 'ads_fee' => $adsFee,
-                'total' => $total,
-            ],
-        ]);
+                'total' => $mpTotal,
+            ];
+
+            $results['base_sum'] += $basePrice;
+            $results['total_overage'] += $overageFee;
+            $results['total_ads'] += $adsFee;
+        }
+
+        // Apply bundle discount on base sum of all packages
+        $marketplacesCount = count($results['items']);
+        $discountPercent = \App\Models\BundleDiscount::getManagementDiscount($marketplacesCount);
+        $discountAmount = $results['base_sum'] * ($discountPercent / 100);
+        $discountedBaseSum = $results['base_sum'] - $discountAmount;
+
+        $results['discount_percent'] = $discountPercent;
+        $results['discount_amount'] = $discountAmount;
+        $results['total'] = $discountedBaseSum + $results['total_overage'] + $results['total_ads'];
+
+        // Repass packages for view
+        $uzumPackages = MarketplaceService::active()
+            ->byGroup('management')
+            ->byMarketplace('uzum')
+            ->whereNotNull('sku_limit')
+            ->orderBy('sort')
+            ->get();
+        
+        $complexPackages = MarketplaceService::active()
+            ->byGroup('management')
+            ->where('marketplace', 'all')
+            ->whereNotNull('sku_limit')
+            ->where('code', 'LIKE', 'MGMT_COMPLEX%')
+            ->orderBy('sort')
+            ->get();
+
+        return view('marketplace-calculator', array_merge($results, compact('uzumPackages', 'complexPackages')));
     }
 }

@@ -34,6 +34,15 @@ class MarketplaceService extends Model
         return app()->getLocale() === 'ru' ? $this->name_ru : $this->name_uz;
     }
 
+    public function getShortName(): string
+    {
+        // For packages like "Управление на Uzum до 100 SKU" return just "До 100 SKU"
+        if ($this->sku_limit) {
+            return "До {$this->sku_limit} SKU";
+        }
+        return $this->getName();
+    }
+
     public function getDescription(): ?string
     {
         return app()->getLocale() === 'ru' ? $this->description_ru : $this->description_uz;

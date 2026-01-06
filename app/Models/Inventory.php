@@ -9,7 +9,7 @@ class Inventory extends Model
     protected $table = 'inventory';
     
     protected $fillable = [
-        'company_id', 'sku_id', 'qty_total', 'qty_reserved', 'location_code'
+        'company_id', 'sku_id', 'product_variant_id', 'qty_total', 'qty_reserved', 'location_code'
     ];
     
     protected $casts = [
@@ -22,9 +22,20 @@ class Inventory extends Model
         return $this->belongsTo(Company::class);
     }
     
+    /**
+     * Old SKU relationship (deprecated, for backward compatibility)
+     */
     public function sku()
     {
         return $this->belongsTo(Sku::class);
+    }
+    
+    /**
+     * New ProductVariant relationship
+     */
+    public function productVariant()
+    {
+        return $this->belongsTo(ProductVariant::class);
     }
     
     public function getAvailableQtyAttribute()

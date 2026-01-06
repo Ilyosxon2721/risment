@@ -40,40 +40,52 @@ $alpineData = [
     </p>
     
     <!-- Desktop Table -->
-    <div class="hidden md:block overflow-x-auto">
-        <table class="w-full">
-            <thead>
-                <tr class="border-b-2 border-brand-border">
-                    <th class="text-left py-4 px-4 font-semibold">Пакет</th>
-                    <th class="text-left py-4 px-4 font-semibold">Цена в месяц</th>
-                    <th class="text-left py-4 px-4 font-semibold">Лимиты</th>
-                    <th class="text-right py-4 px-4"></th>
-                </tr>
-            </thead>
-            <tbody>
-                <template x-for="pkg in currentPackages()" :key="pkg.code">
-                    <tr class="border-b border-brand-border hover:bg-bg-soft transition">
-                        <td class="py-5 px-4">
-                            <div class="font-semibold text-h4" x-text="pkg.name_ru"></div>
-                            <div class="text-body-s text-text-muted mt-1" x-text="pkg.description_ru"></div>
-                        </td>
-                        <td class="py-5 px-4">
-                            <div class="text-h3 text-brand" x-text="Math.floor(pkg.price).toLocaleString('ru-RU') + ' сум'"></div>
-                            <div class="text-body-s text-text-muted" x-text="pkg.unit_ru"></div>
-                        </td>
-                        <td class="py-5 px-4 text-body-s">
-                            <div>До <span x-text="pkg.sku_limit"></span> SKU</div>
-                            <div class="text-text-muted mt-1">+50 000 сум за каждые 10 SKU</div>
-                        </td>
-                        <td class="py-5 px-4 text-right">
-                            <a :href="'{{ route('calculators.marketplace', app()->getLocale()) }}'" class="btn btn-sm btn-secondary whitespace-nowrap">
-                                Рассчитать
-                            </a>
-                        </td>
+    <div class="mx-auto max-w-4xl">
+        <div class="hidden md:block overflow-x-auto bg-white rounded-card shadow-sm">
+            <table class="w-full">
+                <thead>
+                    <tr class="border-b-2 border-brand-border">
+                        <th class="text-left py-4 px-4 font-semibold">Пакет</th>
+                        <th class="text-left py-4 px-4 font-semibold">Цена в месяц</th>
+                        <th class="text-left py-4 px-4 font-semibold">Лимиты</th>
+                        <th class="text-right py-4 px-4"></th>
                     </tr>
-                </template>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <template x-for="pkg in currentPackages()" :key="pkg.code">
+                        <tr class="border-b border-brand-border hover:bg-bg-soft transition">
+                            <td class="py-5 px-4">
+                                <div class="font-semibold text-h4" x-text="pkg.name_ru"></div>
+                                <div class="text-body-s text-text-muted mt-1" x-text="pkg.description_ru"></div>
+                            </td>
+                            <td class="py-5 px-4">
+                                <div class="text-h3 text-brand" x-text="Math.floor(pkg.price).toLocaleString('ru-RU') + ' сум'"></div>
+                                <div class="text-body-s text-text-muted" x-text="pkg.unit_ru"></div>
+                            </td>
+                            <td class="py-5 px-4 text-body-s">
+                                <template x-if="pkg.sku_limit">
+                                    <div>
+                                        <div>До <span x-text="pkg.sku_limit"></span> SKU</div>
+                                        <div class="text-text-muted mt-1">+50 000 сум за каждые 10 SKU</div>
+                                    </div>
+                                </template>
+                                <template x-if="!pkg.sku_limit">
+                                    <div>
+                                        <div class="font-semibold text-warning">Индивидуально</div>
+                                        <div class="text-text-muted mt-1">Обсуждается отдельно</div>
+                                    </div>
+                                </template>
+                            </td>
+                            <td class="py-5 px-4 text-right">
+                                <a :href="'{{ route('calculators.marketplace', app()->getLocale()) }}'" class="btn btn-sm btn-secondary whitespace-nowrap">
+                                    Рассчитать
+                                </a>
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
     </div>
     
     <!-- Mobile Cards -->
@@ -89,8 +101,18 @@ $alpineData = [
                 </div>
                 
                 <div class="text-body-s mb-4">
-                    <div>До <span x-text="pkg.sku_limit"></span> SKU</div>
-                    <div class="text-text-muted">+50 000 сум за каждые 10 SKU</div>
+                    <template x-if="pkg.sku_limit">
+                        <div>
+                            <div>До <span x-text="pkg.sku_limit"></span> SKU</div>
+                            <div class="text-text-muted">+50 000 сум за каждые 10 SKU</div>
+                        </div>
+                    </template>
+                    <template x-if="!pkg.sku_limit">
+                        <div>
+                            <div class="font-semibold text-warning">Индивидуально</div>
+                            <div class="text-text-muted">Обсуждается отдельно</div>
+                        </div>
+                    </template>
                 </div>
                 
                 <a :href="'{{ route('calculators.marketplace', app()->getLocale()) }}'" class="btn btn-secondary w-full">

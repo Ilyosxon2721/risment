@@ -73,5 +73,12 @@ class DatabaseSeeder extends Seeder
                 array_merge($cat, ['sort' => $index * 10])
             );
         }
+
+        // Marketplace Management Seeders
+        $this->call([
+            MarketplaceServiceSeeder::class,
+            BundleDiscountSeeder::class,
+            PricingRateSeeder::class,
+        ]);
     }
 }
