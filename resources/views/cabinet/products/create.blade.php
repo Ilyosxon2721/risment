@@ -40,6 +40,21 @@
                     @enderror
                 </div>
 
+                {{-- Short Description --}}
+                <div class="md:col-span-2">
+                    <label class="label" for="short_description">
+                        {{ __('Short Description') }}
+                    </label>
+                    <textarea 
+                        name="short_description" 
+                        id="short_description"
+                        rows="2"
+                        class="input"
+                        placeholder="{{ __('Brief description for listings (max 500 chars)') }}"
+                        maxlength="500">{{ old('short_description') }}</textarea>
+                    <p class="text-xs text-text-muted mt-1">{{ __('Used for product cards and previews') }}</p>
+                </div>
+
                 {{-- Article --}}
                 <div>
                     <label class="label" for="article">
@@ -192,7 +207,7 @@
                                     class="input">
                             </div>
 
-                            {{-- Price (optional) --}}
+                            {{-- Price --}}
                             <div>
                                 <label class="label">{{ __('Price') }}</label>
                                 <input 
@@ -200,6 +215,31 @@
                                     :name="'variants[' + vIndex + '][price]'"
                                     x-model="variant.price"
                                     step="0.01"
+                                    placeholder="0.00"
+                                    class="input">
+                            </div>
+
+                            {{-- Cost Price --}}
+                            <div>
+                                <label class="label">{{ __('Cost Price') }}</label>
+                                <input 
+                                    type="number" 
+                                    :name="'variants[' + vIndex + '][cost_price]'"
+                                    x-model="variant.cost_price"
+                                    step="0.01"
+                                    placeholder="0.00"
+                                    class="input">
+                            </div>
+
+                            {{-- Expenses --}}
+                            <div>
+                                <label class="label">{{ __('Expenses') }}</label>
+                                <input 
+                                    type="number" 
+                                    :name="'variants[' + vIndex + '][expenses]'"
+                                    x-model="variant.expenses"
+                                    step="0.01"
+                                    placeholder="0.00"
                                     class="input">
                             </div>
 
@@ -218,8 +258,31 @@
 
                             {{-- Attributes --}}
                             <div class="md:col-span-2 border-t pt-4 mt-2">
-                                <div class="flex justify-between items-center mb-2">
+                                <div class="flex justify-between items-center mb-3">
                                     <label class="label mb-0">{{ __('Attributes') }}</label>
+                                </div>
+                                
+                                {{-- Catalog Selector --}}
+                                <div class="mb-3 p-3 bg-bg-soft rounded border border-brand-border">
+                                    <label class="text-sm font-medium text-text mb-2 block">📚 Выбрать из справочника</label>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                        @foreach($attributeCatalog as $catalog)
+                                            <button 
+                                                type="button"
+                                                @click="addAttributeFromCatalog(vIndex, @js($catalog))"
+                                                class="text-left px-3 py-2 rounded bg-white hover:bg-brand hover:text-white transition border border-brand-border text-sm">
+                                                <span class="font-medium">{{ $catalog->name }}</span>
+                                                @if($catalog->type === 'select')
+                                                    <span class="text-xs opacity-70 ml-1">({{ count($catalog->options) }} вариантов)</span>
+                                                @endif
+                                            </button>
+                                        @endforeach
+                                    </div>
+                                </div>
+
+                                {{-- Custom Attributes --}}
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-sm text-text-muted">Или добавьте свою характеристику:</span>
                                     <button 
                                         type="button"
                                         @click="addAttribute(vIndex)"
@@ -227,29 +290,69 @@
                                         + {{ __('Add Attribute') }}
                                     </button>
                                 </div>
+                                
                                 <div class="space-y-2">
                                     <template x-for="(attr, aIndex) in variant.attributes" :key="aIndex">
-                                        <div class="flex gap-2">
-                                            <input 
-                                                type="text" 
-                                                :name="'variants[' + vIndex + '][attributes][' + aIndex + '][name]'"
-                                                x-model="attr.name"
-                                                placeholder="{{ __('Name (e.g. Color)') }}"
-                                                class="input flex-1">
-                                            <input 
-                                                type="text" 
-                                                :name="'variants[' + vIndex + '][attributes][' + aIndex + '][value]'"
-                                                x-model="attr.value"
-                                                placeholder="{{ __('Value (e.g. Red)') }}"
-                                                class="input flex-1">
-                                            <button 
-                                                type="button"
-                                                @click="removeAttribute(vIndex, aIndex)"
-                                                class="btn btn-sm btn-error">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                                </svg>
-                                            </button>
+                                        <div class="space-y-1">
+                                            <div class="flex gap-2 items-start">
+                                                <div class="flex-1">
+                                                    <input 
+                                                        type="text" 
+                                                        :name="'variants[' + vIndex + '][attributes][' + aIndex + '][name]'"
+                                                        x-model="attr.name"
+                                                        placeholder="{{ __('Name (e.g. Color)') }}"
+                                                        :readonly="attr.catalogType"
+                                                        :class="attr.catalogType ? 'bg-bg-soft' : ''"
+                                                        class="input input-sm">
+                                                </div>
+                                                <div class="flex-1">
+                                                    {{-- Select dropdown --}}
+                                                    <template x-if="attr.catalogType === 'select' && attr.options && !attr.useCustomValue">
+                                                        <select 
+                                                            :name="'variants[' + vIndex + '][attributes][' + aIndex + '][value]'"
+                                                            x-model="attr.value"
+                                                            class="input input-sm">
+                                                            <option value="">Выберите...</option>
+                                                            <template x-for="option in attr.options" :key="option">
+                                                                <option :value="option" x-text="option"></option>
+                                                            </template>
+                                                        </select>
+                                                    </template>
+                                                    {{-- Text input --}}
+                                                    <template x-if="!attr.catalogType || attr.catalogType !== 'select' || attr.useCustomValue">
+                                                        <input 
+                                                            type="text" 
+                                                            :name="'variants[' + vIndex + '][attributes][' + aIndex + '][value]'"
+                                                            x-model="attr.value"
+                                                            placeholder="{{ __('Value (e.g. Red)') }}"
+                                                            class="input input-sm">
+                                                    </template>
+                                                </div>
+                                                <button 
+                                                    type="button"
+                                                    @click="removeAttribute(vIndex, aIndex)"
+                                                    class="btn btn-sm btn-error">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                            {{-- Toggle for custom value --}}
+                                            <template x-if="attr.catalogType === 'select' && attr.options">
+                                                <div class="flex justify-end">
+                                                    <button 
+                                                        type="button"
+                                                        @click="attr.useCustomValue = !attr.useCustomValue; attr.value = ''"
+                                                        class="text-xs text-brand hover:text-brand-hover">
+                                                        <template x-if="!attr.useCustomValue">
+                                                            <span>✏️ Ввести свое значение</span>
+                                                        </template>
+                                                        <template x-if="attr.useCustomValue">
+                                                            <span>↩️ Выбрать из списка</span>
+                                                        </template>
+                                                    </button>
+                                                </div>
+                                            </template>
                                         </div>
                                     </template>
                                 </div>
@@ -351,6 +454,8 @@ function productForm() {
                 dims_h: '',
                 weight: '',
                 price: '',
+                cost_price: '',
+                expenses: '',
                 attributes: [],
                 marketplace_links: []
             }
@@ -366,6 +471,8 @@ function productForm() {
                 dims_h: '',
                 weight: '',
                 price: '',
+                cost_price: '',
+                expenses: '',
                 attributes: [],
                 marketplace_links: []
             });
@@ -380,7 +487,20 @@ function productForm() {
         addAttribute(variantIndex) {
             this.variants[variantIndex].attributes.push({
                 name: '',
-                value: ''
+                value: '',
+                catalogType: null,
+                options: null,
+                useCustomValue: false
+            });
+        },
+        
+        addAttributeFromCatalog(variantIndex, catalog) {
+            this.variants[variantIndex].attributes.push({
+                name: catalog.name,
+                value: '',
+                catalogType: catalog.type,
+                options: catalog.options,
+                useCustomValue: false
             });
         },
         

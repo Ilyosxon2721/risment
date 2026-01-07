@@ -22,7 +22,11 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $company = auth()->user()->currentCompany;
+        $company = auth()->user()->companies()->first();
+        
+        if (!$company) {
+            abort(403, 'No company assigned');
+        }
         
         $query = Product::where('company_id', $company->id)
             ->with(['variants.images', 'variants.attributes'])
@@ -52,8 +56,9 @@ class ProductController extends Controller
     public function create()
     {
         $marketplaces = ['uzum', 'wildberries', 'ozon', 'yandex'];
+        $attributeCatalog = \App\Models\AttributeCatalog::active()->ordered()->get();
         
-        return view('cabinet.products.create', compact('marketplaces'));
+        return view('cabinet.products.create', compact('marketplaces', 'attributeCatalog'));
     }
 
     /**
@@ -61,7 +66,11 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-        $company = auth()->user()->currentCompany;
+        $company = auth()->user()->companies()->first();
+        
+        if (!$company) {
+            abort(403, 'No company assigned');
+        }
         
         DB::beginTransaction();
         
@@ -70,6 +79,7 @@ class ProductController extends Controller
             $product = Product::create([
                 'company_id' => $company->id,
                 'title' => $request->title,
+                'short_description' => $request->short_description,
                 'description' => $request->description,
                 'article' => $request->article,
                 'is_active' => $request->boolean('is_active', true),
@@ -154,8 +164,6 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        $this->authorize('update', $product);
-        
         $product->load([
             'variants.images',
             'variants.attributes',
@@ -163,8 +171,9 @@ class ProductController extends Controller
         ]);
         
         $marketplaces = ['uzum', 'wildberries', 'ozon', 'yandex'];
+        $attributeCatalog = \App\Models\AttributeCatalog::active()->ordered()->get();
         
-        return view('cabinet.products.edit', compact('product', 'marketplaces'));
+        return view('cabinet.products.edit', compact('product', 'marketplaces', 'attributeCatalog'));
     }
 
     /**
@@ -172,7 +181,6 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, Product $product)
     {
-        $this->authorize('update', $product);
         
         DB::beginTransaction();
         
@@ -180,6 +188,7 @@ class ProductController extends Controller
             // Update product
             $product->update([
                 'title' => $request->title,
+                'short_description' => $request->short_description,
                 'description' => $request->description,
                 'article' => $request->article,
                 'is_active' => $request->boolean('is_active', true),
@@ -301,7 +310,6 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        $this->authorize('delete', $product);
         
         DB::beginTransaction();
         

@@ -92,18 +92,18 @@
                             <!-- SKU Selection -->
                             <div class="flex-1">
                                 <label class="block text-body-s font-semibold text-brand-dark mb-2">
-                                    {{ __('SKU') }} *
+                                    Товар *
                                 </label>
                                 <select 
-                                    :name="`items[${index}][sku_id]`" 
-                                    x-model="item.sku_id"
+                                    :name="`items[${index}][variant_id]`" 
+                                    x-model="item.variant_id"
                                     class="input w-full"
                                     required
                                 >
-                                    <option value="">{{ __('Select SKU') }}</option>
-                                    @foreach($skus as $sku)
-                                        <option value="{{ $sku->id }}">
-                                            {{ $sku->sku }} - {{ $sku->name }}
+                                    <option value="">Выберите товар</option>
+                                    @foreach($variants as $variant)
+                                        <option value="{{ $variant->id }}">
+                                            {{ $variant->product->title }} - {{ $variant->variant_name }} ({{ $variant->sku_code }})
                                         </option>
                                     @endforeach
                                 </select>
@@ -188,13 +188,13 @@ function inboundForm() {
     return {
         items: @json($inbound->items->map(function($item) {
             return [
-                'sku_id' => $item->sku_id,
+                'variant_id' => $item->variant_id,
                 'qty_planned' => $item->qty_planned,
                 'notes' => $item->notes ?? ''
             ];
         })),
         addItem() {
-            this.items.push({ sku_id: '', qty_planned: 1, notes: '' });
+            this.items.push({ variant_id: '', qty_planned: 1, notes: '' });
         },
         removeItem(index) {
             this.items.splice(index, 1);

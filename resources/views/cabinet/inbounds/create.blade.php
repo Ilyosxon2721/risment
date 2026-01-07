@@ -26,26 +26,26 @@
                 
                 <!-- Reference -->
                 <div class="mb-6">
-                    <label for="reference" class="block text-body-m font-semibold text-brand-dark mb-2">
-                        {{ __('Reference') }} *
+                    <label for="reference" class="label">
+                        {{ __('Reference') }} <span class="text-error">*</span>
                     </label>
                     <input 
                         type="text" 
                         id="reference" 
                         name="reference" 
-                        value="{{ old('reference') }}" 
+                        value="{{ old('reference', 'ASN-' . now()->format('Ymd') . '-' . str_pad(rand(1, 999), 3, '0', STR_PAD_LEFT)) }}" 
                         class="input w-full @error('reference') border-error @enderror"
                         placeholder="{{ __('e.g. ASN-001') }}"
                         required
                     >
                     @error('reference')
-                        <p class="text-error text-body-s mt-1">{{ $message }}</p>
+                        <p class="text-error text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
                 
                 <!-- Planned Date -->
                 <div class="mb-6">
-                    <label for="planned_at" class="block text-body-m font-semibold text-brand-dark mb-2">
+                    <label for="planned_at" class="label">
                         {{ __('Planned Date') }}
                     </label>
                     <input 
@@ -56,13 +56,68 @@
                         class="input w-full @error('planned_at') border-error @enderror"
                     >
                     @error('planned_at')
-                        <p class="text-error text-body-s mt-1">{{ $message }}</p>
+                        <p class="text-error text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Shipping Address -->
+                <div class="mb-6">
+                    <label for="shipping_address" class="label">
+                        Адрес склада отправки <span class="text-error">*</span>
+                    </label>
+                    <textarea 
+                        id="shipping_address" 
+                        name="shipping_address" 
+                        rows="2" 
+                        class="input w-full @error('shipping_address') border-error @enderror"
+                        placeholder="г. Ташкент, ул. Примерная, д. 1"
+                        required
+                    >{{ old('shipping_address') }}</textarea>
+                    @error('shipping_address')
+                        <p class="text-error text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Executor Name -->
+                <div class="mb-6">
+                    <label for="executor_name" class="label">
+                        Исполнитель отгрузки <span class="text-error">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="executor_name" 
+                        name="executor_name" 
+                        value="{{ old('executor_name') }}" 
+                        class="input w-full @error('executor_name') border-error @enderror"
+                        placeholder="ФИО ответственного"
+                        required
+                    >
+                    @error('executor_name')
+                        <p class="text-error text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Executor Phone -->
+                <div class="mb-6">
+                    <label for="executor_phone" class="label">
+                        Телефон исполнителя
+                    </label>
+                    <input 
+                        type="tel" 
+                        id="executor_phone" 
+                        name="executor_phone" 
+                        value="{{ old('executor_phone') }}" 
+                        class="input w-full @error('executor_phone') border-error @enderror"
+                        placeholder="+998 90 123 45 67"
+                    >
+                    @error('executor_phone')
+                        <p class="text-error text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
                 
                 <!-- Notes -->
                 <div class="mb-6">
-                    <label for="notes" class="block text-body-m font-semibold text-brand-dark mb-2">
+                    <label for="notes" class="label">
                         {{ __('Notes') }}
                     </label>
                     <textarea 
@@ -73,7 +128,7 @@
                         placeholder="{{ __('Additional information...') }}"
                     >{{ old('notes') }}</textarea>
                     @error('notes')
-                        <p class="text-error text-body-s mt-1">{{ $message }}</p>
+                        <p class="text-error text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
             </div>
@@ -87,74 +142,76 @@
                     </button>
                 </div>
                 
-                <div class="space-y-4" id="items-container">
-                    <div class="p-4 bg-bg-soft rounded-btn border border-brand-border" x-for="(item, index) in items" :key="index">
-                        <div class="flex gap-4">
-                            <!-- SKU Selection -->
-                            <div class="flex-1">
-                                <label class="block text-body-s font-semibold text-brand-dark mb-2">
-                                    {{ __('SKU') }} *
-                                </label>
-                                <select 
-                                    :name="`items[${index}][sku_id]`" 
-                                    x-model="item.sku_id"
-                                    class="input w-full"
-                                    required
-                                >
-                                    <option value="">{{ __('Select SKU') }}</option>
-                                    @foreach($skus as $sku)
-                                        <option value="{{ $sku->id }}">
-                                            {{ $sku->sku }} - {{ $sku->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                <div class="space-y-4">
+                    <template x-for="(item, index) in items" :key="index">
+                        <div class="p-4 bg-bg-soft rounded-btn border border-brand-border">
+                            <div class="flex gap-4">
+                                <!-- Product Variant Selection -->
+                                <div class="flex-1">
+                                    <label class="label">
+                                        Товар <span class="text-error">*</span>
+                                    </label>
+                                    <select 
+                                        :name="`items[${index}][variant_id]`" 
+ x-model="item.variant_id"
+                                        class="input w-full"
+                                        required
+                                    >
+                                        <option value="">Выберите товар</option>
+                                        @foreach($variants as $variant)
+                                            <option value="{{ $variant->id }}">
+                                                {{ $variant->product->title }} - {{ $variant->variant_name }} ({{ $variant->sku_code }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                
+                                <!-- Quantity -->
+                                <div class="w-32">
+                                    <label class="label">
+                                        {{ __('Quantity') }} <span class="text-error">*</span>
+                                    </label>
+                                    <input 
+                                        type="number" 
+                                        :name="`items[${index}][qty_planned]`"
+                                        x-model="item.qty_planned"
+                                        class="input w-full"
+                                        min="1"
+                                        required
+                                    >
+                                </div>
+                                
+                                <!-- Remove Button -->
+                                <div class="flex items-end">
+                                    <button 
+                                        type="button" 
+                                        @click="removeItem(index)"
+                                        class="btn btn-ghost text-error h-[42px]"
+                                        x-show="items.length > 1"
+                                    >
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
                             
-                            <!-- Quantity -->
-                            <div class="w-32">
-                                <label class="block text-body-s font-semibold text-brand-dark mb-2">
-                                    {{ __('Quantity') }} *
-                                </label>
+                            <!-- Item Notes -->
+                            <div class="mt-3">
                                 <input 
-                                    type="number" 
-                                    :name="`items[${index}][qty_planned]`"
-                                    x-model="item.qty_planned"
+                                    type="text" 
+                                    :name="`items[${index}][notes]`"
+                                    x-model="item.notes"
                                     class="input w-full"
-                                    min="1"
-                                    required
+                                    :placeholder="'{{ __('Notes for this item...') }}'"
                                 >
                             </div>
-                            
-                            <!-- Remove Button -->
-                            <div class="flex items-end">
-                                <button 
-                                    type="button" 
-                                    @click="removeItem(index)"
-                                    class="btn btn-ghost text-error h-[42px]"
-                                    x-show="items.length > 1"
-                                >
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                    </svg>
-                                </button>
-                            </div>
                         </div>
-                        
-                        <!-- Item Notes -->
-                        <div class="mt-3">
-                            <input 
-                                type="text" 
-                                :name="`items[${index}][notes]`"
-                                x-model="item.notes"
-                                class="input w-full"
-                                :placeholder="'{{ __('Notes for this item...') }}'"
-                            >
-                        </div>
-                    </div>
+                    </template>
                 </div>
                 
                 @error('items')
-                    <p class="text-error text-body-s mt-2">{{ $message }}</p>
+                    <p class="text-error text-xs mt-2">{{ $message }}</p>
                 @enderror
             </div>
         </div>
@@ -189,10 +246,10 @@
 function inboundForm() {
     return {
         items: [
-            { sku_id: '', qty_planned: 1, notes: '' }
+            { variant_id: '', qty_planned: 1, notes: '' }
         ],
         addItem() {
-            this.items.push({ sku_id: '', qty_planned: 1, notes: '' });
+            this.items.push({ variant_id: '', qty_planned: 1, notes: '' });
         },
         removeItem(index) {
             this.items.splice(index, 1);

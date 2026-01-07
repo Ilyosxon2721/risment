@@ -40,6 +40,21 @@
                     @enderror
                 </div>
 
+                {{-- Short Description --}}
+                <div class="md:col-span-2">
+                    <label class="label" for="short_description">
+                        {{ __('Short Description') }}
+                    </label>
+                    <textarea 
+                        name="short_description" 
+                        id="short_description"
+                        rows="2"
+                        class="input"
+                        placeholder="{{ __('Brief description for listings (max 500 chars)') }}"
+                        maxlength="500">{{ old('short_description', $product->short_description) }}</textarea>
+                    <p class="text-xs text-text-muted mt-1">{{ __('Used for product cards and previews') }}</p>
+                </div>
+
                 <div>
                     <label class="label" for="article">
                         {{ __('Article') }} <span class="text-error">*</span>

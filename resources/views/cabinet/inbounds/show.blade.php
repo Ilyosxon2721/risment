@@ -3,6 +3,54 @@
 @section('title', __('Inbound') . ' ' . $inbound->reference)
 
 @section('content')
+    @if($inbound->status === 'draft' && $inbound->items->count() > 0)
+        <div class="mb-4 bg-yellow-50 p-4 rounded-lg flex items-center justify-between border border-yellow-200">
+            <div class="flex items-center gap-3">
+                <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <div class="text-sm font-medium text-yellow-800">Черновик. Состав поставки можно редактировать.</div>
+            </div>
+            <form action="{{ route('cabinet.inbounds.submit', $inbound) }}" method="POST">
+                @csrf
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold">
+                    Отправить на склад
+                </button>
+            </form>
+        </div>
+    @endif
+
+    @if($inbound->status === 'completed' && $inbound->has_discrepancies)
+        <div class="mb-4 bg-red-50 p-4 rounded-lg flex flex-col md:flex-row items-center justify-between border border-red-200">
+            <div class="flex items-center gap-3 mb-4 md:mb-0">
+                <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+                <div>
+                    <div class="text-lg font-bold text-red-800">Обнаружены расхождения при приёмке!</div>
+                    <div class="text-sm text-red-700">Пожалуйста, ознакомьтесь с результатами в таблице ниже и подтвердите приёмку.</div>
+                </div>
+            </div>
+            <form action="{{ route('cabinet.inbounds.confirm', $inbound) }}" method="POST">
+                @csrf
+                <button type="submit" class="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-bold shadow-lg">
+                    Подтвердить и принять
+                </button>
+            </form>
+        </div>
+    @endif
+
+    @if($inbound->status === 'closed' && $inbound->confirmed_at)
+        <div class="mb-4 bg-green-50 p-4 rounded-lg flex items-center gap-3 border border-green-200">
+            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            <div class="text-sm font-medium text-green-800">
+                Поставка принята и закрыта клиентом {{ $inbound->confirmed_at->format('d.m.Y H:i') }}
+            </div>
+        </div>
+    @endif
+
 <div class="mb-8">
     <div class="flex items-center justify-between">
         <div>
@@ -11,6 +59,12 @@
         </div>
         <div class="flex gap-3">
             @if($inbound->status === 'draft')
+            <form action="{{ route('cabinet.inbounds.submit', $inbound) }}" method="POST" onsubmit="return confirm('Отправить поставку на склад?')">
+                @csrf
+                <button type="submit" class="btn btn-primary">
+                    📤 Отправить на склад
+                </button>
+            </form>
             <a href="{{ route('cabinet.inbounds.edit', ['inbound' => $inbound]) }}" class="btn btn-secondary">
                 {{ __('Edit') }}
             </a>
@@ -88,8 +142,8 @@
                     <tbody>
                         @foreach($inbound->items as $item)
                         <tr class="border-t border-brand-border">
-                            <td class="px-4 py-3 font-mono text-body-s">{{ $item->sku->sku }}</td>
-                            <td class="px-4 py-3">{{ $item->sku->name }}</td>
+                            <td class="px-4 py-3 font-mono text-body-s">{{ $item->variant->sku_code }}</td>
+                            <td class="px-4 py-3">{{ $item->variant->product->title }} - {{ $item->variant->variant_name }}</td>
                             <td class="px-4 py-3 text-right font-semibold">{{ number_format($item->qty_planned) }}</td>
                             <td class="px-4 py-3 text-right font-semibold {{ $item->qty_received ? 'text-success' : 'text-text-muted' }}">
                                 {{ $item->qty_received ? number_format($item->qty_received) : '-' }}

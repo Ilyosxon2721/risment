@@ -63,14 +63,12 @@ Route::prefix('cabinet')->name('cabinet.')->middleware(['auth', \App\Http\Middle
     
     // Products (New system with variants)
     Route::resource('products', \App\Http\Controllers\Cabinet\ProductController::class);
+    Route::post('/products/{product}/toggle-status', [\App\Http\Controllers\Cabinet\ProductController::class, 'toggleStatus'])->name('products.toggle-status');
     
-    // Inbounds (ASN)
-    Route::get('/inbounds', [InboundController::class, 'index'])->name('inbounds.index');
-    Route::get('/inbounds/create', [InboundController::class, 'create'])->name('inbounds.create');
-    Route::post('/inbounds', [InboundController::class, 'store'])->name('inbounds.store');
-    Route::get('/inbounds/{inbound}', [InboundController::class, 'show'])->name('inbounds.show');
-    Route::get('/inbounds/{inbound}/edit', [InboundController::class, 'edit'])->name('inbounds.edit');
-    Route::put('/inbounds/{inbound}', [InboundController::class, 'update'])->name('inbounds.update');
+    // Inbounds
+    Route::resource('inbounds', InboundController::class);
+    Route::post('/inbounds/{inbound}/submit', [InboundController::class, 'submit'])->name('inbounds.submit');
+    Route::post('/inbounds/{inbound}/confirm', [InboundController::class, 'confirm'])->name('inbounds.confirm');
     
     // Shipments
     Route::get('/shipments', [ShipmentController::class, 'index'])->name('shipments.index');

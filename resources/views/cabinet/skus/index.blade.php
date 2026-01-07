@@ -9,7 +9,7 @@
             <h1 class="text-h1 font-heading">{{ __('Products') }}</h1>
             <p class="text-body-m text-text-muted mt-2">{{ __('Manage your product catalog') }}</p>
         </div>
-        <a href="{{ route('cabinet.skus.create') }}" class="btn btn-primary">
+        <a href="{{ route('cabinet.products.create') }}" class="btn btn-primary">
             + {{ __('Add Product') }}
         </a>
     </div>
@@ -130,7 +130,7 @@
         </svg>
         <h3 class="text-h4 font-heading mb-2">{{ __('No products yet') }}</h3>
         <p class="text-text-muted mb-6">{{ __('Start by adding your first product to the catalog.') }}</p>
-        <a href="{{ route('cabinet.skus.create') }}" class="btn btn-primary">
+        <a href="{{ route('cabinet.products.create') }}" class="btn btn-primary">
             + {{ __('Add Product') }}
         </a>
     </div>

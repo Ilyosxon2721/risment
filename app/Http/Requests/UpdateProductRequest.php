@@ -11,7 +11,7 @@ class UpdateProductRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return auth()->check() && auth()->user()->currentCompany !== null;
+        return auth()->check();
     }
 
     /**
@@ -20,13 +20,17 @@ class UpdateProductRequest extends FormRequest
     public function rules(): array
     {
         $product = $this->route('product');
-        $companyId = auth()->user()->currentCompany->id;
+        $company = auth()->user()->companies()->first();
+        $companyId = $company ? $company->id : null;
         
         return [
             // Product fields
             'title' => 'required|string|max:255',
+            'short_description' => 'nullable|string|max:500',
             'description' => 'nullable|string|max:5000',
-            'article' => "required|string|max:100|unique:products,article,{$product->id},id,company_id,{$companyId}",
+            'article' => $companyId
+                ? "required|string|max:100|unique:products,article,{$product->id},id,company_id,{$companyId}"
+                : "required|string|max:100",
             'is_active' => 'sometimes|boolean',
             
             // Variants array

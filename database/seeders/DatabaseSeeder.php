@@ -29,6 +29,26 @@ class DatabaseSeeder extends Seeder
         );
         $admin->assignRole($adminRole);
         
+        // Create test company for admin user
+        $testCompany = \App\Models\Company::firstOrCreate(
+            ['inn' => '123456789'],
+            [
+                'name' => 'Тестовая компания',
+                'contact_name' => 'Admin User',
+                'phone' => '+998901234567',
+                'email' => 'admin@risment.uz',
+                'address' => 'Tashkent, Uzbekistan',
+                'status' => 'active',
+            ]
+        );
+        
+        // Attach admin to company if not already attached
+        if (!$admin->companies()->where('company_id', $testCompany->id)->exists()) {
+            $admin->companies()->attach($testCompany->id, [
+                'role_in_company' => 'owner',
+            ]);
+        }
+        
         // Seed subscription plans
         $this->call(SubscriptionPlanSeeder::class);
         
@@ -79,6 +99,7 @@ class DatabaseSeeder extends Seeder
             MarketplaceServiceSeeder::class,
             BundleDiscountSeeder::class,
             PricingRateSeeder::class,
+            AttributeCatalogSeeder::class,
         ]);
     }
 }

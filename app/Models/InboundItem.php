@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class InboundItem extends Model
 {
     protected $fillable = [
-        'inbound_id', 'sku_id', 'qty_planned', 'qty_received', 'qty_diff', 'notes'
+        'inbound_id', 'variant_id', 'qty_planned', 'qty_received', 'qty_diff', 'notes'
     ];
     
     protected $casts = [
@@ -21,8 +21,13 @@ class InboundItem extends Model
         return $this->belongsTo(Inbound::class);
     }
     
-    public function sku()
+    public function variant()
     {
-        return $this->belongsTo(Sku::class);
+        return $this->belongsTo(\App\Models\ProductVariant::class, 'variant_id');
+    }
+    
+    public function photos()
+    {
+        return $this->hasMany(InboundItemPhoto::class);
     }
 }
