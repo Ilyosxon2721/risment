@@ -108,9 +108,9 @@ class ReceiveInbound extends Page
     }
     
     
-    public function complete()
+    public function complete(\App\Services\InventoryService $inventoryService)
     {
-        DB::transaction(function () {
+        DB::transaction(function () use ($inventoryService, &$hasDiscrepancies) {
             $hasDiscrepancies = false;
             
             foreach ($this->record->items as $item) {
@@ -129,18 +129,25 @@ class ReceiveInbound extends Page
                 ]);
             }
             
+            $status = $hasDiscrepancies ? 'completed' : 'closed';
+            
             $this->record->update([
-                'status' => 'completed',
+                'status' => $status,
                 'received_at' => now(),
                 'received_by' => auth()->id(),
                 'has_discrepancies' => $hasDiscrepancies,
             ]);
+
+            // If no discrepancies, update inventory immediately
+            if (!$hasDiscrepancies) {
+                $inventoryService->updateFromInbound($this->record);
+            }
         });
         
         Notification::make()
             ->success()
             ->title('Приёмка завершена')
-            ->body('Поставка успешно принята')
+            ->body($hasDiscrepancies ? 'Поставка успешно принята, ожидаем подтверждения расхождений' : 'Поставка успешно принята и закрыта')
             ->send();
         
         $this->redirect(InboundResource::getUrl('view', ['record' => $this->record]));

@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Inbound;
 use App\Models\InboundItem;
 use App\Models\ProductVariant;
+use App\Services\InventoryService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class InboundController extends Controller
 {
@@ -99,19 +101,23 @@ class InboundController extends Controller
             ->with('success', 'Поставка отправлена на склад');
     }
 
-    public function confirm(Inbound $inbound)
+    public function confirm(Inbound $inbound, InventoryService $inventoryService)
     {
         if ($inbound->status !== 'completed' || !$inbound->has_discrepancies) {
             return back()->with('error', 'Эта поставка не требует подтверждения');
         }
 
-        $inbound->update([
-            'status' => 'closed',
-            'confirmed_at' => now(),
-            'confirmed_by_client' => auth()->id(),
-        ]);
+        DB::transaction(function () use ($inbound, $inventoryService) {
+            $inbound->update([
+                'status' => 'closed',
+                'confirmed_at' => now(),
+                'confirmed_by_client' => auth()->id(),
+            ]);
 
-        return back()->with('success', 'Расхождения подтверждены, поставка закрыта');
+            $inventoryService->updateFromInbound($inbound);
+        });
+
+        return back()->with('success', 'Расхождения подтверждены, поставка закрыта и товар добавлен на остатки');
     }
     
     public function show(Request $request, Inbound $inbound)
