@@ -59,7 +59,9 @@ return new class extends Migration
             $table->decimal('amount', 15, 2); // положительная для topup/refund, отрицательная для charge
             $table->decimal('balance_after', 15, 2);
             $table->string('description');
-            $table->nullableMorphs('reference'); // invoice, payment, etc.
+            $table->unsignedBigInteger('reference_id')->nullable();
+            $table->string('reference_type')->nullable();
+            $table->index(['reference_type', 'reference_id'], 'bal_tx_reference_idx');
             $table->timestamps();
 
             $table->index(['company_id', 'created_at']);
@@ -112,7 +114,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->index(['company_id', 'billed']);
-            $table->index(['company_id', 'operation_type', 'operation_date']);
+            $table->index(['company_id', 'operation_type', 'operation_date'], 'billable_ops_company_type_date_idx');
         });
 
         // 8. Storage snapshots (ежедневный снимок хранения)
