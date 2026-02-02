@@ -9,7 +9,7 @@ class ShipmentFbo extends Model
     protected $table = 'shipments_fbo';
     
     protected $fillable = [
-        'company_id', 'marketplace', 'warehouse_name', 'planned_at', 'status', 'notes'
+        'company_id', 'marketplace', 'warehouse_name', 'planned_at', 'status', 'sellermind_order_id', 'notes'
     ];
     
     protected $casts = [

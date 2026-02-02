@@ -14,6 +14,7 @@ class Product extends Model
         'article',
         'description',
         'is_active',
+        'sellermind_product_id',
     ];
 
     protected $casts = [

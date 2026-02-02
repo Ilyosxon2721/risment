@@ -19,6 +19,8 @@ use App\Http\Controllers\Cabinet\ProfileController;
 use App\Http\Controllers\Cabinet\SubscriptionController;
 use App\Http\Controllers\Cabinet\FinanceController;
 use App\Http\Controllers\Cabinet\InvoicePaymentController;
+use App\Http\Controllers\Cabinet\SellermindLinkController;
+use App\Http\Controllers\Cabinet\BillingReportController;
 use App\Http\Middleware\SetLocale;
 use App\Http\Middleware\EnsureUserHasCompany;
 use Illuminate\Support\Facades\Route;
@@ -98,7 +100,18 @@ Route::prefix('cabinet')->name('cabinet.')->middleware(['auth', \App\Http\Middle
     Route::get('/finance/invoices/{invoice}/pay', [InvoicePaymentController::class, 'pay'])->name('finance.invoices.pay');
     Route::post('/finance/invoices/{invoice}/pay/click', [InvoicePaymentController::class, 'initiateClick'])->name('finance.invoices.pay.click');
     Route::post('/finance/invoices/{invoice}/pay/payme', [InvoicePaymentController::class, 'initiatePayme'])->name('finance.invoices.pay.payme');
-    
+
+    // SellerMind Integration
+    Route::get('/sellermind', [SellermindLinkController::class, 'index'])->name('sellermind.index');
+    Route::post('/sellermind/generate', [SellermindLinkController::class, 'generateToken'])->name('sellermind.generate');
+    Route::put('/sellermind/settings', [SellermindLinkController::class, 'updateSettings'])->name('sellermind.settings');
+    Route::delete('/sellermind', [SellermindLinkController::class, 'disconnect'])->name('sellermind.disconnect');
+
+    // Billing Report
+    Route::get('/billing', [BillingReportController::class, 'index'])->name('billing.report');
+    Route::get('/billing/invoices/{billingInvoice}', [BillingReportController::class, 'showInvoice'])->name('billing.invoice');
+    Route::get('/billing/transactions', [BillingReportController::class, 'transactions'])->name('billing.transactions');
+
     // Profile
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');

@@ -31,7 +31,27 @@ class Company extends Model
     {
         return $this->hasMany(Payment::class);
     }
-    
+
+    public function sellermindLink()
+    {
+        return $this->hasOne(SellermindAccountLink::class);
+    }
+
+    public function billingSubscription()
+    {
+        return $this->hasOne(BillingSubscription::class)->where('status', 'active');
+    }
+
+    public function billingBalance()
+    {
+        return $this->hasOne(BillingBalance::class);
+    }
+
+    public function billingInvoices()
+    {
+        return $this->hasMany(BillingInvoice::class);
+    }
+
     public function getFormattedBalanceAttribute(): string
     {
         return number_format(abs($this->balance), 0, '', ' ') . ' ' . __('UZS');
