@@ -105,11 +105,11 @@
                     <span>{{ __('Billing') }}</span>
                 </a>
 
-                <a href="{{ route('cabinet.sellermind.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-btn {{ request()->routeIs('cabinet.sellermind.*') ? 'bg-brand text-white' : 'hover:bg-bg-soft' }} mt-1">
+                <a href="{{ route('cabinet.integrations.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-btn {{ request()->routeIs('cabinet.integrations.*') ? 'bg-brand text-white' : 'hover:bg-bg-soft' }} mt-1">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"></path>
                     </svg>
-                    <span>{{ __('SellerMind') }}</span>
+                    <span>{{ __('integrations.title') }}</span>
                 </a>
 
                 <a href="{{ route('cabinet.company.show') }}" class="flex items-center gap-3 px-4 py-3 rounded-btn {{ request()->routeIs('cabinet.company.*') ? 'bg-brand text-white' : 'hover:bg-bg-soft' }} mt-1">
