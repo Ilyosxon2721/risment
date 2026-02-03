@@ -136,6 +136,7 @@
                     <select name="locale" onchange="this.form.submit()" class="input w-full">
                         <option value="ru" {{ auth()->user()->locale === 'ru' ? 'selected' : '' }}>Русский</option>
                         <option value="uz" {{ auth()->user()->locale === 'uz' ? 'selected' : '' }}>O'zbek</option>
+                        <option value="en" {{ auth()->user()->locale === 'en' ? 'selected' : '' }}>English</option>
                     </select>
                 </form>
             </div>

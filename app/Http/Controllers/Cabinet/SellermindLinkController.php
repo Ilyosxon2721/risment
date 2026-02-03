@@ -67,7 +67,8 @@ class SellermindLinkController extends Controller
         }
 
         return redirect()->route('cabinet.sellermind.index')
-            ->with('success', __('Link token generated. Enter this token in SellerMind.'));
+            ->with('success', __('Link token generated. Enter this token in SellerMind.'))
+            ->with('newToken', true);
     }
 
     /**

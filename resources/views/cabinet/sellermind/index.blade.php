@@ -71,24 +71,62 @@
     </div>
 
 @elseif($link && $link->status === 'pending')
-    <!-- Pending Connection -->
-    <div class="card mb-8 border-2 border-warning">
+    <!-- Pending Connection — Token Display -->
+    <div class="card mb-8 border-2 border-warning" id="token-section">
         <div class="flex items-center gap-3 mb-4">
             <div class="w-3 h-3 rounded-full bg-warning animate-pulse"></div>
             <h2 class="text-h3 font-heading text-warning">{{ __('Awaiting Connection') }}</h2>
         </div>
-        <p class="text-body-m mb-6">{{ __('Enter this token in SellerMind to complete the link:') }}</p>
-        <div class="p-4 bg-bg-soft rounded-btn font-mono text-lg break-all select-all border-2 border-dashed border-brand-border">
-            {{ $link->link_token }}
+
+        <p class="text-body-m mb-4">{{ __('Copy this token and paste it in SellerMind to complete the link.') }}</p>
+
+        <!-- Token Field -->
+        <div class="relative">
+            <div class="flex items-stretch gap-0 border-2 border-brand rounded-btn overflow-hidden {{ session('newToken') ? 'ring-2 ring-brand ring-offset-2' : '' }}">
+                <input
+                    type="text"
+                    id="link-token"
+                    value="{{ $link->link_token }}"
+                    readonly
+                    class="flex-1 px-4 py-4 font-mono text-lg bg-bg-soft border-0 focus:outline-none select-all tracking-wider"
+                >
+                <button
+                    type="button"
+                    onclick="copyToken()"
+                    id="copy-btn"
+                    class="px-6 bg-brand text-white font-semibold hover:bg-brand/90 transition-colors flex items-center gap-2 shrink-0"
+                >
+                    <svg id="copy-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                    </svg>
+                    <svg id="check-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                    <span id="copy-text">{{ __('Copy') }}</span>
+                </button>
+            </div>
         </div>
-        <p class="text-body-s text-text-muted mt-4">
-            {{ __('Go to SellerMind → Settings → Integrations → Enter RISMENT token') }}
-        </p>
-        <div class="mt-6">
+
+        <!-- Step-by-step Instructions -->
+        <div class="mt-6 p-4 bg-bg-soft rounded-btn">
+            <h3 class="font-semibold mb-3">{{ __('How to connect:') }}</h3>
+            <ol class="space-y-2 text-body-m text-text-muted list-decimal list-inside">
+                <li>{{ __('Copy the token above using the "Copy" button') }}</li>
+                <li>{{ __('Open SellerMind and go to Settings') }}</li>
+                <li>{{ __('Select Integrations section') }}</li>
+                <li>{{ __('Paste the RISMENT token and confirm') }}</li>
+            </ol>
+        </div>
+
+        <div class="mt-6 flex items-center gap-4">
             <form method="POST" action="{{ route('cabinet.sellermind.disconnect') }}">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="btn btn-outline text-text-muted">{{ __('Cancel') }}</button>
+            </form>
+            <form method="POST" action="{{ route('cabinet.sellermind.generate') }}">
+                @csrf
+                <button type="submit" class="btn btn-outline">{{ __('Regenerate Token') }}</button>
             </form>
         </div>
     </div>
@@ -137,3 +175,47 @@
     </div>
 @endif
 @endsection
+
+@push('scripts')
+<script>
+function copyToken() {
+    const input = document.getElementById('link-token');
+    const copyIcon = document.getElementById('copy-icon');
+    const checkIcon = document.getElementById('check-icon');
+    const copyText = document.getElementById('copy-text');
+    const copyBtn = document.getElementById('copy-btn');
+
+    navigator.clipboard.writeText(input.value).then(function() {
+        copyIcon.classList.add('hidden');
+        checkIcon.classList.remove('hidden');
+        copyText.textContent = '{{ __("Copied!") }}';
+        copyBtn.classList.add('bg-success');
+        copyBtn.classList.remove('bg-brand');
+
+        setTimeout(function() {
+            copyIcon.classList.remove('hidden');
+            checkIcon.classList.add('hidden');
+            copyText.textContent = '{{ __("Copy") }}';
+            copyBtn.classList.remove('bg-success');
+            copyBtn.classList.add('bg-brand');
+        }, 2000);
+    }).catch(function() {
+        input.select();
+        document.execCommand('copy');
+        copyText.textContent = '{{ __("Copied!") }}';
+        setTimeout(function() {
+            copyText.textContent = '{{ __("Copy") }}';
+        }, 2000);
+    });
+}
+
+@if(session('newToken'))
+document.addEventListener('DOMContentLoaded', function() {
+    const section = document.getElementById('token-section');
+    if (section) {
+        section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+});
+@endif
+</script>
+@endpush

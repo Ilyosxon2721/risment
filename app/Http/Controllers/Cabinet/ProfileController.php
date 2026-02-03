@@ -47,7 +47,7 @@ class ProfileController extends Controller
     public function updateLocale(Request $request)
     {
         $validated = $request->validate([
-            'locale' => 'required|string|in:ru,uz',
+            'locale' => 'required|string|in:ru,uz,en',
         ]);
         
         auth()->user()->update([
