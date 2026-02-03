@@ -107,8 +107,15 @@
     "Bidirectional stock synchronization": "Двусторонняя синхронизация остатков",
     "Save Settings": "Сохранить настройки",
     "Awaiting Connection": "Ожидание подключения",
-    "Enter this token in SellerMind to complete the link:": "Введите этот токен в SellerMind для завершения связки:",
-    "Go to SellerMind → Settings → Integrations → Enter RISMENT token": "Перейдите в SellerMind → Настройки → Интеграции → Введите токен RISMENT",
+    "Copy this token and paste it in SellerMind to complete the link.": "Скопируйте этот токен и вставьте его в SellerMind для завершения связки.",
+    "Copy": "Копировать",
+    "Copied!": "Скопировано!",
+    "How to connect:": "Как подключить:",
+    "Copy the token above using the \"Copy\" button": "Скопируйте токен выше, нажав кнопку «Копировать»",
+    "Open SellerMind and go to Settings": "Откройте SellerMind и перейдите в Настройки",
+    "Select Integrations section": "Выберите раздел Интеграции",
+    "Paste the RISMENT token and confirm": "Вставьте токен RISMENT и подтвердите",
+    "Regenerate Token": "Сгенерировать заново",
     "Not connected": "Не подключено",
     "Link your SellerMind account to sync products, orders and stock with marketplaces.": "Привяжите аккаунт SellerMind для синхронизации товаров, заказов и остатков с маркетплейсами.",
     "Generate Link Token": "Сгенерировать токен связки",
@@ -187,5 +194,6 @@
     "Last Payment": "Последняя оплата",
     "Payment date": "Дата оплаты",
     "Recent Payments": "Последние оплаты",
-    "Payment without invoice": "Оплата без счёта"
+    "Payment without invoice": "Оплата без счёта",
+    "Language updated successfully": "Язык успешно изменён"
 }

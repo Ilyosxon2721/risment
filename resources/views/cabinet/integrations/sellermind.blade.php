@@ -1,11 +1,21 @@
 @extends('cabinet.layout')
 
-@section('title', __('SellerMind Integration'))
+@section('title', __('integrations.sellermind_page_title'))
 
 @section('content')
+<!-- Back Button -->
+<div class="mb-6">
+    <a href="{{ route('cabinet.integrations.index') }}" class="inline-flex items-center gap-2 text-body-m text-text-muted hover:text-brand transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+        {{ __('integrations.back_to_integrations') }}
+    </a>
+</div>
+
 <div class="mb-8">
-    <h1 class="text-h1 font-heading">{{ __('SellerMind Integration') }}</h1>
-    <p class="text-body-m text-text-muted mt-2">{{ __('Connect your SellerMind account for marketplace synchronization') }}</p>
+    <h1 class="text-h1 font-heading">{{ __('integrations.sellermind_page_title') }}</h1>
+    <p class="text-body-m text-text-muted mt-2">{{ __('integrations.sellermind_page_subtitle') }}</p>
 </div>
 
 @if($link && $link->isActive())
@@ -15,18 +25,18 @@
             <div>
                 <div class="flex items-center gap-3 mb-4">
                     <div class="w-3 h-3 rounded-full bg-success animate-pulse"></div>
-                    <h2 class="text-h3 font-heading text-success">{{ __('Connected') }}</h2>
+                    <h2 class="text-h3 font-heading text-success">{{ __('integrations.sellermind_connected') }}</h2>
                 </div>
                 <div class="space-y-2 text-body-m">
-                    <p><span class="text-text-muted">{{ __('SellerMind Company ID') }}:</span> <strong>{{ $link->sellermind_company_id }}</strong></p>
-                    <p><span class="text-text-muted">{{ __('Connected at') }}:</span> <strong>{{ $link->linked_at?->format('d.m.Y H:i') }}</strong></p>
+                    <p><span class="text-text-muted">{{ __('integrations.sellermind_company_id') }}:</span> <strong>{{ $link->sellermind_company_id }}</strong></p>
+                    <p><span class="text-text-muted">{{ __('integrations.sellermind_connected_at') }}:</span> <strong>{{ $link->linked_at?->format('d.m.Y H:i') }}</strong></p>
                 </div>
             </div>
-            <form method="POST" action="{{ route('cabinet.sellermind.disconnect') }}" onsubmit="return confirm('{{ __('Are you sure you want to disconnect?') }}')">
+            <form method="POST" action="{{ route('cabinet.integrations.sellermind.disconnect') }}" onsubmit="return confirm('{{ __('integrations.sellermind_confirm_disconnect') }}')">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="btn btn-outline text-error border-error hover:bg-error hover:text-white">
-                    {{ __('Disconnect') }}
+                    {{ __('integrations.disconnect') }}
                 </button>
             </form>
         </div>
@@ -34,8 +44,8 @@
 
     <!-- Sync Settings -->
     <div class="card mb-8">
-        <h2 class="text-h3 font-heading mb-6">{{ __('Sync Settings') }}</h2>
-        <form method="POST" action="{{ route('cabinet.sellermind.settings') }}">
+        <h2 class="text-h3 font-heading mb-6">{{ __('integrations.sync_settings') }}</h2>
+        <form method="POST" action="{{ route('cabinet.integrations.sellermind.settings') }}">
             @csrf
             @method('PUT')
             <div class="space-y-4">
@@ -43,29 +53,29 @@
                     <input type="hidden" name="sync_products" value="0">
                     <input type="checkbox" name="sync_products" value="1" {{ $link->sync_products ? 'checked' : '' }} class="w-5 h-5 text-brand rounded">
                     <div>
-                        <div class="font-semibold">{{ __('Sync Products') }}</div>
-                        <div class="text-body-s text-text-muted">{{ __('Push products from RISMENT to SellerMind') }}</div>
+                        <div class="font-semibold">{{ __('integrations.sync_products') }}</div>
+                        <div class="text-body-s text-text-muted">{{ __('integrations.sync_products_desc') }}</div>
                     </div>
                 </label>
                 <label class="flex items-center gap-3 p-4 bg-bg-soft rounded-btn cursor-pointer">
                     <input type="hidden" name="sync_orders" value="0">
                     <input type="checkbox" name="sync_orders" value="1" {{ $link->sync_orders ? 'checked' : '' }} class="w-5 h-5 text-brand rounded">
                     <div>
-                        <div class="font-semibold">{{ __('Sync Orders') }}</div>
-                        <div class="text-body-s text-text-muted">{{ __('Receive marketplace orders from SellerMind') }}</div>
+                        <div class="font-semibold">{{ __('integrations.sync_orders') }}</div>
+                        <div class="text-body-s text-text-muted">{{ __('integrations.sync_orders_desc') }}</div>
                     </div>
                 </label>
                 <label class="flex items-center gap-3 p-4 bg-bg-soft rounded-btn cursor-pointer">
                     <input type="hidden" name="sync_stock" value="0">
                     <input type="checkbox" name="sync_stock" value="1" {{ $link->sync_stock ? 'checked' : '' }} class="w-5 h-5 text-brand rounded">
                     <div>
-                        <div class="font-semibold">{{ __('Sync Stock') }}</div>
-                        <div class="text-body-s text-text-muted">{{ __('Bidirectional stock synchronization') }}</div>
+                        <div class="font-semibold">{{ __('integrations.sync_stock') }}</div>
+                        <div class="text-body-s text-text-muted">{{ __('integrations.sync_stock_desc') }}</div>
                     </div>
                 </label>
             </div>
             <div class="mt-6">
-                <button type="submit" class="btn btn-primary">{{ __('Save Settings') }}</button>
+                <button type="submit" class="btn btn-primary">{{ __('integrations.save_settings') }}</button>
             </div>
         </form>
     </div>
@@ -75,10 +85,10 @@
     <div class="card mb-8 border-2 border-warning" id="token-section">
         <div class="flex items-center gap-3 mb-4">
             <div class="w-3 h-3 rounded-full bg-warning animate-pulse"></div>
-            <h2 class="text-h3 font-heading text-warning">{{ __('Awaiting Connection') }}</h2>
+            <h2 class="text-h3 font-heading text-warning">{{ __('integrations.status_pending') }}</h2>
         </div>
 
-        <p class="text-body-m mb-4">{{ __('Copy this token and paste it in SellerMind to complete the link.') }}</p>
+        <p class="text-body-m mb-4">{{ __('integrations.token_instruction') }}</p>
 
         <!-- Token Field -->
         <div class="relative">
@@ -102,31 +112,31 @@
                     <svg id="check-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                     </svg>
-                    <span id="copy-text">{{ __('Copy') }}</span>
+                    <span id="copy-text">{{ __('integrations.copy') }}</span>
                 </button>
             </div>
         </div>
 
         <!-- Step-by-step Instructions -->
         <div class="mt-6 p-4 bg-bg-soft rounded-btn">
-            <h3 class="font-semibold mb-3">{{ __('How to connect:') }}</h3>
+            <h3 class="font-semibold mb-3">{{ __('integrations.how_to_connect') }}</h3>
             <ol class="space-y-2 text-body-m text-text-muted list-decimal list-inside">
-                <li>{{ __('Copy the token above using the "Copy" button') }}</li>
-                <li>{{ __('Open SellerMind and go to Settings') }}</li>
-                <li>{{ __('Select Integrations section') }}</li>
-                <li>{{ __('Paste the RISMENT token and confirm') }}</li>
+                <li>{{ __('integrations.step_1') }}</li>
+                <li>{{ __('integrations.step_2') }}</li>
+                <li>{{ __('integrations.step_3') }}</li>
+                <li>{{ __('integrations.step_4') }}</li>
             </ol>
         </div>
 
         <div class="mt-6 flex items-center gap-4">
-            <form method="POST" action="{{ route('cabinet.sellermind.disconnect') }}">
+            <form method="POST" action="{{ route('cabinet.integrations.sellermind.disconnect') }}">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="btn btn-outline text-text-muted">{{ __('Cancel') }}</button>
+                <button type="submit" class="btn btn-outline text-text-muted">{{ __('integrations.cancel') }}</button>
             </form>
-            <form method="POST" action="{{ route('cabinet.sellermind.generate') }}">
+            <form method="POST" action="{{ route('cabinet.integrations.sellermind.generate') }}">
                 @csrf
-                <button type="submit" class="btn btn-outline">{{ __('Regenerate Token') }}</button>
+                <button type="submit" class="btn btn-outline">{{ __('integrations.regenerate_token') }}</button>
             </form>
         </div>
     </div>
@@ -138,13 +148,13 @@
             <svg class="w-16 h-16 mx-auto mb-6 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
             </svg>
-            <h2 class="text-h3 font-heading mb-2">{{ __('Not connected') }}</h2>
+            <h2 class="text-h3 font-heading mb-2">{{ __('integrations.not_connected_title') }}</h2>
             <p class="text-body-m text-text-muted mb-6">
-                {{ __('Link your SellerMind account to sync products, orders and stock with marketplaces.') }}
+                {{ __('integrations.not_connected_desc') }}
             </p>
-            <form method="POST" action="{{ route('cabinet.sellermind.generate') }}">
+            <form method="POST" action="{{ route('cabinet.integrations.sellermind.generate') }}">
                 @csrf
-                <button type="submit" class="btn btn-primary btn-lg">{{ __('Generate Link Token') }}</button>
+                <button type="submit" class="btn btn-primary btn-lg">{{ __('integrations.generate_token') }}</button>
             </form>
         </div>
     </div>
@@ -155,22 +165,22 @@
             <svg class="w-10 h-10 mx-auto mb-4 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
             </svg>
-            <h3 class="text-h4 font-heading mb-2">{{ __('Product Sync') }}</h3>
-            <p class="text-body-s text-text-muted">{{ __('Automatically push products from RISMENT to marketplaces') }}</p>
+            <h3 class="text-h4 font-heading mb-2">{{ __('integrations.benefit_products') }}</h3>
+            <p class="text-body-s text-text-muted">{{ __('integrations.benefit_products_desc') }}</p>
         </div>
         <div class="card text-center">
             <svg class="w-10 h-10 mx-auto mb-4 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
             </svg>
-            <h3 class="text-h4 font-heading mb-2">{{ __('Order Receiving') }}</h3>
-            <p class="text-body-s text-text-muted">{{ __('Get marketplace orders for fulfilment directly') }}</p>
+            <h3 class="text-h4 font-heading mb-2">{{ __('integrations.benefit_orders') }}</h3>
+            <p class="text-body-s text-text-muted">{{ __('integrations.benefit_orders_desc') }}</p>
         </div>
         <div class="card text-center">
             <svg class="w-10 h-10 mx-auto mb-4 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
             </svg>
-            <h3 class="text-h4 font-heading mb-2">{{ __('Stock Sync') }}</h3>
-            <p class="text-body-s text-text-muted">{{ __('Keep stock levels in sync across systems') }}</p>
+            <h3 class="text-h4 font-heading mb-2">{{ __('integrations.benefit_stock') }}</h3>
+            <p class="text-body-s text-text-muted">{{ __('integrations.benefit_stock_desc') }}</p>
         </div>
     </div>
 @endif
@@ -188,23 +198,23 @@ function copyToken() {
     navigator.clipboard.writeText(input.value).then(function() {
         copyIcon.classList.add('hidden');
         checkIcon.classList.remove('hidden');
-        copyText.textContent = '{{ __("Copied!") }}';
+        copyText.textContent = '{{ __("integrations.copied") }}';
         copyBtn.classList.add('bg-success');
         copyBtn.classList.remove('bg-brand');
 
         setTimeout(function() {
             copyIcon.classList.remove('hidden');
             checkIcon.classList.add('hidden');
-            copyText.textContent = '{{ __("Copy") }}';
+            copyText.textContent = '{{ __("integrations.copy") }}';
             copyBtn.classList.remove('bg-success');
             copyBtn.classList.add('bg-brand');
         }, 2000);
     }).catch(function() {
         input.select();
         document.execCommand('copy');
-        copyText.textContent = '{{ __("Copied!") }}';
+        copyText.textContent = '{{ __("integrations.copied") }}';
         setTimeout(function() {
-            copyText.textContent = '{{ __("Copy") }}';
+            copyText.textContent = '{{ __("integrations.copy") }}';
         }, 2000);
     });
 }

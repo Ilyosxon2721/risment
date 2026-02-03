@@ -18,7 +18,7 @@ class SellermindLinkController extends Controller
 
         $link = SellermindAccountLink::where('company_id', $company->id)->first();
 
-        return view('cabinet.sellermind.index', compact('link'));
+        return view('cabinet.integrations.sellermind', compact('link'));
     }
 
     /**
@@ -34,8 +34,8 @@ class SellermindLinkController extends Controller
             ->first();
 
         if ($existing) {
-            return redirect()->route('cabinet.sellermind.index')
-                ->with('error', __('An active SellerMind link already exists.'));
+            return redirect()->route('cabinet.integrations.sellermind')
+                ->with('error', __('integrations.link_exists'));
         }
 
         // Deactivate old pending tokens
@@ -66,8 +66,9 @@ class SellermindLinkController extends Controller
             // Redis not available — link will work when SellerMind reads the token
         }
 
-        return redirect()->route('cabinet.sellermind.index')
-            ->with('success', __('Link token generated. Enter this token in SellerMind.'));
+        return redirect()->route('cabinet.integrations.sellermind')
+            ->with('success', __('integrations.token_generated'))
+            ->with('newToken', true);
     }
 
     /**
@@ -93,8 +94,8 @@ class SellermindLinkController extends Controller
             'sync_stock' => $validated['sync_stock'] ?? false,
         ]);
 
-        return redirect()->route('cabinet.sellermind.index')
-            ->with('success', __('Sync settings updated.'));
+        return redirect()->route('cabinet.integrations.sellermind')
+            ->with('success', __('integrations.settings_updated'));
     }
 
     /**
@@ -108,7 +109,7 @@ class SellermindLinkController extends Controller
             ->whereIn('status', ['active', 'pending'])
             ->update(['status' => 'disabled']);
 
-        return redirect()->route('cabinet.sellermind.index')
-            ->with('success', __('SellerMind account disconnected.'));
+        return redirect()->route('cabinet.integrations.sellermind')
+            ->with('success', __('integrations.disconnected'));
     }
 }

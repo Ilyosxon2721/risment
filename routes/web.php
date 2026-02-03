@@ -19,6 +19,7 @@ use App\Http\Controllers\Cabinet\ProfileController;
 use App\Http\Controllers\Cabinet\SubscriptionController;
 use App\Http\Controllers\Cabinet\FinanceController;
 use App\Http\Controllers\Cabinet\InvoicePaymentController;
+use App\Http\Controllers\Cabinet\IntegrationsController;
 use App\Http\Controllers\Cabinet\SellermindLinkController;
 use App\Http\Controllers\Cabinet\BillingReportController;
 use App\Http\Middleware\SetLocale;
@@ -101,11 +102,17 @@ Route::prefix('cabinet')->name('cabinet.')->middleware(['auth', \App\Http\Middle
     Route::post('/finance/invoices/{invoice}/pay/click', [InvoicePaymentController::class, 'initiateClick'])->name('finance.invoices.pay.click');
     Route::post('/finance/invoices/{invoice}/pay/payme', [InvoicePaymentController::class, 'initiatePayme'])->name('finance.invoices.pay.payme');
 
-    // SellerMind Integration
-    Route::get('/sellermind', [SellermindLinkController::class, 'index'])->name('sellermind.index');
-    Route::post('/sellermind/generate', [SellermindLinkController::class, 'generateToken'])->name('sellermind.generate');
-    Route::put('/sellermind/settings', [SellermindLinkController::class, 'updateSettings'])->name('sellermind.settings');
-    Route::delete('/sellermind', [SellermindLinkController::class, 'disconnect'])->name('sellermind.disconnect');
+    // Integrations hub
+    Route::get('/integrations', [IntegrationsController::class, 'index'])->name('integrations.index');
+
+    // SellerMind Integration (under /integrations/sellermind)
+    Route::get('/integrations/sellermind', [SellermindLinkController::class, 'index'])->name('integrations.sellermind');
+    Route::post('/integrations/sellermind/generate', [SellermindLinkController::class, 'generateToken'])->name('integrations.sellermind.generate');
+    Route::put('/integrations/sellermind/settings', [SellermindLinkController::class, 'updateSettings'])->name('integrations.sellermind.settings');
+    Route::delete('/integrations/sellermind', [SellermindLinkController::class, 'disconnect'])->name('integrations.sellermind.disconnect');
+
+    // Old sellermind routes → redirect to new location
+    Route::get('/sellermind', fn () => redirect()->route('cabinet.integrations.sellermind'))->name('sellermind.index');
 
     // Billing Report
     Route::get('/billing', [BillingReportController::class, 'index'])->name('billing.report');
