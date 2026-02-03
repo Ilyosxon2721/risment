@@ -53,16 +53,14 @@ echo "🏗️  Step 4: Building assets..."
 npm run build
 success "Assets built"
 
-echo "🗄️  Step 5: Running database migrations..."
+echo "🧹 Step 5: Clearing caches..."
+php artisan optimize:clear
+php artisan cache:clear
+success "Caches cleared"
+
+echo "🗄️  Step 6: Running database migrations..."
 php artisan migrate --force
 success "Migrations completed"
-
-echo "🧹 Step 6: Clearing caches..."
-php artisan config:clear
-php artisan cache:clear
-php artisan view:clear
-php artisan route:clear
-success "Caches cleared"
 
 echo "⚡ Step 7: Optimizing..."
 php artisan config:cache
@@ -79,6 +77,15 @@ chmod -R 775 $APP_DIR/bootstrap/cache
 success "Permissions set"
 
 echo "🔄 Step 9: Restarting services..."
+# Restart PHP-FPM to flush OPcache (new PHP files won't load without this)
+if systemctl is-active --quiet php8.4-fpm; then
+    systemctl restart php8.4-fpm
+    success "PHP-FPM restarted"
+elif systemctl is-active --quiet php8.3-fpm; then
+    systemctl restart php8.3-fpm
+    success "PHP-FPM restarted"
+fi
+
 if [ -f "/etc/supervisor/conf.d/risment-worker.conf" ]; then
     php artisan queue:restart
     supervisorctl restart risment-worker:*
