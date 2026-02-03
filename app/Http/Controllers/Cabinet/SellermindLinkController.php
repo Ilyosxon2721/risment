@@ -16,7 +16,10 @@ class SellermindLinkController extends Controller
     {
         $company = $request->attributes->get('currentCompany');
 
-        $link = SellermindAccountLink::where('company_id', $company->id)->first();
+        $link = SellermindAccountLink::where('company_id', $company->id)
+            ->whereIn('status', ['active', 'pending'])
+            ->orderByRaw("FIELD(status, 'active', 'pending')")
+            ->first();
 
         return view('cabinet.integrations.sellermind', compact('link'));
     }
