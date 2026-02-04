@@ -31,7 +31,9 @@ class DashboardController extends Controller
         $overageEstimate = null;
         if ($plan && $usage) {
             $overageEstimate = $plan->calculateOverage(
-                $usage->fbs_shipments_count ?? 0,
+                $usage->fbs_shipments_count ?? 0, // mgtCount (all shipments as MGT estimate)
+                0, // sgtCount
+                0, // kgtCount
                 $usage->storage_boxes_peak ?? 0,
                 $usage->storage_bags_peak ?? 0,
                 $usage->inbound_boxes_count ?? 0

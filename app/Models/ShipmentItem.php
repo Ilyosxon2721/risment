@@ -23,4 +23,9 @@ class ShipmentItem extends Model
     {
         return $this->belongsTo(Sku::class);
     }
+
+    public function productVariant()
+    {
+        return $this->belongsTo(ProductVariant::class);
+    }
 }

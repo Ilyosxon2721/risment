@@ -77,6 +77,7 @@ class PushMarketplaceToSellermind
                 'campaign_id' => $credential->yandex_campaign_id,
                 'business_id' => $credential->yandex_business_id,
             ],
+            default => [],
         };
     }
 }

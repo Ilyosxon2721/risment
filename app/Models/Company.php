@@ -32,6 +32,11 @@ class Company extends Model
         return $this->hasMany(Payment::class);
     }
 
+    public function subscriptionPlan()
+    {
+        return $this->belongsTo(SubscriptionPlan::class);
+    }
+
     public function sellermindLink()
     {
         return $this->hasOne(SellermindAccountLink::class);
