@@ -30,6 +30,10 @@ class AppServiceProvider extends ServiceProvider
         // Register notification observers
         \App\Models\Ticket::observe(\App\Observers\TicketObserver::class);
         \App\Models\Lead::observe(\App\Observers\LeadObserver::class);
+
+        // Register SellerMind sync observers
+        \App\Models\Product::observe(\App\Observers\ProductSellermindObserver::class);
+        \App\Models\ProductVariant::observe(\App\Observers\ProductVariantSellermindObserver::class);
         
         // Force HTTPS in production
         if ($this->app->environment('production')) {
