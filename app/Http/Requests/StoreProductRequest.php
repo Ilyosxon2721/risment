@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\ProductVariant;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreProductRequest extends FormRequest
@@ -36,7 +37,7 @@ class StoreProductRequest extends FormRequest
             'variants' => 'required|array|min:1',
             'variants.*.variant_name' => 'required|string|max:255',
             'variants.*.sku_code' => 'required|string|max:100',
-            'variants.*.barcode' => 'nullable|string|max:100',
+            'variants.*.barcode' => 'nullable|string|max:100|distinct',
             
             // Dimensions
             'variants.*.dims_l' => 'nullable|numeric|min:0|max:999',
@@ -88,7 +89,25 @@ class StoreProductRequest extends FormRequest
             'variants.*.images.*.max' => __('Image must not be larger than 5MB'),
             
             'variants.*.marketplace_links.*.marketplace.in' => __('Invalid marketplace'),
+            'variants.*.barcode.distinct' => __('Barcode must be unique across variants'),
+            'variants.*.barcode.unique_barcode' => __('This barcode is already in use'),
         ];
+    }
+
+    /**
+     * Configure the validator instance.
+     */
+    public function withValidator($validator): void
+    {
+        $validator->after(function ($validator) {
+            foreach ($this->input('variants', []) as $index => $variant) {
+                if (!empty($variant['barcode'])) {
+                    if (ProductVariant::where('barcode', $variant['barcode'])->exists()) {
+                        $validator->errors()->add("variants.{$index}.barcode", __('This barcode is already in use'));
+                    }
+                }
+            }
+        });
     }
 
     /**

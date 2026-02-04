@@ -12,6 +12,7 @@ class PushStockToSellermind
     public function __construct(
         protected int $companyId,
         protected ?int $productVariantId = null,
+        protected string $reason = 'stock_updated',
     ) {}
 
     public function handle(): void
@@ -34,27 +35,34 @@ class PushStockToSellermind
 
         $inventoryItems = $query->get();
 
-        $stockData = $inventoryItems->map(function ($inv) {
-            return [
-                'risment_variant_id' => $inv->product_variant_id,
-                'sku_code' => $inv->productVariant?->sku_code,
-                'barcode' => $inv->productVariant?->barcode,
-                'qty_total' => $inv->qty_total,
-                'qty_reserved' => $inv->qty_reserved,
-                'qty_available' => $inv->qty_total - $inv->qty_reserved,
-            ];
-        })->toArray();
+        $stockData = $inventoryItems
+            ->filter(fn ($inv) => $inv->productVariant?->product?->sellermind_product_id)
+            ->map(function ($inv) {
+                return [
+                    'risment_product_id' => $inv->productVariant?->product?->id,
+                    'risment_variant_id' => $inv->product_variant_id,
+                    'sku' => $inv->productVariant?->sku_code,
+                    'barcode' => $inv->productVariant?->barcode,
+                    'quantity' => $inv->qty_total,
+                    'reserved' => $inv->qty_reserved,
+                    'available' => $inv->qty_total - $inv->qty_reserved,
+                ];
+            })
+            ->values()
+            ->toArray();
 
         if (empty($stockData)) {
             return;
         }
 
         $payload = json_encode([
-            'action' => 'stock_update',
-            'link_token' => $link->link_token,
-            'sellermind_company_id' => $link->sellermind_company_id,
-            'items' => $stockData,
+            'event' => 'stock.updated',
             'timestamp' => now()->toIso8601String(),
+            'link_token' => $link->link_token,
+            'data' => [
+                'reason' => $this->reason,
+                'stocks' => $stockData,
+            ],
         ]);
 
         try {

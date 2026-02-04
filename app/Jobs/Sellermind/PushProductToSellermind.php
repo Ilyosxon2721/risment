@@ -33,37 +33,42 @@ class PushProductToSellermind
         $variants = $product->variants->map(function ($variant) {
             return [
                 'risment_variant_id' => $variant->id,
-                'variant_name' => $variant->variant_name,
-                'sku_code' => $variant->sku_code,
+                'name' => $variant->variant_name,
+                'sku' => $variant->sku_code,
                 'barcode' => $variant->barcode,
                 'price' => (float) $variant->price,
                 'cost_price' => (float) $variant->cost_price,
                 'weight' => (float) $variant->weight,
-                'dims' => [
-                    'l' => (float) $variant->dims_l,
-                    'w' => (float) $variant->dims_w,
-                    'h' => (float) $variant->dims_h,
-                ],
-                'is_active' => $variant->is_active,
+                'length' => (float) $variant->dims_l,
+                'width' => (float) $variant->dims_w,
+                'height' => (float) $variant->dims_h,
+                'is_active' => (bool) $variant->is_active,
             ];
         })->toArray();
 
-        $isUpdate = (bool) $product->sellermind_product_id;
+        $images = $product->variants
+            ->flatMap(fn ($variant) => $variant->images)
+            ->map(fn ($image) => $image->url)
+            ->unique()
+            ->values()
+            ->toArray();
 
         $payload = json_encode([
-            'event' => $isUpdate ? 'product.updated' : 'product.created',
+            'event' => $product->sellermind_product_id ? 'product.updated' : 'product.created',
+            'timestamp' => now()->toIso8601String(),
             'link_token' => $link->link_token,
             'data' => [
                 'product_id' => $product->id,
                 'name' => $product->title,
                 'article' => $product->article,
-                'sku' => $product->variants->first()?->sku_code,
-                'barcode' => $product->variants->first()?->barcode,
                 'description' => $product->description,
-                'is_active' => $product->is_active,
+                'short_description' => $product->short_description,
+                'brand_name' => null,
+                'category' => null,
+                'is_active' => (bool) $product->is_active,
+                'images' => $images,
                 'variants' => $variants,
             ],
-            'timestamp' => now()->toIso8601String(),
         ]);
 
         try {

@@ -67,6 +67,7 @@ return [
 
     // Flash xabarlari
     'token_generated' => 'Ulanish tokeni yaratildi. Ushbu tokenni SellerMind ga kiriting.',
+    'token_regenerated' => 'Token qayta yaratildi. Yangi tokenni SellerMind ga kiriting.',
     'link_exists' => 'Faol SellerMind ulanishi allaqachon mavjud.',
     'settings_updated' => 'Sinxronlash sozlamalari yangilandi.',
     'disconnected' => 'SellerMind akkaunt uzildi.',

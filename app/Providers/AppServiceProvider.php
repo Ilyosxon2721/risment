@@ -34,6 +34,7 @@ class AppServiceProvider extends ServiceProvider
         // Register SellerMind sync observers
         \App\Models\Product::observe(\App\Observers\ProductSellermindObserver::class);
         \App\Models\ProductVariant::observe(\App\Observers\ProductVariantSellermindObserver::class);
+        \App\Models\Inventory::observe(\App\Observers\InventorySellermindObserver::class);
         
         // Force HTTPS in production
         if ($this->app->environment('production')) {

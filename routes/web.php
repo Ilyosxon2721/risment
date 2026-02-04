@@ -21,6 +21,7 @@ use App\Http\Controllers\Cabinet\FinanceController;
 use App\Http\Controllers\Cabinet\InvoicePaymentController;
 use App\Http\Controllers\Cabinet\IntegrationsController;
 use App\Http\Controllers\Cabinet\SellermindLinkController;
+use App\Http\Controllers\Cabinet\MarketplaceCredentialController;
 use App\Http\Controllers\Cabinet\BillingReportController;
 use App\Http\Middleware\SetLocale;
 use App\Http\Middleware\EnsureUserHasCompany;
@@ -108,8 +109,12 @@ Route::prefix('cabinet')->name('cabinet.')->middleware(['auth', \App\Http\Middle
     // SellerMind Integration (under /integrations/sellermind)
     Route::get('/integrations/sellermind', [SellermindLinkController::class, 'index'])->name('integrations.sellermind');
     Route::post('/integrations/sellermind/generate', [SellermindLinkController::class, 'generateToken'])->name('integrations.sellermind.generate');
+    Route::post('/integrations/sellermind/regenerate', [SellermindLinkController::class, 'regenerateToken'])->name('integrations.sellermind.regenerate');
     Route::put('/integrations/sellermind/settings', [SellermindLinkController::class, 'updateSettings'])->name('integrations.sellermind.settings');
     Route::delete('/integrations/sellermind', [SellermindLinkController::class, 'disconnect'])->name('integrations.sellermind.disconnect');
+
+    // Marketplace Credentials
+    Route::resource('marketplaces', MarketplaceCredentialController::class)->except(['show']);
 
     // Old sellermind routes → redirect to new location
     Route::get('/sellermind', fn () => redirect()->route('cabinet.integrations.sellermind'))->name('sellermind.index');

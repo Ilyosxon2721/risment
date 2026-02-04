@@ -67,6 +67,7 @@ return [
 
     // Flash сообщения
     'token_generated' => 'Токен сгенерирован. Введите его в SellerMind.',
+    'token_regenerated' => 'Токен перегенерирован. Введите новый токен в SellerMind.',
     'link_exists' => 'Активная связка с SellerMind уже существует.',
     'settings_updated' => 'Настройки синхронизации обновлены.',
     'disconnected' => 'Аккаунт SellerMind отключён.',

@@ -67,6 +67,7 @@ return [
 
     // Flash messages
     'token_generated' => 'Link token generated. Enter this token in SellerMind.',
+    'token_regenerated' => 'Token regenerated. Enter the new token in SellerMind.',
     'link_exists' => 'An active SellerMind link already exists.',
     'settings_updated' => 'Sync settings updated.',
     'disconnected' => 'SellerMind account disconnected.',

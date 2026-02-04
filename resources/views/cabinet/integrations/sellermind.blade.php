@@ -134,7 +134,7 @@
                 @method('DELETE')
                 <button type="submit" class="btn btn-outline text-text-muted">{{ __('integrations.cancel') }}</button>
             </form>
-            <form method="POST" action="{{ route('cabinet.integrations.sellermind.generate') }}">
+            <form method="POST" action="{{ route('cabinet.integrations.sellermind.regenerate') }}">
                 @csrf
                 <button type="submit" class="btn btn-outline">{{ __('integrations.regenerate_token') }}</button>
             </form>

@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\BillableOperation;
 use App\Models\Inventory;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Models\SellermindAccountLink;
 use App\Models\ShipmentFbo;
 use App\Models\ShipmentItem;
@@ -24,6 +25,7 @@ class ProcessSellermindQueues extends Command
         'risment:stock',
         'risment:returns',
         'risment:link',
+        'risment:marketplace_confirm',
     ];
 
     public function handle(): int
@@ -74,6 +76,7 @@ class ProcessSellermindQueues extends Command
             'risment:stock' => $this->handleStockUpdate($data),
             'risment:returns' => $this->handleReturn($data),
             'risment:link' => $this->handleLinkConfirmation($data),
+            'risment:marketplace_confirm' => $this->handleMarketplaceConfirmation($data),
             default => Log::warning("Unknown queue: $queue"),
         };
     }
@@ -96,59 +99,112 @@ class ProcessSellermindQueues extends Command
      */
     private function handleOrder(array $data): void
     {
+        $event = $data['event'] ?? 'order.created';
+
+        match ($event) {
+            'order.created' => $this->createOrder($data),
+            'order.cancelled' => $this->cancelOrder($data),
+            default => Log::warning('Unknown order event: ' . $event),
+        };
+    }
+
+    private function createOrder(array $data): void
+    {
         $link = $this->resolveLink($data);
         if (!$link) {
             return;
         }
 
         $orderData = $data['data'] ?? [];
-        $sellermindOrderId = $data['sellermind_order_id'] ?? null;
+        $sellermindOrderId = $orderData['sellermind_order_id'] ?? null;
 
         // Check if already exists
         if ($sellermindOrderId) {
             $existing = ShipmentFbo::where('sellermind_order_id', $sellermindOrderId)->first();
             if ($existing) {
-                // Update status
-                $existing->update(['status' => $orderData['status'] ?? $existing->status]);
-                $this->info("Updated existing shipment #{$existing->id} for SellerMind order #{$sellermindOrderId}");
+                $this->info("Order already exists: shipment #{$existing->id}");
                 return;
             }
         }
 
-        DB::transaction(function () use ($link, $orderData, $sellermindOrderId) {
+        // Validate items — only include those with existing products in RISMENT
+        $validItems = collect($orderData['items'] ?? [])->filter(function ($item) use ($link) {
+            $productId = $item['risment_product_id'] ?? null;
+            if (!$productId) {
+                return false;
+            }
+            return Product::where('id', $productId)
+                ->where('company_id', $link->company_id)
+                ->exists();
+        });
+
+        if ($validItems->isEmpty()) {
+            Log::warning('Order rejected: no valid RISMENT products', [
+                'sellermind_order_id' => $sellermindOrderId,
+            ]);
+            return;
+        }
+
+        DB::transaction(function () use ($link, $orderData, $sellermindOrderId, $validItems) {
             $shipment = ShipmentFbo::create([
                 'company_id' => $link->company_id,
                 'marketplace' => $orderData['marketplace'] ?? 'unknown',
                 'warehouse_name' => $orderData['warehouse'] ?? '',
-                'planned_at' => now(),
+                'planned_at' => isset($orderData['shipping']['deadline'])
+                    ? $orderData['shipping']['deadline']
+                    : now(),
                 'status' => 'submitted',
                 'sellermind_order_id' => $sellermindOrderId,
                 'notes' => 'Auto-created from SellerMind order #' . $sellermindOrderId,
             ]);
 
-            foreach ($orderData['items'] ?? [] as $item) {
+            foreach ($validItems as $item) {
                 ShipmentItem::create([
                     'shipment_id' => $shipment->id,
                     'sku_id' => $item['sku_id'] ?? null,
-                    'qty' => $item['qty'] ?? 1,
+                    'product_variant_id' => $item['risment_variant_id'] ?? null,
+                    'item_name' => $item['name'] ?? null,
+                    'qty' => $item['quantity'] ?? $item['qty'] ?? 1,
+                    'price' => $item['price'] ?? null,
                 ]);
             }
 
-            // Record billable operation
-            $totalItems = collect($orderData['items'] ?? [])->sum('qty');
+            $totalItems = $validItems->sum(fn ($i) => $i['quantity'] ?? $i['qty'] ?? 1);
             BillableOperation::create([
                 'company_id' => $link->company_id,
                 'operation_type' => 'shipment',
                 'quantity' => max(1, $totalItems),
-                'unit_cost' => 0, // Will be calculated at billing time
+                'unit_cost' => 0,
                 'total_cost' => 0,
                 'source_type' => ShipmentFbo::class,
                 'source_id' => $shipment->id,
                 'operation_date' => now()->toDateString(),
             ]);
 
-            $this->info("Created shipment #{$shipment->id} from SellerMind order #{$sellermindOrderId}");
+            $this->info("Created shipment #{$shipment->id} from SellerMind order #{$sellermindOrderId} ({$validItems->count()} items)");
         });
+    }
+
+    private function cancelOrder(array $data): void
+    {
+        $link = $this->resolveLink($data);
+        if (!$link) {
+            return;
+        }
+
+        $sellermindOrderId = $data['data']['sellermind_order_id'] ?? null;
+        if (!$sellermindOrderId) {
+            return;
+        }
+
+        $shipment = ShipmentFbo::where('sellermind_order_id', $sellermindOrderId)
+            ->where('company_id', $link->company_id)
+            ->first();
+
+        if ($shipment && $shipment->status !== 'shipped') {
+            $shipment->update(['status' => 'cancelled']);
+            $this->info("Cancelled shipment #{$shipment->id} (SellerMind order #{$sellermindOrderId})");
+        }
     }
 
     /**
@@ -255,5 +311,31 @@ class ProcessSellermindQueues extends Command
         ]);
 
         $this->info("Account linked: company #{$link->company_id} ↔ SellerMind company #{$link->sellermind_company_id}");
+    }
+
+    /**
+     * Handle marketplace account confirmation from SellerMind.
+     */
+    private function handleMarketplaceConfirmation(array $data): void
+    {
+        $credentialId = $data['risment_credential_id'] ?? null;
+        $sellermindAccountId = $data['sellermind_account_id'] ?? null;
+
+        if (!$credentialId) {
+            return;
+        }
+
+        $credential = \App\Models\MarketplaceCredential::find($credentialId);
+        if (!$credential) {
+            Log::warning('Marketplace credential not found', ['id' => $credentialId]);
+            return;
+        }
+
+        $credential->update([
+            'sellermind_account_id' => $sellermindAccountId,
+            'synced_to_sellermind_at' => now(),
+        ]);
+
+        $this->info("Marketplace confirmed: credential #{$credentialId} → SellerMind account #{$sellermindAccountId}");
     }
 }
