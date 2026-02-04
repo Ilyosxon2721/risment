@@ -48,15 +48,17 @@ class PushProductToSellermind
             ];
         })->toArray();
 
+        $isUpdate = (bool) $product->sellermind_product_id;
+
         $payload = json_encode([
-            'action' => $product->sellermind_product_id ? 'update' : 'create',
+            'event' => $isUpdate ? 'product.updated' : 'product.created',
             'link_token' => $link->link_token,
-            'sellermind_company_id' => $link->sellermind_company_id,
-            'risment_product_id' => $product->id,
-            'sellermind_product_id' => $product->sellermind_product_id,
             'data' => [
-                'title' => $product->title,
+                'product_id' => $product->id,
+                'name' => $product->title,
                 'article' => $product->article,
+                'sku' => $product->variants->first()?->sku_code,
+                'barcode' => $product->variants->first()?->barcode,
                 'description' => $product->description,
                 'is_active' => $product->is_active,
                 'variants' => $variants,
