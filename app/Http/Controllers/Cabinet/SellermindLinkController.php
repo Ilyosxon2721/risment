@@ -11,6 +11,7 @@ class SellermindLinkController extends Controller
 {
     /**
      * Show integration status page.
+     * Auto-generates a pending token on first visit if none exists.
      */
     public function index(Request $request)
     {
@@ -21,17 +22,22 @@ class SellermindLinkController extends Controller
             ->orderByRaw("FIELD(status, 'active', 'pending')")
             ->first();
 
+        // Auto-generate token on first visit (no active/pending link)
+        if (!$link) {
+            $link = $this->createPendingLink($company);
+        }
+
         return view('cabinet.integrations.sellermind', compact('link'));
     }
 
     /**
-     * Generate link token and show linking instructions.
+     * Regenerate link token.
      */
     public function generateToken(Request $request)
     {
         $company = $request->attributes->get('currentCompany');
 
-        // Prevent duplicate active links
+        // Prevent regeneration if already actively linked
         $existing = SellermindAccountLink::where('company_id', $company->id)
             ->where('status', 'active')
             ->first();
@@ -41,33 +47,12 @@ class SellermindLinkController extends Controller
                 ->with('error', __('integrations.link_exists'));
         }
 
-        // Deactivate old pending tokens
+        // Deactivate old pending tokens, then create fresh one
         SellermindAccountLink::where('company_id', $company->id)
             ->where('status', 'pending')
             ->update(['status' => 'disabled']);
 
-        $link = SellermindAccountLink::create([
-            'company_id' => $company->id,
-            'link_token' => SellermindAccountLink::generateToken(),
-            'sync_products' => true,
-            'sync_orders' => true,
-            'sync_stock' => true,
-            'status' => 'pending',
-        ]);
-
-        // Push link request to SellerMind via Redis
-        try {
-            $payload = json_encode([
-                'action' => 'link_request',
-                'link_token' => $link->link_token,
-                'risment_company_id' => $company->id,
-                'risment_company_name' => $company->name,
-                'timestamp' => now()->toIso8601String(),
-            ]);
-            Redis::connection('integration')->rpush('sellermind:link', $payload);
-        } catch (\Exception $e) {
-            // Redis not available — link will work when SellerMind reads the token
-        }
+        $this->createPendingLink($company);
 
         return redirect()->route('cabinet.integrations.sellermind')
             ->with('success', __('integrations.token_generated'))
@@ -114,5 +99,36 @@ class SellermindLinkController extends Controller
 
         return redirect()->route('cabinet.integrations.sellermind')
             ->with('success', __('integrations.disconnected'));
+    }
+
+    /**
+     * Create a new pending link with generated token and push to Redis.
+     */
+    private function createPendingLink($company): SellermindAccountLink
+    {
+        $link = SellermindAccountLink::create([
+            'company_id' => $company->id,
+            'link_token' => SellermindAccountLink::generateToken(),
+            'sync_products' => true,
+            'sync_orders' => true,
+            'sync_stock' => true,
+            'status' => 'pending',
+        ]);
+
+        // Push link request to SellerMind via Redis
+        try {
+            $payload = json_encode([
+                'action' => 'link_request',
+                'link_token' => $link->link_token,
+                'risment_company_id' => $company->id,
+                'risment_company_name' => $company->name,
+                'timestamp' => now()->toIso8601String(),
+            ]);
+            Redis::connection('integration')->rpush('sellermind:link', $payload);
+        } catch (\Exception $e) {
+            // Redis not available — link will work when SellerMind reads the token
+        }
+
+        return $link;
     }
 }
