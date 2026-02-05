@@ -5,55 +5,71 @@
 @section('content')
 @php
     use App\Models\ContentBlock;
+    use App\Services\PricingService;
+
     $explanation = ContentBlock::getBlock('calculator', 'explanation');
+
+    // Load rates from database
+    $pricingService = app(PricingService::class);
+    $overageRates = $pricingService->getOverageRates();
+    $dimensionCategories = config('pricing.dimension_categories');
 @endphp
 
 <section class="py-16">
-    <div class="container-risment max-w-4xl">
+    <div class="container-risment max-w-5xl">
         <h1 class="text-h1 font-heading text-center mb-4">{{ __('Calculator') }}</h1>
-        
+
         @if($explanation)
         <p class="text-body-l text-text-muted text-center mb-12">{{ $explanation->getBody() }}</p>
         @endif
-        
+
         {{-- Input Form --}}
         <form method="POST" action="{{ route('calculator.calculate', ['locale' => app()->getLocale()]) }}" class="card mb-8">
             @csrf
-            
+
             {{-- FBS Delivery Size Breakdown --}}
             <div class="mb-6">
                 <h3 class="text-h3 font-heading mb-2">{{ __('Логистика FBS (сборка + доставка)') }}</h3>
                 <p class="text-body-s text-text-muted mb-4">{{ __('Укажите количество отправок по каждому размеру. Цена включает сборку заказа и довоз до ПВЗ маркетплейса.') }}</p>
-                
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div>
                         <label class="block text-body-m font-semibold mb-2">
-                            {{ __('МГТ (≤60 см)') }}
-                            <span class="text-brand ml-2">8 000 {{ __('сум/шт') }}</span>
+                            MICRO (≤{{ $dimensionCategories['micro']['max'] ?? 30 }} см)
+                            <span class="text-brand ml-2">{{ number_format($overageRates['shipments']['micro_fee'] ?? 4000, 0, '', ' ') }} {{ __('сум/шт') }}</span>
+                        </label>
+                        <input type="number" name="micro_count" class="input" value="{{ old('micro_count', $result['usage']['micro_count'] ?? 0) }}" min="0" required>
+                        <p class="text-body-s text-text-muted mt-1">{{ __('Мини посылки') }}</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-body-m font-semibold mb-2">
+                            {{ __('МГТ') }} ({{ $dimensionCategories['mgt']['min'] ?? 31 }}-{{ $dimensionCategories['mgt']['max'] ?? 60 }} см)
+                            <span class="text-brand ml-2">{{ number_format($overageRates['shipments']['mgt_fee'] ?? 8000, 0, '', ' ') }} {{ __('сум/шт') }}</span>
                         </label>
                         <input type="number" name="mgt_count" class="input" value="{{ old('mgt_count', $result['usage']['mgt_count'] ?? 0) }}" min="0" required>
-                        <p class="text-body-s text-text-muted mt-1">{{ __('Малые посылки') }} (Д+Ш+В ≤60)</p>
+                        <p class="text-body-s text-text-muted mt-1">{{ __('Малые посылки') }}</p>
                     </div>
-                    
+
                     <div>
                         <label class="block text-body-m font-semibold mb-2">
-                            {{ __('СГТ (61-120 см)') }}
-                            <span class="text-brand ml-2">15 000 {{ __('сум/шт') }}</span>
+                            {{ __('СГТ') }} ({{ $dimensionCategories['sgt']['min'] ?? 61 }}-{{ $dimensionCategories['sgt']['max'] ?? 120 }} см)
+                            <span class="text-brand ml-2">{{ number_format($overageRates['shipments']['sgt_fee'] ?? 15000, 0, '', ' ') }} {{ __('сум/шт') }}</span>
                         </label>
                         <input type="number" name="sgt_count" class="input" value="{{ old('sgt_count', $result['usage']['sgt_count'] ?? 0) }}" min="0" required>
-                        <p class="text-body-s text-text-muted mt-1">{{ __('Средние посылки') }} (Д+Ш+В 61-120)</p>
+                        <p class="text-body-s text-text-muted mt-1">{{ __('Средние посылки') }}</p>
                     </div>
-                    
+
                     <div>
                         <label class="block text-body-m font-semibold mb-2">
-                            {{ __('КГТ (>120 см)') }}
-                            <span class="text-brand ml-2">35 000 {{ __('сум/шт') }}</span>
+                            {{ __('КГТ') }} (>{{ $dimensionCategories['sgt']['max'] ?? 120 }} см)
+                            <span class="text-brand ml-2">{{ number_format($overageRates['shipments']['kgt_fee'] ?? 35000, 0, '', ' ') }} {{ __('сум/шт') }}</span>
                         </label>
                         <input type="number" name="kgt_count" class="input" value="{{ old('kgt_count', $result['usage']['kgt_count'] ?? 0) }}" min="0" required>
-                        <p class="text-body-s text-text-muted mt-1">{{ __('Крупные посылки') }} (Д+Ш+В >120)</p>
+                        <p class="text-body-s text-text-muted mt-1">{{ __('Крупные посылки') }}</p>
                     </div>
                 </div>
-                
+
                 <p class="text-body-s text-text-muted mt-3">
                     💡 {{ __('Д+Ш+В = длина + ширина + высота в см. Цена уже включает сборку заказа и доставку до склада маркетплейса.') }}
                 </p>
@@ -114,16 +130,17 @@
                 <div class="flex-1">
                     <h3 class="text-h4 font-heading mb-2">{{ __('Ваши объемы в месяц') }}</h3>
                     <div class="space-y-1 text-body-m">
-                        <p><strong>{{ $result['usage']['total_shipments'] }} {{ __('FBS отправлений') }}</strong> 
-                            @if($result['usage']['mgt_count'] > 0)
-                                ({{ $result['usage']['mgt_count'] }} МГТ
+                        <p><strong>{{ $result['usage']['total_shipments'] }} {{ __('FBS отправлений') }}</strong>
+                            @php
+                                $parts = [];
+                                if (($result['usage']['micro_count'] ?? 0) > 0) $parts[] = $result['usage']['micro_count'] . ' MICRO';
+                                if ($result['usage']['mgt_count'] > 0) $parts[] = $result['usage']['mgt_count'] . ' МГТ';
+                                if ($result['usage']['sgt_count'] > 0) $parts[] = $result['usage']['sgt_count'] . ' СГТ';
+                                if ($result['usage']['kgt_count'] > 0) $parts[] = $result['usage']['kgt_count'] . ' КГТ';
+                            @endphp
+                            @if(count($parts) > 0)
+                                ({{ implode(', ', $parts) }})
                             @endif
-                            @if($result['usage']['sgt_count'] > 0)
-                                @if($result['usage']['mgt_count'] > 0), @endif {{ $result['usage']['sgt_count'] }} СГТ
-                            @endif
-                            @if($result['usage']['kgt_count'] > 0)
-                                @if($result['usage']['mgt_count'] > 0 || $result['usage']['sgt_count'] > 0), @endif {{ $result['usage']['kgt_count'] }} КГТ
-                            @endif)
                         </p>
                         @if($result['usage']['storage_box_days'] > 0 || $result['usage']['storage_bag_days'] > 0)
                         <p><strong>{{ __('Хранение:') }}</strong> {{ $result['usage']['storage_box_days'] }} {{ __('короб-дней') }} + {{ $result['usage']['storage_bag_days'] }} {{ __('мешок-дней') }}</p>
@@ -393,20 +410,27 @@
                 @else
                 {{-- Per-unit detailed breakdown --}}
                 <div class="space-y-3">
+                    @if(($perUnitOption['breakdown']['micro']['count'] ?? 0) > 0)
+                    <div class="flex justify-between items-center">
+                        <span>MICRO: {{ $perUnitOption['breakdown']['micro']['count'] }} × {{ number_format($perUnitOption['breakdown']['micro']['rate_per_shipment'], 0, '', ' ') }} {{ __('сум') }}</span>
+                        <span class="font-semibold">{{ number_format($perUnitOption['breakdown']['micro']['total'], 0, '', ' ') }} {{ __('сум') }}</span>
+                    </div>
+                    @endif
+
                     @if($perUnitOption['breakdown']['mgt']['count'] > 0)
                     <div class="flex justify-between items-center">
                         <span>МГТ: {{ $perUnitOption['breakdown']['mgt']['count'] }} × {{ number_format($perUnitOption['breakdown']['mgt']['rate_per_shipment'], 0, '', ' ') }} {{ __('сум') }}</span>
                         <span class="font-semibold">{{ number_format($perUnitOption['breakdown']['mgt']['total'], 0, '', ' ') }} {{ __('сум') }}</span>
                     </div>
                     @endif
-                    
+
                     @if($perUnitOption['breakdown']['sgt']['count'] > 0)
                     <div class="flex justify-between items-center">
                         <span>СГТ: {{ $perUnitOption['breakdown']['sgt']['count'] }} × {{ number_format($perUnitOption['breakdown']['sgt']['rate_per_shipment'], 0, '', ' ') }} {{ __('сум') }}</span>
                         <span class="font-semibold">{{ number_format($perUnitOption['breakdown']['sgt']['total'], 0, '', ' ') }} {{ __('сум') }}</span>
                     </div>
                     @endif
-                    
+
                     @if($perUnitOption['breakdown']['kgt']['count'] > 0)
                     <div class="flex justify-between items-center">
                         <span>КГТ: {{ $perUnitOption['breakdown']['kgt']['count'] }} × {{ number_format($perUnitOption['breakdown']['kgt']['rate_per_shipment'], 0, '', ' ') }} {{ __('сум') }}</span>

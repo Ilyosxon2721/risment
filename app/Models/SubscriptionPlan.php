@@ -133,52 +133,63 @@ class SubscriptionPlan extends Model
      * Storage is calculated per day
      */
     public function calculateOverage(
-        int $mgtCount, 
-        int $sgtCount, 
-        int $kgtCount, 
-        int $storageBoxDays, 
-        int $storageBagDays, 
-        int $inboundBoxes
+        int $mgtCount,
+        int $sgtCount,
+        int $kgtCount,
+        int $storageBoxDays,
+        int $storageBagDays,
+        int $inboundBoxes,
+        int $microCount = 0
     ): array {
         $totalOverage = 0;
         $breakdown = [];
 
-        $totalShipments = $mgtCount + $sgtCount + $kgtCount;
+        $totalShipments = $microCount + $mgtCount + $sgtCount + $kgtCount;
 
         // FBS shipments overage by size
-        // Apply included shipments to benefit client: MGT first, then SGT, then KGT
+        // Apply included shipments to benefit client: MICRO first, then MGT, SGT, KGT
         if (!$this->is_custom && $this->fbs_shipments_included && $totalShipments > $this->fbs_shipments_included) {
             $remainingIncluded = $this->fbs_shipments_included;
-            
-            // Apply to MGT first
+
+            // Apply to MICRO first (cheapest)
+            $microIncluded = min($microCount, $remainingIncluded);
+            $microOver = $microCount - $microIncluded;
+            $remainingIncluded -= $microIncluded;
+
+            // Apply to MGT
             $mgtIncluded = min($mgtCount, $remainingIncluded);
             $mgtOver = $mgtCount - $mgtIncluded;
             $remainingIncluded -= $mgtIncluded;
-            
+
             // Apply remaining to SGT
             $sgtIncluded = min($sgtCount, $remainingIncluded);
             $sgtOver = $sgtCount - $sgtIncluded;
             $remainingIncluded -= $sgtIncluded;
-            
+
             // Apply remaining to KGT
             $kgtIncluded = min($kgtCount, $remainingIncluded);
             $kgtOver = $kgtCount - $kgtIncluded;
-            
+
+            // Get MICRO overage fee from PricingService
+            $microFeeRate = $this->over_fbs_micro_fee ?? app(\App\Services\PricingService::class)->getOverageRates()['shipments']['micro_fee'] ?? 4000;
+
             // Calculate overage fees using base rates (NO surcharge)
-            // Overage fee = Pick&Pack (first) + Delivery
+            $microFee = $microOver * $microFeeRate;
             $mgtFee = $mgtOver * $this->over_fbs_mgt_fee;
             $sgtFee = $sgtOver * $this->over_fbs_sgt_fee;
             $kgtFee = $kgtOver * $this->over_fbs_kgt_fee;
-            
-            $totalShipmentFee = $mgtFee + $sgtFee + $kgtFee;
-            
+
+            $totalShipmentFee = $microFee + $mgtFee + $sgtFee + $kgtFee;
+
             if ($totalShipmentFee > 0) {
                 $breakdown['shipments'] = [
-                    'total_over' => $mgtOver + $sgtOver + $kgtOver,
+                    'total_over' => $microOver + $mgtOver + $sgtOver + $kgtOver,
+                    'micro' => ['count' => $microOver, 'fee' => $microFee],
                     'mgt' => ['count' => $mgtOver, 'fee' => $mgtFee],
                     'sgt' => ['count' => $sgtOver, 'fee' => $sgtFee],
                     'kgt' => ['count' => $kgtOver, 'fee' => $kgtFee],
                     'fee' => $totalShipmentFee,
+                    'total' => $totalShipmentFee,
                 ];
                 $totalOverage += $totalShipmentFee;
             }

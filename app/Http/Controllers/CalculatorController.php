@@ -26,6 +26,7 @@ class CalculatorController extends Controller
     public function calculate(Request $request)
     {
         $validated = $request->validate([
+            'micro_count' => 'required|integer|min:0',
             'mgt_count' => 'required|integer|min:0',
             'sgt_count' => 'required|integer|min:0',
             'kgt_count' => 'required|integer|min:0',
@@ -46,15 +47,17 @@ class CalculatorController extends Controller
             $validated['storage_box_days'],
             $validated['storage_bag_days'],
             $validated['inbound_boxes'],
-            $avgItemsPerOrder
+            $avgItemsPerOrder,
+            $validated['micro_count']
         );
-        
+
         $result = [
             'usage' => [
+                'micro_count' => $validated['micro_count'],
                 'mgt_count' => $validated['mgt_count'],
                 'sgt_count' => $validated['sgt_count'],
                 'kgt_count' => $validated['kgt_count'],
-                'total_shipments' => $validated['mgt_count'] + $validated['sgt_count'] + $validated['kgt_count'],
+                'total_shipments' => $validated['micro_count'] + $validated['mgt_count'] + $validated['sgt_count'] + $validated['kgt_count'],
                 'storage_box_days' => $validated['storage_box_days'],
                 'storage_bag_days' => $validated['storage_bag_days'],
                 'inbound_boxes' => $validated['inbound_boxes'],
