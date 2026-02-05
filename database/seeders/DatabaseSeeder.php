@@ -100,6 +100,7 @@ class DatabaseSeeder extends Seeder
             BundleDiscountSeeder::class,
             PricingRateSeeder::class,
             AttributeCatalogSeeder::class,
+            ServiceAddonsSeeder::class,
         ]);
     }
 }

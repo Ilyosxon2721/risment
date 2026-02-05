@@ -7,8 +7,11 @@ use App\Models\BillableOperation;
 use App\Models\BillingBalance;
 use App\Models\BillingBalanceTransaction;
 use App\Models\BillingInvoice;
+use App\Models\BillingItem;
 use App\Models\BillingSubscription;
 use App\Models\SellermindAccountLink;
+use App\Models\ServiceAddon;
+use App\Services\AddonService;
 use App\Services\BillingCalculator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -141,5 +144,53 @@ class BillingReportController extends Controller
             'receiving' => $receivingCosts,
             'returns' => $returnCosts,
         ];
+    }
+
+    /**
+     * Billing items (additional services charges) page.
+     */
+    public function charges(Request $request, AddonService $addonService)
+    {
+        $company = $request->attributes->get('currentCompany');
+
+        // Period filter (default to current month)
+        $period = $request->get('period', now()->format('Y-m'));
+
+        // Scope filter
+        $scopeFilter = $request->get('scope');
+
+        // Get billing summary grouped by scope
+        $summary = $addonService->getBillingSummary($company->id, $period);
+
+        // Get detailed items with pagination
+        $query = BillingItem::forCompany($company->id)
+            ->forPeriod($period)
+            ->orderBy('scope')
+            ->orderByDesc('billed_at');
+
+        if ($scopeFilter && $scopeFilter !== 'all') {
+            $query->byScope($scopeFilter);
+        }
+
+        $items = $query->paginate(20)->appends($request->query());
+
+        // Get available periods (last 12 months)
+        $periods = [];
+        for ($i = 0; $i < 12; $i++) {
+            $date = now()->subMonths($i);
+            $periods[$date->format('Y-m')] = $date->translatedFormat('F Y');
+        }
+
+        // Scope options for filter
+        $scopeOptions = ServiceAddon::getScopeOptions();
+
+        return view('cabinet.billing.charges', compact(
+            'summary',
+            'items',
+            'period',
+            'periods',
+            'scopeFilter',
+            'scopeOptions'
+        ));
     }
 }
