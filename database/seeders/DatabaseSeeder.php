@@ -99,6 +99,7 @@ class DatabaseSeeder extends Seeder
             MarketplaceServiceSeeder::class,
             BundleDiscountSeeder::class,
             PricingRateSeeder::class,
+            RismentRatesSeeder::class, // Updates/adds MICRO rates
             AttributeCatalogSeeder::class,
             ServiceAddonsSeeder::class,
         ]);
