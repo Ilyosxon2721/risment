@@ -7,10 +7,23 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BillingItem extends Model
 {
+    // Status constants
+    public const STATUS_ACCRUED = 'accrued';
+    public const STATUS_VOID = 'void';
+    public const STATUS_INVOICED = 'invoiced';
+
+    // Source types
+    public const SOURCE_INBOUND = 'inbound';
+    public const SOURCE_SHIPMENT = 'shipment';
+    public const SOURCE_RETURN = 'return';
+    public const SOURCE_STORAGE_DAILY = 'storage_daily';
+    public const SOURCE_MANUAL = 'manual';
+
     protected $fillable = [
         'company_id',
         'period',
         'billed_at',
+        'occurred_at',
         'scope',
         'source_type',
         'source_id',
@@ -20,15 +33,25 @@ class BillingItem extends Model
         'unit_price',
         'qty',
         'amount',
+        'status',
+        'invoice_id',
+        'idempotency_key',
         'comment',
+        'meta',
         'created_by',
     ];
 
     protected $casts = [
         'billed_at' => 'datetime',
+        'occurred_at' => 'datetime',
         'unit_price' => 'integer',
         'qty' => 'decimal:2',
         'amount' => 'integer',
+        'meta' => 'array',
+    ];
+
+    protected $attributes = [
+        'status' => self::STATUS_ACCRUED,
     ];
 
     public function company(): BelongsTo
@@ -46,10 +69,35 @@ class BillingItem extends Model
         return $this->belongsTo(ServiceAddon::class, 'addon_code', 'code');
     }
 
+    public function invoice(): BelongsTo
+    {
+        return $this->belongsTo(BillingInvoice::class, 'invoice_id');
+    }
+
     public function getTitle(): string
     {
         $locale = app()->getLocale();
         return $locale === 'uz' ? $this->title_uz : $this->title_ru;
+    }
+
+    /**
+     * Generate idempotency key to prevent duplicate billing
+     */
+    public static function generateIdempotencyKey(string $sourceType, ?int $sourceId, ?string $addonCode = null, ?string $suffix = null): string
+    {
+        $parts = [$sourceType, $sourceId ?? 'null', $addonCode ?? 'base'];
+        if ($suffix) {
+            $parts[] = $suffix;
+        }
+        return implode(':', $parts);
+    }
+
+    /**
+     * Check if a billing item already exists (idempotency check)
+     */
+    public static function exists(string $idempotencyKey): bool
+    {
+        return self::where('idempotency_key', $idempotencyKey)->exists();
     }
 
     /**
@@ -63,12 +111,22 @@ class BillingItem extends Model
         ?string $sourceType = null,
         ?int $sourceId = null,
         ?string $comment = null,
-        ?int $createdBy = null
+        ?int $createdBy = null,
+        ?array $meta = null,
+        ?\DateTimeInterface $occurredAt = null
     ): self {
+        $idempotencyKey = self::generateIdempotencyKey($sourceType ?? 'addon', $sourceId, $addon->code);
+
+        // Check idempotency
+        if (self::exists($idempotencyKey)) {
+            return self::where('idempotency_key', $idempotencyKey)->first();
+        }
+
         return self::create([
             'company_id' => $companyId,
             'period' => now()->format('Y-m'),
             'billed_at' => now(),
+            'occurred_at' => $occurredAt ?? now(),
             'scope' => $addon->scope,
             'source_type' => $sourceType,
             'source_id' => $sourceId,
@@ -78,7 +136,10 @@ class BillingItem extends Model
             'unit_price' => $unitPrice,
             'qty' => $qty,
             'amount' => (int) round($unitPrice * $qty),
+            'status' => self::STATUS_ACCRUED,
+            'idempotency_key' => $idempotencyKey,
             'comment' => $comment,
+            'meta' => $meta,
             'created_by' => $createdBy ?? auth()->id(),
         ]);
     }
@@ -94,46 +155,125 @@ class BillingItem extends Model
         int $unitPrice,
         float $qty,
         ?string $comment = null,
-        ?int $createdBy = null
+        ?int $createdBy = null,
+        ?array $meta = null
     ): self {
         return self::create([
             'company_id' => $companyId,
             'period' => now()->format('Y-m'),
             'billed_at' => now(),
+            'occurred_at' => now(),
             'scope' => $scope,
+            'source_type' => self::SOURCE_MANUAL,
             'addon_code' => null,
             'title_ru' => $titleRu,
             'title_uz' => $titleUz,
             'unit_price' => $unitPrice,
             'qty' => $qty,
             'amount' => (int) round($unitPrice * $qty),
+            'status' => self::STATUS_ACCRUED,
             'comment' => $comment,
+            'meta' => $meta,
             'created_by' => $createdBy ?? auth()->id(),
         ]);
     }
 
     /**
-     * Scope: by company
+     * Create accrual with idempotency check
      */
+    public static function accrue(
+        int $companyId,
+        string $scope,
+        string $titleRu,
+        string $titleUz,
+        int $unitPrice,
+        float $qty,
+        string $sourceType,
+        ?int $sourceId = null,
+        ?string $addonCode = null,
+        ?string $comment = null,
+        ?array $meta = null,
+        ?string $idempotencySuffix = null,
+        ?\DateTimeInterface $occurredAt = null
+    ): ?self {
+        $idempotencyKey = self::generateIdempotencyKey($sourceType, $sourceId, $addonCode, $idempotencySuffix);
+
+        // Check idempotency
+        if (self::exists($idempotencyKey)) {
+            return null;
+        }
+
+        return self::create([
+            'company_id' => $companyId,
+            'period' => now()->format('Y-m'),
+            'billed_at' => now(),
+            'occurred_at' => $occurredAt ?? now(),
+            'scope' => $scope,
+            'source_type' => $sourceType,
+            'source_id' => $sourceId,
+            'addon_code' => $addonCode,
+            'title_ru' => $titleRu,
+            'title_uz' => $titleUz,
+            'unit_price' => $unitPrice,
+            'qty' => $qty,
+            'amount' => (int) round($unitPrice * $qty),
+            'status' => self::STATUS_ACCRUED,
+            'idempotency_key' => $idempotencyKey,
+            'comment' => $comment,
+            'meta' => $meta,
+            'created_by' => auth()->id(),
+        ]);
+    }
+
+    /**
+     * Void this billing item
+     */
+    public function void(): bool
+    {
+        if ($this->status === self::STATUS_INVOICED) {
+            return false; // Cannot void invoiced items
+        }
+
+        $this->update(['status' => self::STATUS_VOID]);
+        return true;
+    }
+
+    /**
+     * Mark as invoiced
+     */
+    public function markInvoiced(int $invoiceId): void
+    {
+        $this->update([
+            'status' => self::STATUS_INVOICED,
+            'invoice_id' => $invoiceId,
+        ]);
+    }
+
+    // Scopes
+
     public function scopeForCompany($query, int $companyId)
     {
         return $query->where('company_id', $companyId);
     }
 
-    /**
-     * Scope: by period (YYYY-MM)
-     */
     public function scopeForPeriod($query, string $period)
     {
         return $query->where('period', $period);
     }
 
-    /**
-     * Scope: by scope type
-     */
     public function scopeByScope($query, string $scope)
     {
         return $query->where('scope', $scope);
+    }
+
+    public function scopeAccrued($query)
+    {
+        return $query->where('status', self::STATUS_ACCRUED);
+    }
+
+    public function scopeNotVoid($query)
+    {
+        return $query->where('status', '!=', self::STATUS_VOID);
     }
 
     /**
@@ -143,6 +283,7 @@ class BillingItem extends Model
     {
         return self::forCompany($companyId)
             ->forPeriod($period)
+            ->notVoid()
             ->selectRaw('scope, SUM(amount) as total')
             ->groupBy('scope')
             ->pluck('total', 'scope')
