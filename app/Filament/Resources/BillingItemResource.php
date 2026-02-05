@@ -4,15 +4,18 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\BillingItemResource\Pages;
 use App\Models\BillingItem;
+use App\Models\BillingInvoice;
 use App\Models\Company;
 use App\Models\ServiceAddon;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 
 class BillingItemResource extends Resource
 {
@@ -20,7 +23,7 @@ class BillingItemResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-banknotes';
 
-    protected static ?string $navigationLabel = 'Начисления';
+    protected static ?string $navigationLabel = 'Начисления (Ledger)';
 
     protected static ?string $modelLabel = 'начисление';
 
@@ -54,8 +57,19 @@ class BillingItemResource extends Resource
                             ->placeholder('YYYY-MM')
                             ->maxLength(7)
                             ->default(fn () => now()->format('Y-m')),
+
+                        Forms\Components\Select::make('status')
+                            ->label('Статус')
+                            ->options([
+                                BillingItem::STATUS_ACCRUED => 'Начислено',
+                                BillingItem::STATUS_INVOICED => 'В счёте',
+                                BillingItem::STATUS_VOID => 'Аннулировано',
+                            ])
+                            ->default(BillingItem::STATUS_ACCRUED)
+                            ->disabled()
+                            ->dehydrated(true),
                     ])
-                    ->columns(3),
+                    ->columns(4),
 
                 Forms\Components\Section::make('Привязка')
                     ->schema([
@@ -84,10 +98,17 @@ class BillingItemResource extends Resource
                                 }
                             }),
 
-                        Forms\Components\TextInput::make('source_type')
+                        Forms\Components\Select::make('source_type')
                             ->label('Тип источника')
-                            ->placeholder('shipment, inbound, return')
-                            ->maxLength(50),
+                            ->options([
+                                BillingItem::SOURCE_INBOUND => 'Приёмка',
+                                BillingItem::SOURCE_SHIPMENT => 'Отправка',
+                                BillingItem::SOURCE_RETURN => 'Возврат',
+                                BillingItem::SOURCE_STORAGE_DAILY => 'Хранение (авто)',
+                                BillingItem::SOURCE_MANUAL => 'Ручное',
+                            ])
+                            ->default(BillingItem::SOURCE_MANUAL)
+                            ->native(false),
 
                         Forms\Components\TextInput::make('source_id')
                             ->label('ID источника')
@@ -150,8 +171,8 @@ class BillingItemResource extends Resource
                             ->label('Комментарий')
                             ->rows(2),
 
-                        Forms\Components\DateTimePicker::make('billed_at')
-                            ->label('Дата начисления')
+                        Forms\Components\DateTimePicker::make('occurred_at')
+                            ->label('Дата события')
                             ->default(now())
                             ->native(false),
                     ])
@@ -175,6 +196,22 @@ class BillingItemResource extends Resource
                     ->sortable()
                     ->badge()
                     ->color(fn (string $state) => $state === $currentPeriod ? 'success' : 'gray'),
+
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Статус')
+                    ->badge()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        BillingItem::STATUS_ACCRUED => 'Начислено',
+                        BillingItem::STATUS_INVOICED => 'В счёте',
+                        BillingItem::STATUS_VOID => 'Аннулировано',
+                        default => $state,
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        BillingItem::STATUS_ACCRUED => 'warning',
+                        BillingItem::STATUS_INVOICED => 'success',
+                        BillingItem::STATUS_VOID => 'danger',
+                        default => 'gray',
+                    }),
 
                 Tables\Columns\TextColumn::make('scope')
                     ->label('Категория')
@@ -211,13 +248,37 @@ class BillingItemResource extends Resource
                     ->sortable()
                     ->summarize(Tables\Columns\Summarizers\Sum::make()->money('UZS', locale: 'ru')),
 
+                Tables\Columns\TextColumn::make('source_type')
+                    ->label('Источник')
+                    ->badge()
+                    ->formatStateUsing(fn (?string $state): string => match ($state) {
+                        BillingItem::SOURCE_INBOUND => 'Приёмка',
+                        BillingItem::SOURCE_SHIPMENT => 'Отправка',
+                        BillingItem::SOURCE_RETURN => 'Возврат',
+                        BillingItem::SOURCE_STORAGE_DAILY => 'Хранение',
+                        BillingItem::SOURCE_MANUAL => 'Ручное',
+                        default => $state ?? '-',
+                    })
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                Tables\Columns\TextColumn::make('invoice.invoice_number')
+                    ->label('Счёт')
+                    ->url(fn (BillingItem $record): ?string =>
+                        $record->invoice_id
+                            ? BillingInvoiceResource::getUrl('view', ['record' => $record->invoice_id])
+                            : null
+                    )
+                    ->badge()
+                    ->color('info')
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 Tables\Columns\TextColumn::make('addon_code')
                     ->label('Код услуги')
                     ->badge()
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                Tables\Columns\TextColumn::make('billed_at')
-                    ->label('Дата')
+                Tables\Columns\TextColumn::make('occurred_at')
+                    ->label('Дата события')
                     ->dateTime('d.m.Y H:i')
                     ->sortable(),
 
@@ -245,20 +306,77 @@ class BillingItemResource extends Resource
                     })
                     ->default(now()->format('Y-m')),
 
+                Tables\Filters\SelectFilter::make('status')
+                    ->label('Статус')
+                    ->options([
+                        BillingItem::STATUS_ACCRUED => 'Начислено',
+                        BillingItem::STATUS_INVOICED => 'В счёте',
+                        BillingItem::STATUS_VOID => 'Аннулировано',
+                    ]),
+
                 Tables\Filters\SelectFilter::make('scope')
                     ->label('Категория')
                     ->options(ServiceAddon::getScopeOptions()),
+
+                Tables\Filters\SelectFilter::make('source_type')
+                    ->label('Источник')
+                    ->options([
+                        BillingItem::SOURCE_INBOUND => 'Приёмка',
+                        BillingItem::SOURCE_SHIPMENT => 'Отправка',
+                        BillingItem::SOURCE_RETURN => 'Возврат',
+                        BillingItem::SOURCE_STORAGE_DAILY => 'Хранение',
+                        BillingItem::SOURCE_MANUAL => 'Ручное',
+                    ]),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->visible(fn (BillingItem $record): bool =>
+                        $record->status === BillingItem::STATUS_ACCRUED),
+                Tables\Actions\Action::make('void')
+                    ->label('Аннулировать')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->modalHeading('Аннулировать начисление?')
+                    ->modalDescription('Это действие нельзя отменить. Начисление будет исключено из счёта.')
+                    ->visible(fn (BillingItem $record): bool =>
+                        $record->status === BillingItem::STATUS_ACCRUED)
+                    ->action(function (BillingItem $record): void {
+                        $record->void();
+                        Notification::make()
+                            ->title('Начисление аннулировано')
+                            ->success()
+                            ->send();
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\BulkAction::make('void_selected')
+                        ->label('Аннулировать выбранные')
+                        ->icon('heroicon-o-x-circle')
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->modalHeading('Аннулировать выбранные начисления?')
+                        ->deselectRecordsAfterCompletion()
+                        ->action(function (Collection $records): void {
+                            $voided = 0;
+                            foreach ($records as $record) {
+                                if ($record->status === BillingItem::STATUS_ACCRUED) {
+                                    $record->void();
+                                    $voided++;
+                                }
+                            }
+                            Notification::make()
+                                ->title("Аннулировано: {$voided}")
+                                ->success()
+                                ->send();
+                        }),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->visible(fn (): bool => auth()->user()?->hasRole('admin')),
                 ]),
             ])
-            ->defaultSort('billed_at', 'desc');
+            ->defaultSort('occurred_at', 'desc');
     }
 
     public static function getRelations(): array
@@ -273,6 +391,7 @@ class BillingItemResource extends Resource
         return [
             'index' => Pages\ListBillingItems::route('/'),
             'create' => Pages\CreateBillingItem::route('/create'),
+            'view' => Pages\ViewBillingItem::route('/{record}'),
             'edit' => Pages\EditBillingItem::route('/{record}/edit'),
         ];
     }

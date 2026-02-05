@@ -13,6 +13,7 @@ use App\Models\SellermindAccountLink;
 use App\Models\ServiceAddon;
 use App\Services\AddonService;
 use App\Services\BillingCalculator;
+use App\Services\BillingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
@@ -21,7 +22,7 @@ class BillingReportController extends Controller
     /**
      * Billing dashboard — summary report.
      */
-    public function index(Request $request, BillingCalculator $calculator)
+    public function index(Request $request, BillingCalculator $calculator, BillingService $billingService)
     {
         $company = $request->attributes->get('currentCompany');
         $companyId = $company->id;
@@ -35,12 +36,26 @@ class BillingReportController extends Controller
             ->with('billingPlan')
             ->first();
 
-        // Current period estimate
+        // Current period estimate from legacy calculator
         $estimate = $calculator->getCurrentPeriodEstimate($companyId);
+
+        // NEW: Get current month summary from billing_items ledger
+        $ledgerSummary = $billingService->getCurrentMonthSummary($companyId);
+
+        // Merge ledger totals into estimate if available
+        if ($ledgerSummary['grand_total'] > 0) {
+            $estimate['ledger_total'] = $ledgerSummary['grand_total'];
+            $estimate['ledger_by_scope'] = $ledgerSummary['totals_by_scope'];
+            $estimate['ledger_item_count'] = $ledgerSummary['item_count'];
+
+            // Update totals from ledger if more accurate
+            $estimate['total'] = max($estimate['total'] ?? 0, $ledgerSummary['grand_total']);
+        }
 
         // Recent invoices
         $recentInvoices = BillingInvoice::where('company_id', $companyId)
             ->orderByDesc('issue_date')
+            ->orderByDesc('created_at')
             ->take(10)
             ->get();
 
@@ -62,6 +77,7 @@ class BillingReportController extends Controller
             'billingBalance',
             'subscription',
             'estimate',
+            'ledgerSummary',
             'recentInvoices',
             'recentTransactions',
             'chartData',
@@ -159,14 +175,15 @@ class BillingReportController extends Controller
         // Scope filter
         $scopeFilter = $request->get('scope');
 
-        // Get billing summary grouped by scope
+        // Get billing summary grouped by scope (excluding void items)
         $summary = $addonService->getBillingSummary($company->id, $period);
 
-        // Get detailed items with pagination
+        // Get detailed items with pagination (exclude void items)
         $query = BillingItem::forCompany($company->id)
             ->forPeriod($period)
+            ->notVoid()
             ->orderBy('scope')
-            ->orderByDesc('billed_at');
+            ->orderByDesc('occurred_at');
 
         if ($scopeFilter && $scopeFilter !== 'all') {
             $query->byScope($scopeFilter);
