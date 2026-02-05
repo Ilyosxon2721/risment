@@ -220,11 +220,13 @@ class PricingService
         int $kgtCount,
         int $storageBoxDays,
         int $storageBagDays,
-        int $inboundBoxes
+        int $inboundBoxes,
+        int $microCount = 0
     ): array {
         $overage = $plan->calculateOverage(
             $mgtCount, $sgtCount, $kgtCount,
-            $storageBoxDays, $storageBagDays, $inboundBoxes
+            $storageBoxDays, $storageBagDays, $inboundBoxes,
+            $microCount
         );
         
         $monthlyFee = $plan->price_month;
@@ -248,15 +250,17 @@ class PricingService
         int $storageBoxDays,
         int $storageBagDays,
         int $inboundBoxes,
-        float $avgItemsPerOrder = 1.0
+        float $avgItemsPerOrder = 1.0,
+        int $microCount = 0
     ): array {
         $comparisons = [];
-        
+
         // Per-unit option
         $perUnit = $this->calculatePerUnit(
             $mgtCount, $sgtCount, $kgtCount,
             $storageBoxDays, $storageBagDays, $inboundBoxes,
-            $avgItemsPerOrder
+            $avgItemsPerOrder,
+            $microCount
         );
         
         $comparisons[] = [
@@ -276,7 +280,8 @@ class PricingService
         foreach ($plans as $plan) {
             $planCost = $this->calculatePlanCost(
                 $plan, $mgtCount, $sgtCount, $kgtCount,
-                $storageBoxDays, $storageBagDays, $inboundBoxes
+                $storageBoxDays, $storageBagDays, $inboundBoxes,
+                $microCount
             );
             
             $comparisons[] = [
