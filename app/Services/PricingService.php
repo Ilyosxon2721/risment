@@ -39,9 +39,9 @@ class PricingService
 
     /**
      * Determine dimension category from L+W+H sum
-     * 
+     *
      * @param int $dimensions Sum of length + width + height in cm
-     * @return string 'mgt', 'sgt', or 'kgt'
+     * @return string 'micro', 'mgt', 'sgt', or 'kgt'
      */
     public function getDimensionCategory(int $dimensions): string
     {
@@ -58,7 +58,7 @@ class PricingService
 
     /**
      * Calculate per-unit (razoviy tarif) pricing with surcharge
-     * 
+     *
      * @param int $mgtCount Number of MGT shipments
      * @param int $sgtCount Number of SGT shipments
      * @param int $kgtCount Number of KGT shipments
@@ -66,6 +66,7 @@ class PricingService
      * @param int $storageBagDays Bag-days of storage
      * @param int $inboundBoxes Number of inbound boxes
      * @param float $avgItemsPerOrder Average items per order (default 1)
+     * @param int $microCount Number of MICRO shipments
      * @return array
      */
     public function calculatePerUnit(
@@ -75,31 +76,34 @@ class PricingService
         int $storageBoxDays = 0,
         int $storageBagDays = 0,
         int $inboundBoxes = 0,
-        float $avgItemsPerOrder = 1.0
+        float $avgItemsPerOrder = 1.0,
+        int $microCount = 0
     ): array {
-        $totalShipments = $mgtCount + $sgtCount + $kgtCount;
-        
+        $totalShipments = $microCount + $mgtCount + $sgtCount + $kgtCount;
+
         // Determine surcharge tier
         $surcharge = $this->getSurchargeRate($totalShipments);
-        
+
         // Calculate operational fees per category
+        $microOperational = $this->calculateCategoryOperational('micro', $microCount, $avgItemsPerOrder, $surcharge);
         $mgtOperational = $this->calculateCategoryOperational('mgt', $mgtCount, $avgItemsPerOrder, $surcharge);
         $sgtOperational = $this->calculateCategoryOperational('sgt', $sgtCount, $avgItemsPerOrder, $surcharge);
         $kgtOperational = $this->calculateCategoryOperational('kgt', $kgtCount, $avgItemsPerOrder, $surcharge);
-        
-        $fbsTotal = $mgtOperational['total'] + $sgtOperational['total'] + $kgtOperational['total'];
-        
+
+        $fbsTotal = $microOperational['total'] + $mgtOperational['total'] + $sgtOperational['total'] + $kgtOperational['total'];
+
         // Storage and inbound (NO surcharge)
         $storageBoxRate = $this->getRate('STORAGE_BOX_DAY');
         $storageBagRate = $this->getRate('STORAGE_BAG_DAY');
         $storageCost = ($storageBoxDays * $storageBoxRate) + ($storageBagDays * $storageBagRate);
-        
+
         $inboundRate = $this->getRate('INBOUND_BOX');
         $inboundCost = $inboundBoxes * $inboundRate;
-        
+
         $total = $fbsTotal + $storageCost + $inboundCost;
-        
+
         return [
+            'micro' => $microOperational,
             'mgt' => $mgtOperational,
             'sgt' => $sgtOperational,
             'kgt' => $kgtOperational,
@@ -311,26 +315,29 @@ class PricingService
     /**
      * Get overage rates for plan overages (exceeding included limits).
      * Uses base operational rates - NO surcharge tiers applied.
-     * 
+     *
      * @return array Structured overage data with shipment, storage, and inbound rates
      */
     public function getOverageRates(): array
     {
         // Base Pick&Pack + Delivery rates (no surcharge)
+        $microPickPack = $this->getRate('PICKPACK_MICRO_FIRST');
         $mgtPickPack = $this->getRate('PICKPACK_MGT_FIRST');
         $sgtPickPack = $this->getRate('PICKPACK_SGT_FIRST');
         $kgtPickPack = $this->getRate('PICKPACK_KGT_FIRST');
-        
+
+        $deliveryMICRO = $this->getRate('DELIVERY_MICRO');
         $deliveryMGT = $this->getRate('DELIVERY_MGT');
         $deliverySGT = $this->getRate('DELIVERY_SGT');
         $deliveryKGT = $this->getRate('DELIVERY_KGT');
-        
+
         $storageBoxDay = $this->getRate('STORAGE_BOX_DAY');
         $storageBagDay = $this->getRate('STORAGE_BAG_DAY');
         $inboundBox = $this->getRate('INBOUND_BOX');
 
         return [
             'shipments' => [
+                'micro_fee' => $microPickPack + $deliveryMICRO,
                 'mgt_fee' => $mgtPickPack + $deliveryMGT,
                 'sgt_fee' => $sgtPickPack + $deliverySGT,
                 'kgt_fee' => $kgtPickPack + $deliveryKGT,
@@ -372,21 +379,24 @@ class PricingService
         
         $targetUtil = $config['target_util'];
         $discount = $config['discount'];
-        
+
         $mix = config('pricing.default_shipment_mix');
-        
+
         // Calculate target shipment counts
         $targetShipments = (int) round($plan->fbs_shipments_included * $targetUtil);
+        $micro = (int) round($targetShipments * ($mix['micro_ratio'] ?? 0));
         $mgt = (int) round($targetShipments * $mix['mgt_ratio']);
         $sgt = (int) round($targetShipments * $mix['sgt_ratio']);
         $kgt = (int) round($targetShipments * $mix['kgt_ratio']);
-        
+
         // Calculate per-unit equivalent WITH surcharge
         $perUnit = $this->calculatePerUnit(
             $mgt, $sgt, $kgt,
             $plan->storage_included_boxes ?? 0,
             $plan->storage_included_bags ?? 0,
-            $plan->inbound_included_boxes ?? 0
+            $plan->inbound_included_boxes ?? 0,
+            1.0,
+            $micro
         );
         
         // Apply plan discount

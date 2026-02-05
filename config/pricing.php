@@ -23,7 +23,8 @@ return [
     |
     */
     'dimension_categories' => [
-        'mgt' => ['min' => 0, 'max' => 60], // MGT: ≤60 cm
+        'micro' => ['min' => 0, 'max' => 30], // MICRO: ≤30 cm
+        'mgt' => ['min' => 31, 'max' => 60], // MGT: 31-60 cm
         'sgt' => ['min' => 61, 'max' => 120], // SGT: 61-120 cm
         'kgt' => ['min' => 121, 'max' => 999999], // KGT: >120 cm
     ],
@@ -94,8 +95,9 @@ return [
     */
     
     'default_shipment_mix' => [
-        'mgt_ratio' => 0.30,
-        'sgt_ratio' => 0.50,
+        'micro_ratio' => 0.10,
+        'mgt_ratio' => 0.25,
+        'sgt_ratio' => 0.45,
         'kgt_ratio' => 0.20,
     ],
 ];
