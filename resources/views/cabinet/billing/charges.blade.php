@@ -64,6 +64,7 @@
                         <th class="pb-3">{{ __('Дата') }}</th>
                         <th class="pb-3">{{ __('Категория') }}</th>
                         <th class="pb-3">{{ __('Услуга') }}</th>
+                        <th class="pb-3">{{ __('Статус') }}</th>
                         <th class="pb-3 text-right">{{ __('Цена') }}</th>
                         <th class="pb-3 text-right">{{ __('Кол-во') }}</th>
                         <th class="pb-3 text-right">{{ __('Сумма') }}</th>
@@ -72,7 +73,7 @@
                 <tbody>
                     @foreach($items as $item)
                     <tr class="border-b border-brand-border/50 hover:bg-gray-50">
-                        <td class="py-3 text-body-s">{{ $item->billed_at ? $item->billed_at->format('d.m.Y H:i') : '-' }}</td>
+                        <td class="py-3 text-body-s">{{ $item->occurred_at ? $item->occurred_at->format('d.m.Y H:i') : ($item->billed_at ? $item->billed_at->format('d.m.Y H:i') : '-') }}</td>
                         <td class="py-3">
                             <span class="badge badge-{{ $item->scope === 'inbound' ? 'info' : ($item->scope === 'pickpack' ? 'success' : ($item->scope === 'storage' ? 'warning' : ($item->scope === 'shipping' ? 'primary' : ($item->scope === 'returns' ? 'danger' : 'gray')))) }}">
                                 {{ $scopeOptions[$item->scope] ?? $item->scope }}
@@ -84,6 +85,15 @@
                                 <div class="text-body-xs text-text-muted">{{ $item->comment }}</div>
                             @endif
                         </td>
+                        <td class="py-3">
+                            @if($item->status === 'invoiced')
+                                <span class="badge badge-success">{{ __('В счёте') }}</span>
+                            @elseif($item->status === 'accrued')
+                                <span class="badge badge-warning">{{ __('Начислено') }}</span>
+                            @else
+                                <span class="badge badge-gray">{{ $item->status }}</span>
+                            @endif
+                        </td>
                         <td class="py-3 text-right text-body-s">{{ number_format($item->unit_price, 0, '', ' ') }}</td>
                         <td class="py-3 text-right text-body-s">{{ number_format($item->qty, $item->qty == intval($item->qty) ? 0 : 2, '.', ' ') }}</td>
                         <td class="py-3 text-right font-semibold">{{ number_format($item->amount, 0, '', ' ') }}</td>
@@ -92,7 +102,7 @@
                 </tbody>
                 <tfoot>
                     <tr class="border-t-2 border-brand-border font-semibold">
-                        <td colspan="5" class="py-3 text-right">{{ __('Итого на странице') }}:</td>
+                        <td colspan="6" class="py-3 text-right">{{ __('Итого на странице') }}:</td>
                         <td class="py-3 text-right text-brand">{{ number_format($items->sum('amount'), 0, '', ' ') }}</td>
                     </tr>
                 </tfoot>
