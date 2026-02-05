@@ -5,6 +5,7 @@ namespace App\Filament\Resources\InboundResource\Pages;
 use App\Filament\Resources\InboundResource;
 use App\Models\Inbound;
 use App\Models\InboundItemPhoto;
+use App\Services\BillingService;
 use Filament\Resources\Pages\Page;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -108,29 +109,29 @@ class ReceiveInbound extends Page
     }
     
     
-    public function complete(\App\Services\InventoryService $inventoryService)
+    public function complete(\App\Services\InventoryService $inventoryService, BillingService $billingService)
     {
-        DB::transaction(function () use ($inventoryService, &$hasDiscrepancies) {
-            $hasDiscrepancies = false;
-            
+        $hasDiscrepancies = false;
+
+        DB::transaction(function () use ($inventoryService, $billingService, &$hasDiscrepancies) {
             foreach ($this->record->items as $item) {
                 $data = $this->itemsData[$item->id] ?? [];
                 $qtyReceived = $data['qty_received'] ?? $item->qty_planned;
                 $diff = $qtyReceived - $item->qty_planned;
-                
+
                 if ($diff != 0) {
                     $hasDiscrepancies = true;
                 }
-                
+
                 $item->update([
                     'qty_received' => $qtyReceived,
                     'qty_diff' => $diff,
                     'notes' => $data['notes'] ?? null,
                 ]);
             }
-            
+
             $status = $hasDiscrepancies ? 'completed' : 'closed';
-            
+
             $this->record->update([
                 'status' => $status,
                 'received_at' => now(),
@@ -142,14 +143,17 @@ class ReceiveInbound extends Page
             if (!$hasDiscrepancies) {
                 $inventoryService->updateFromInbound($this->record);
             }
+
+            // Accrue billing charges for inbound
+            $billingService->accrueForInbound($this->record);
         });
-        
+
         Notification::make()
             ->success()
             ->title('Приёмка завершена')
             ->body($hasDiscrepancies ? 'Поставка успешно принята, ожидаем подтверждения расхождений' : 'Поставка успешно принята и закрыта')
             ->send();
-        
+
         $this->redirect(InboundResource::getUrl('view', ['record' => $this->record]));
     }
     
