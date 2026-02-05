@@ -160,6 +160,7 @@
                     <div>
                         <div class="font-semibold mb-1">{{ __('FBS jo\'natmalar limiti oshsa') }}:</div>
                         <ul class="ml-4 space-y-1">
+                            <li>MICRO — {{ number_format($overages['shipments']['micro_fee'] ?? 0, 0, '', ' ') }} {{ __('so\'m/jo\'natma') }}</li>
                             <li>{{ __('МГТ') }} — {{ number_format($overages['shipments']['mgt_fee'], 0, '', ' ') }} {{ __('so\'m/jo\'natma') }}</li>
                             <li>{{ __('СГТ') }} — {{ number_format($overages['shipments']['sgt_fee'], 0, '', ' ') }} {{ __('so\'m/jo\'natma') }}</li>
                             <li>{{ __('КГТ') }} — {{ number_format($overages['shipments']['kgt_fee'], 0, '', ' ') }} {{ __('so\'m/jo\'natma') }}</li>
@@ -213,30 +214,37 @@
                 use App\Services\PricingService;
                 $pricingService = app(PricingService::class);
                 $rates = $pricingService->getPublicRates();
-                
+                $dimensionCategories = config('pricing.dimension_categories');
+
                 $categories = [
                     [
+                        'code' => 'MICRO',
+                        'size' => '≤' . ($dimensionCategories['micro']['max'] ?? 30) . ' см',
+                        'pickpack_first' => $rates['PICKPACK_MICRO_FIRST']['value'] ?? 2000,
+                        'delivery' => $rates['DELIVERY_MICRO']['value'] ?? 2000,
+                    ],
+                    [
                         'code' => __('МГТ'),
-                        'size' => '≤60 см',
-                        'pickpack_first' => $rates['PICKPACK_MGT_FIRST']->value ?? 4000,
-                        'delivery' => $rates['DELIVERY_MGT']->value ?? 4000,
+                        'size' => ($dimensionCategories['mgt']['min'] ?? 31) . '-' . ($dimensionCategories['mgt']['max'] ?? 60) . ' см',
+                        'pickpack_first' => $rates['PICKPACK_MGT_FIRST']['value'] ?? 4000,
+                        'delivery' => $rates['DELIVERY_MGT']['value'] ?? 4000,
                     ],
                     [
                         'code' => __('СГТ'),
-                        'size' => '61-120 см',
-                        'pickpack_first' => $rates['PICKPACK_SGT_FIRST']->value ?? 7000,
-                        'delivery' => $rates['DELIVERY_SGT']->value ?? 8000,
+                        'size' => ($dimensionCategories['sgt']['min'] ?? 61) . '-' . ($dimensionCategories['sgt']['max'] ?? 120) . ' см',
+                        'pickpack_first' => $rates['PICKPACK_SGT_FIRST']['value'] ?? 7000,
+                        'delivery' => $rates['DELIVERY_SGT']['value'] ?? 8000,
                     ],
                     [
                         'code' => __('КГТ'),
-                        'size' => '>120 см',
-                        'pickpack_first' => $rates['PICKPACK_KGT_FIRST']->value ?? 15000,
-                        'delivery' => $rates['DELIVERY_KGT']->value ?? 20000,
+                        'size' => '>' . ($dimensionCategories['sgt']['max'] ?? 120) . ' см',
+                        'pickpack_first' => $rates['PICKPACK_KGT_FIRST']['value'] ?? 15000,
+                        'delivery' => $rates['DELIVERY_KGT']['value'] ?? 20000,
                     ],
                 ];
             @endphp
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 @foreach($categories as $cat)
                 <div class="card">
                     <div class="inline-block px-4 py-2 bg-brand/10 text-brand rounded-btn font-semibold mb-4">
@@ -278,10 +286,10 @@
             
             @php
                 $storageRates = [
-                    ['type' => __('Короб 60×40×40'), 'rate' => $rates['STORAGE_BOX_DAY']->value ?? 500],
-                    ['type' => __('Мешок одежды'), 'rate' => $rates['STORAGE_BAG_DAY']->value ?? 350],
-                    ['type' => __('Паллета'), 'rate' => $rates['STORAGE_PALLET_DAY']->value ?? 4000],
-                    ['type' => __('Кубический метр'), 'rate' => $rates['STORAGE_M3_DAY']->value ?? 7000],
+                    ['type' => __('Короб 60×40×40'), 'rate' => $rates['STORAGE_BOX_DAY']['value'] ?? 600],
+                    ['type' => __('Мешок одежды'), 'rate' => $rates['STORAGE_BAG_DAY']['value'] ?? 400],
+                    ['type' => __('Паллета'), 'rate' => $rates['STORAGE_PALLET_DAY']['value'] ?? 4000],
+                    ['type' => __('Кубический метр'), 'rate' => $rates['STORAGE_M3_DAY']['value'] ?? 7000],
                 ];
             @endphp
             
