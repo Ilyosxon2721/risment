@@ -105,6 +105,43 @@
     </div>
 </div>
 
+<!-- Quick Links -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+    <a href="{{ route('cabinet.billing.charges') }}" class="card hover:shadow-lg transition flex items-center gap-4">
+        <div class="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center">
+            <svg class="w-6 h-6 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+            </svg>
+        </div>
+        <div>
+            <div class="font-semibold">{{ __('Начисления за услуги') }}</div>
+            <div class="text-body-s text-text-muted">{{ __('Детализация доп. услуг') }}</div>
+        </div>
+    </a>
+    <a href="{{ route('cabinet.billing.transactions') }}" class="card hover:shadow-lg transition flex items-center gap-4">
+        <div class="w-12 h-12 rounded-full bg-success/10 flex items-center justify-center">
+            <svg class="w-6 h-6 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+            </svg>
+        </div>
+        <div>
+            <div class="font-semibold">{{ __('История транзакций') }}</div>
+            <div class="text-body-s text-text-muted">{{ __('Пополнения и списания') }}</div>
+        </div>
+    </a>
+    <a href="{{ route('cabinet.subscription.choose') }}" class="card hover:shadow-lg transition flex items-center gap-4">
+        <div class="w-12 h-12 rounded-full bg-warning/10 flex items-center justify-center">
+            <svg class="w-6 h-6 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+            </svg>
+        </div>
+        <div>
+            <div class="font-semibold">{{ __('Сменить тариф') }}</div>
+            <div class="text-body-s text-text-muted">{{ __('Выбор тарифного плана') }}</div>
+        </div>
+    </a>
+</div>
+
 <!-- Two-column: Invoices and Transactions -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
     <!-- Recent Invoices -->

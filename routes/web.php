@@ -118,6 +118,7 @@ Route::prefix('cabinet')->name('cabinet.')->middleware(['auth', \App\Http\Middle
     Route::get('/billing', [BillingReportController::class, 'index'])->name('billing.report');
     Route::get('/billing/invoices/{billingInvoice}', [BillingReportController::class, 'showInvoice'])->name('billing.invoice');
     Route::get('/billing/transactions', [BillingReportController::class, 'transactions'])->name('billing.transactions');
+    Route::get('/billing/charges', [BillingReportController::class, 'charges'])->name('billing.charges');
 
     // Profile
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
