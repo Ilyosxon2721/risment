@@ -12,11 +12,9 @@ Artisan::command('inspire', function () {
 // Daily storage charge accrual (runs at 2:00 AM)
 Schedule::job(new DailyStorageChargeJob())
     ->dailyAt('02:00')
-    ->withoutOverlapping()
-    ->runInBackground();
+    ->withoutOverlapping();
 
 // Monthly invoice generation (runs on 1st of each month at 6:00 AM)
 Schedule::command('billing:generate-invoices --use-ledger')
     ->monthlyOn(1, '06:00')
-    ->withoutOverlapping()
-    ->runInBackground();
+    ->withoutOverlapping();
