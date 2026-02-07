@@ -10,6 +10,7 @@ class BillingInvoice extends Model
 {
     public const STATUS_DRAFT = 'draft';
     public const STATUS_ISSUED = 'issued';
+    public const STATUS_PARTIALLY_PAID = 'partially_paid';
     public const STATUS_PAID = 'paid';
     public const STATUS_CANCELLED = 'cancelled';
 
@@ -198,6 +199,7 @@ class BillingInvoice extends Model
         return match ($this->status) {
             'draft' => __('Черновик'),
             'issued' => __('Выставлен'),
+            'partially_paid' => __('Частично оплачен'),
             'paid' => __('Оплачен'),
             'overdue' => __('Просрочен'),
             'cancelled' => __('Отменён'),
@@ -209,6 +211,7 @@ class BillingInvoice extends Model
     {
         return match ($this->status) {
             'paid' => 'badge-success',
+            'partially_paid' => 'badge-warning',
             'overdue' => 'badge-error',
             'issued' => 'badge-info',
             'draft' => 'badge-warning',

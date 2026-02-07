@@ -1,19 +1,30 @@
 <?php
 
-use App\Services\PricingService;
+namespace Tests\Feature;
+
 use App\Models\PricingRate;
 use App\Models\SubscriptionPlan;
+use App\Services\PricingService;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
-describe('PricingService', function () {
-    beforeEach(function () {
-        // Clear cache before each test
+class PricingServiceTest extends TestCase
+{
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seed(\Database\Seeders\PricingRateSeeder::class);
+        $this->seed(\Database\Seeders\RismentRatesSeeder::class);
+        $this->seed(\Database\Seeders\SubscriptionPlanSeeder::class);
         PricingService::clearCache();
-    });
+    }
 
-    it('calculates per-unit pricing with default surcharge tier', function () {
+    public function test_calculates_per_unit_pricing_with_default_surcharge_tier(): void
+    {
         $service = app(PricingService::class);
-        
-        // Test with 120 shipments (should get +10% surcharge)
+
         $result = $service->calculatePerUnit(
             mgtCount: 40,
             sgtCount: 60,
@@ -23,17 +34,25 @@ describe('PricingService', function () {
             inboundBoxes: 10,
             avgItemsPerOrder: 1.0
         );
-        
-        expect($result)->toHaveKeys(['mgt', 'sgt', 'kgt', 'fbs_total', 'storage', 'inbound', 'total', 'surcharge_percent', 'surcharge_tier']);
-        expect($result['surcharge_percent'])->toBe(10.0);
-        expect($result['surcharge_tier'])->toBe('default');
-        expect($result['total'])->toBeGreaterThan(0);
-    });
 
-    it('calculates per-unit pricing with peak surcharge tier', function () {
+        $this->assertArrayHasKey('mgt', $result);
+        $this->assertArrayHasKey('sgt', $result);
+        $this->assertArrayHasKey('kgt', $result);
+        $this->assertArrayHasKey('fbs_total', $result);
+        $this->assertArrayHasKey('storage', $result);
+        $this->assertArrayHasKey('inbound', $result);
+        $this->assertArrayHasKey('total', $result);
+        $this->assertArrayHasKey('surcharge_percent', $result);
+        $this->assertArrayHasKey('surcharge_tier', $result);
+        $this->assertEquals(10.0, $result['surcharge_percent']);
+        $this->assertEquals('default', $result['surcharge_tier']);
+        $this->assertGreaterThan(0, $result['total']);
+    }
+
+    public function test_calculates_per_unit_pricing_with_peak_surcharge_tier(): void
+    {
         $service = app(PricingService::class);
-        
-        // Test with 350 shipments (should get +20% surcharge)
+
         $result = $service->calculatePerUnit(
             mgtCount: 100,
             sgtCount: 150,
@@ -43,84 +62,87 @@ describe('PricingService', function () {
             inboundBoxes: 30,
             avgItemsPerOrder: 1.0
         );
-        
-        expect($result['surcharge_percent'])->toBe(20.0);
-        expect($result['surcharge_tier'])->toBe('peak');
-    });
 
-    it('calculates plan cost without surcharge on overages', function () {
+        $this->assertEquals(20.0, $result['surcharge_percent']);
+        $this->assertEquals('peak', $result['surcharge_tier']);
+    }
+
+    public function test_calculates_plan_cost_without_surcharge_on_overages(): void
+    {
         $service = app(PricingService::class);
-        
+
         $plan = SubscriptionPlan::where('code', 'lite')->first();
-        
+
         if (!$plan) {
             $this->markTestSkipped('LITE plan not found in database');
         }
-        
-        // Test with usage exceeding plan limits
+
         $result = $service->calculatePlanCost(
             plan: $plan,
-            mgtCount: 150,  // Exceeds 200 limit combined
+            mgtCount: 150,
             sgtCount: 100,
             kgtCount: 50,
-            storageBoxDays: 400,  // Exceeds 300 limit
-            storageBagDays: 400,  // Exceeds 300 limit
-            inboundBoxes: 15  // Exceeds 10 limit
+            storageBoxDays: 400,
+            storageBagDays: 400,
+            inboundBoxes: 15
         );
-        
-        expect($result)->toHaveKeys(['plan', 'monthly_fee', 'overage', 'total']);
-        expect($result['monthly_fee'])->toBe((float) $plan->price_month);
-        expect($result['overage']['total'])->toBeGreaterThan(0);
-        expect($result['total'])->toBe($result['monthly_fee'] + $result['overage']['total']);
-    });
 
-    it('ensures plan is cheaper than per-unit for target volume', function () {
+        $this->assertArrayHasKey('plan', $result);
+        $this->assertArrayHasKey('monthly_fee', $result);
+        $this->assertArrayHasKey('overage', $result);
+        $this->assertArrayHasKey('total', $result);
+        $this->assertEquals((float) $plan->price_month, $result['monthly_fee']);
+        $this->assertGreaterThanOrEqual(0, $result['overage']['total']);
+        $this->assertEquals($result['monthly_fee'] + $result['overage']['total'], $result['total']);
+    }
+
+    public function test_ensures_plan_is_cheaper_than_per_unit_for_target_volume(): void
+    {
         $service = app(PricingService::class);
-        
+
         $plan = SubscriptionPlan::where('code', 'start')->first();
-        
+
         if (!$plan) {
             $this->markTestSkipped('START plan not found in database');
         }
-        
-        // Use 85% of plan limits (typical usage)
+
         $shipments = (int) round($plan->fbs_shipments_included * 0.85);
         $mgt = (int) round($shipments * 0.30);
         $sgt = (int) round($shipments * 0.50);
         $kgt = (int) round($shipments * 0.20);
-        
+
         $storageBoxDays = (int) round($plan->storage_included_boxes * 0.85);
         $storageBagDays = (int) round($plan->storage_included_bags * 0.85);
         $inboundBoxes = (int) round($plan->inbound_included_boxes * 0.85);
-        
+
         $perUnit = $service->calculatePerUnit(
             $mgt, $sgt, $kgt,
             $storageBoxDays, $storageBagDays, $inboundBoxes
         );
-        
+
         $planCost = $service->calculatePlanCost(
             $plan,
             $mgt, $sgt, $kgt,
             $storageBoxDays, $storageBagDays, $inboundBoxes
         );
-        
-        // Plan should be cheaper than per-unit at target utilization
-        expect($planCost['total'])->toBeLessThan($perUnit['total']);
-    });
 
-    it('ensures no hardcoded 25000 in overage fees', function () {
+        $this->assertLessThan($perUnit['total'], $planCost['total']);
+    }
+
+    public function test_ensures_no_hardcoded_25000_in_overage_fees(): void
+    {
         $service = app(PricingService::class);
         $overages = $service->getOverageRates();
-        
-        // Check that no overage fee is exactly 25000
-        expect($overages['shipments']['mgt_fee'])->not->toBe(25000);
-        expect($overages['shipments']['sgt_fee'])->not->toBe(25000);
-        expect($overages['shipments']['kgt_fee'])->not->toBe(25000);
-    });
 
-    it('rounds operational fees up to nearest 1000', function () {
+        $this->assertNotEquals(25000, $overages['shipments']['mgt_fee']);
+        $this->assertNotEquals(25000, $overages['shipments']['sgt_fee']);
+        $this->assertNotEquals(25000, $overages['shipments']['kgt_fee']);
+    }
+
+    public function test_rounds_operational_fees_up_to_nearest_1000(): void
+    {
         $service = app(PricingService::class);
-        
+
         $result = $service->calculatePerUnit(
             mgtCount: 10,
             sgtCount: 10,
@@ -130,10 +152,9 @@ describe('PricingService', function () {
             inboundBoxes: 0,
             avgItemsPerOrder: 1.0
         );
-        
-        // All operational costs should be multiples of 1000
-        expect($result['mgt']['total'] % 1000)->toBe(0);
-        expect($result['sgt']['total'] % 1000)->toBe(0);
-        expect($result['kgt']['total'] % 1000)->toBe(0);
-    });
-});
+
+        $this->assertEquals(0, $result['mgt']['total'] % 1000);
+        $this->assertEquals(0, $result['sgt']['total'] % 1000);
+        $this->assertEquals(0, $result['kgt']['total'] % 1000);
+    }
+}

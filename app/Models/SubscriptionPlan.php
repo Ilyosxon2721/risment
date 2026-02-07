@@ -106,7 +106,7 @@ class SubscriptionPlan extends Model
     /**
      * Get display name for specific locale
      */
-    public function getDisplayName(string $locale = null): string
+    public function getDisplayName(?string $locale = null): string
     {
         $locale = $locale ?: app()->getLocale();
         

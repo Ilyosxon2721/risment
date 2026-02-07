@@ -25,7 +25,7 @@ class CmsPricingCalculatorContentSeeder extends Seeder
                 'body_uz' => 'Yig\'ish, qadoqlash, saqlash va FBS yetkazib berish haftasiga 3 marta. Hammasi aniq: limitlar va ortiqcha to\'lovlar belgilangan.',
                 'sort' => 2,
             ],
-            
+
             // What's included
             [
                 'page_slug' => 'pricing',
@@ -41,7 +41,7 @@ class CmsPricingCalculatorContentSeeder extends Seeder
                 'body_uz' => 'Limit doirasida FBS buyurtmalarni tayyorlash (Pick&Pack)|FBS yetkazib berish ichida (Du/Chor/Ju, cut-off 12:00)|Limit doirasida saqlash|Limit doirasida qabul (inbound)|Kabinet: qoldiq, arizalar, statuslar',
                 'sort' => 4,
             ],
-            
+
             // What's NOT included
             [
                 'page_slug' => 'pricing',
@@ -57,7 +57,7 @@ class CmsPricingCalculatorContentSeeder extends Seeder
                 'body_uz' => 'DBS yetkazib berish (alohida kelishuv)|Marketplace omboriga FBO jo\'natmalar|Nostandart: mo\'rt/katta gabarit/maxsus talablar — individual|Qaytish/brak (reverse) — alohida shartlar',
                 'sort' => 6,
             ],
-            
+
             // Plan taglines
             [
                 'page_slug' => 'pricing',
@@ -94,11 +94,11 @@ class CmsPricingCalculatorContentSeeder extends Seeder
                 'body_uz' => 'Katta hajmlar uchun individual.',
                 'sort' => 14,
             ],
-            
+
             // Overages
             [
             // Overages section removed - now dynamically rendered from PricingService in pricing.blade.php
-            
+
             // Schedule
             [
                 'page_slug' => 'pricing',
@@ -114,7 +114,7 @@ class CmsPricingCalculatorContentSeeder extends Seeder
                 'body_uz' => 'FBS jo\'natmalar: haftasiga 3 marta (Du/Chor/Ju). Jo\'natish kuni cut-off: 12:00 gacha.',
                 'sort' => 31,
             ],
-            
+
             // Policy
             [
                 'page_slug' => 'pricing',
@@ -123,7 +123,7 @@ class CmsPricingCalculatorContentSeeder extends Seeder
                 'body_uz' => 'Agar limitlar ketma-ket 2 oy oshsa — keyingi tarifga o\'tkazish yoki shartlarni qayta ko\'rib chiqish.',
                 'sort' => 40,
             ],
-            
+
             // CTA
             [
                 'page_slug' => 'pricing',
@@ -139,7 +139,7 @@ class CmsPricingCalculatorContentSeeder extends Seeder
                 'title_uz' => 'Mijoz bo\'lish',
                 'sort' => 51,
             ],
-            
+
             // CALCULATOR PAGE
             [
                 'page_slug' => 'calculator',
@@ -148,7 +148,7 @@ class CmsPricingCalculatorContentSeeder extends Seeder
                 'body_uz' => 'Tarifni tanlang va kutilayotgan hajmlarni kiriting. Yakuniy summa va ehtimoliy ortiqcha to\'lovlarni ko\'rsatamiz.',
                 'sort' => 1,
             ],
-            
+
             // Input labels
             [
                 'page_slug' => 'calculator',
@@ -185,7 +185,7 @@ class CmsPricingCalculatorContentSeeder extends Seeder
                 'title_uz' => 'Oyiga qabul koroblari',
                 'sort' => 14,
             ],
-            
+
             // Output labels
             [
                 'page_slug' => 'calculator',
@@ -215,7 +215,7 @@ class CmsPricingCalculatorContentSeeder extends Seeder
                 'title_uz' => 'Yakuniy summa',
                 'sort' => 23,
             ],
-            
+
             // Disclaimer
             [
                 'page_slug' => 'calculator',
@@ -223,7 +223,7 @@ class CmsPricingCalculatorContentSeeder extends Seeder
                 'body_ru' => 'DBS и FBO считаются отдельно. Нестандарт — по согласованию.',
                 'body_uz' => 'DBS va FBO alohida hisoblanadi. Nostandart — kelishuv asosida.',
                 'sort' => 30,
-            ],
+            ]
         ];
 
         foreach ($blocks as $blockData) {

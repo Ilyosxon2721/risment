@@ -479,7 +479,7 @@ class BillingService
             }
 
             // Calculate dimension sum
-            $dimensions = ($variant->length ?? 0) + ($variant->width ?? 0) + ($variant->height ?? 0);
+            $dimensions = ($variant->dims_l ?? 0) + ($variant->dims_w ?? 0) + ($variant->dims_h ?? 0);
             $category = $this->pricingService->getDimensionCategory($dimensions);
 
             $counts[$category]['count'] += $item->qty ?? 1;

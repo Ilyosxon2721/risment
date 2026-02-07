@@ -93,9 +93,9 @@ class BillingItem extends Model
     }
 
     /**
-     * Check if a billing item already exists (idempotency check)
+     * Check if a billing item with given idempotency key already exists
      */
-    public static function exists(string $idempotencyKey): bool
+    public static function idempotencyKeyExists(string $idempotencyKey): bool
     {
         return self::where('idempotency_key', $idempotencyKey)->exists();
     }
@@ -118,7 +118,7 @@ class BillingItem extends Model
         $idempotencyKey = self::generateIdempotencyKey($sourceType ?? 'addon', $sourceId, $addon->code);
 
         // Check idempotency
-        if (self::exists($idempotencyKey)) {
+        if (self::idempotencyKeyExists($idempotencyKey)) {
             return self::where('idempotency_key', $idempotencyKey)->first();
         }
 
@@ -199,7 +199,7 @@ class BillingItem extends Model
         $idempotencyKey = self::generateIdempotencyKey($sourceType, $sourceId, $addonCode, $idempotencySuffix);
 
         // Check idempotency
-        if (self::exists($idempotencyKey)) {
+        if (self::idempotencyKeyExists($idempotencyKey)) {
             return null;
         }
 

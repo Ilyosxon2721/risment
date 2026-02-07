@@ -223,8 +223,8 @@ class DailyStorageChargeJob implements ShouldQueue
      */
     protected function getRate(string $code): int
     {
-        return (int) PricingRate::where('code', $code)
+        return (int) (PricingRate::where('code', $code)
             ->where('is_active', true)
-            ->value('value') ?? 0;
+            ->value('value') ?? 0);
     }
 }

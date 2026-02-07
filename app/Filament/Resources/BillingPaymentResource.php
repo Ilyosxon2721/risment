@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\BillingInvoiceResource;
 use App\Filament\Resources\BillingPaymentResource\Pages;
 use App\Models\BillingInvoice;
 use App\Models\BillingPayment;
