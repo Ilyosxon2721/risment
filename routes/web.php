@@ -68,6 +68,7 @@ Route::prefix('cabinet')->name('cabinet.')->middleware(['auth', \App\Http\Middle
     // Products (New system with variants)
     Route::resource('products', \App\Http\Controllers\Cabinet\ProductController::class);
     Route::post('/products/{product}/toggle-status', [\App\Http\Controllers\Cabinet\ProductController::class, 'toggleStatus'])->name('products.toggle-status');
+    Route::post('/products/{product}/resync', [\App\Http\Controllers\Cabinet\ProductController::class, 'resync'])->name('products.resync');
     
     // Inbounds
     Route::resource('inbounds', InboundController::class);

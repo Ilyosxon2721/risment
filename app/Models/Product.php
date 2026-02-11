@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Product extends Model
 {
+    const SYNC_STATUS_PENDING = 'pending';
+    const SYNC_STATUS_SYNCED = 'synced';
+    const SYNC_STATUS_ERROR = 'error';
+
     protected $fillable = [
         'company_id',
         'title',
@@ -16,11 +20,38 @@ class Product extends Model
         'description',
         'is_active',
         'sellermind_product_id',
+        'sellermind_sync_status',
+        'sellermind_sync_error',
+        'sellermind_synced_at',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'sellermind_synced_at' => 'datetime',
     ];
+
+    public function isSyncedToSellermind(): bool
+    {
+        return $this->sellermind_sync_status === self::SYNC_STATUS_SYNCED;
+    }
+
+    public function getSyncStatusLabelAttribute(): string
+    {
+        return match($this->sellermind_sync_status) {
+            self::SYNC_STATUS_SYNCED => 'Синхронизирован',
+            self::SYNC_STATUS_ERROR => 'Ошибка',
+            default => 'Ожидает',
+        };
+    }
+
+    public function getSyncStatusColorAttribute(): string
+    {
+        return match($this->sellermind_sync_status) {
+            self::SYNC_STATUS_SYNCED => 'green',
+            self::SYNC_STATUS_ERROR => 'red',
+            default => 'yellow',
+        };
+    }
 
     /**
      * Get the company that owns the product

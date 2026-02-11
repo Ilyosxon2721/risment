@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Cabinet;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Jobs\Sellermind\PushProductToSellermind;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\ProductVariantAttribute;
@@ -335,5 +336,21 @@ class ProductController extends Controller
             return back()
                 ->with('error', __('Error deleting product: ') . $e->getMessage());
         }
+    }
+
+    /**
+     * Re-sync product to SellerMind
+     */
+    public function resync(Product $product)
+    {
+        $company = auth()->user()->companies()->first();
+
+        if (!$company || $product->company_id !== $company->id) {
+            abort(403);
+        }
+
+        (new PushProductToSellermind($product->id, $product->company_id))->handle();
+
+        return redirect()->back()->with('success', __('Product sent for synchronization'));
     }
 }

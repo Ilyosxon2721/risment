@@ -26,6 +26,7 @@ class ProcessSellermindQueues extends Command
         'risment:returns',
         'risment:link',
         'risment:marketplace_confirm',
+        'risment:product_confirm',
     ];
 
     public function handle(): int
@@ -77,6 +78,7 @@ class ProcessSellermindQueues extends Command
             'risment:returns' => $this->handleReturn($data),
             'risment:link' => $this->handleLinkConfirmation($data),
             'risment:marketplace_confirm' => $this->handleMarketplaceConfirmation($data),
+            'risment:product_confirm' => $this->handleProductConfirm($data),
             default => Log::warning("Unknown queue: $queue"),
         };
     }
@@ -337,5 +339,40 @@ class ProcessSellermindQueues extends Command
         ]);
 
         $this->info("Marketplace confirmed: credential #{$credentialId} → SellerMind account #{$sellermindAccountId}");
+    }
+
+    /**
+     * Handle product sync confirmation from SellerMind.
+     */
+    private function handleProductConfirm(array $data): void
+    {
+        $confirmData = $data['data'] ?? [];
+        $rismentProductId = $confirmData['risment_product_id'] ?? null;
+
+        if (!$rismentProductId) {
+            return;
+        }
+
+        $product = Product::find($rismentProductId);
+        if (!$product) {
+            Log::warning('Product not found for sync confirmation', ['id' => $rismentProductId]);
+            return;
+        }
+
+        if (($confirmData['status'] ?? '') === 'success') {
+            $product->update([
+                'sellermind_product_id' => $confirmData['sellermind_product_id'] ?? null,
+                'sellermind_sync_status' => 'synced',
+                'sellermind_sync_error' => null,
+                'sellermind_synced_at' => now(),
+            ]);
+            $this->info("Product #{$rismentProductId} synced to SellerMind (ID: {$confirmData['sellermind_product_id']})");
+        } else {
+            $product->update([
+                'sellermind_sync_status' => 'error',
+                'sellermind_sync_error' => $confirmData['error'] ?? 'Неизвестная ошибка',
+            ]);
+            $this->error("Product #{$rismentProductId} sync failed: " . ($confirmData['error'] ?? 'unknown'));
+        }
     }
 }

@@ -16,17 +16,21 @@ class PushProductToSellermind
 
     public function handle(): void
     {
+        $product = Product::with(['variants.images', 'variants.marketplaceLinks'])->find($this->productId);
+        if (!$product) {
+            return;
+        }
+
         $link = SellermindAccountLink::where('company_id', $this->companyId)
             ->where('status', 'active')
             ->where('sync_products', true)
             ->first();
 
         if (!$link) {
-            return;
-        }
-
-        $product = Product::with(['variants.images', 'variants.marketplaceLinks'])->find($this->productId);
-        if (!$product) {
+            $product->update([
+                'sellermind_sync_status' => 'pending',
+                'sellermind_sync_error' => 'Нет активной связки с SellerMind',
+            ]);
             return;
         }
 
@@ -73,11 +77,22 @@ class PushProductToSellermind
 
         try {
             Redis::connection('integration')->rpush('sellermind:products', $payload);
+
+            $product->update([
+                'sellermind_sync_status' => 'pending',
+                'sellermind_sync_error' => null,
+            ]);
+
             Log::channel('daily')->info('Pushed product to sellermind:products queue', [
                 'product_id' => $this->productId,
                 'company_id' => $this->companyId,
             ]);
         } catch (\Exception $e) {
+            $product->update([
+                'sellermind_sync_status' => 'error',
+                'sellermind_sync_error' => 'Ошибка отправки: ' . $e->getMessage(),
+            ]);
+
             Log::channel('daily')->error('Failed to push product to Redis', [
                 'product_id' => $this->productId,
                 'error' => $e->getMessage(),

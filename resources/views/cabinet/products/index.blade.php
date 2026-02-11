@@ -51,6 +51,7 @@
                             <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">{{ __('Article') }}</th>
                             <th class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider">{{ __('Variants') }}</th>
                             <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">{{ __('Status') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">SellerMind</th>
                             <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">{{ __('Created') }}</th>
                             <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider">{{ __('Actions') }}</th>
                         </tr>
@@ -79,6 +80,36 @@
                                     <span class="badge badge-error">{{ __('Inactive') }}</span>
                                 @endif
                             </td>
+                            <td class="px-4 py-4">
+                                @if($product->sellermind_sync_status === 'synced')
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                        {{ __('Synced') }}
+                                    </span>
+                                @elseif($product->sellermind_sync_status === 'error')
+                                    <div x-data="{ showError: false }" class="relative">
+                                        <button @click="showError = !showError" class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 cursor-pointer hover:bg-red-200">
+                                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                                            {{ __('Error') }}
+                                        </button>
+                                        <div x-show="showError" @click.away="showError = false" x-cloak
+                                             class="absolute z-50 mt-1 left-0 w-72 bg-white rounded-lg shadow-lg border border-red-200 p-3">
+                                            <p class="text-xs text-gray-700 mb-2">{{ $product->sellermind_sync_error }}</p>
+                                            <form action="{{ route('cabinet.products.resync', $product) }}" method="POST" class="inline">
+                                                @csrf
+                                                <button type="submit" class="text-xs text-blue-600 hover:text-blue-800 font-medium">
+                                                    {{ __('Retry sync') }}
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                @else
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                        <svg class="w-3 h-3 mr-1 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                                        {{ __('Pending') }}
+                                    </span>
+                                @endif
+                            </td>
                             <td class="px-4 py-4 text-body-s text-text-muted">{{ $product->created_at->format('d.m.Y') }}</td>
                             <td class="px-4 py-4 text-right">
                                 <div class="flex justify-end gap-2">
@@ -98,7 +129,7 @@
                         
                         {{-- Expanded Variants --}}
                         <tr x-show="expandedProducts.includes({{ $product->id }})" x-cloak>
-                            <td colspan="6" class="px-4 py-4 bg-gray-50">
+                            <td colspan="7" class="px-4 py-4 bg-gray-50">
                                 <div class="space-y-2">
                                     <div class="text-xs font-semibold uppercase text-text-muted mb-2">{{ __('Variants') }}:</div>
                                     @foreach($product->variants as $variant)
