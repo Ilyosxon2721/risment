@@ -10,7 +10,8 @@ class ManagerRoleSeeder extends Seeder
 {
     public function run(): void
     {
-        // Create manager role
+        // Create roles
+        Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
         Role::firstOrCreate(['name' => 'manager', 'guard_name' => 'web']);
 
         // Create test manager user
