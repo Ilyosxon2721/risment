@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Spatie\Permission\Models\Role;
 
 class UserResource extends Resource
 {
@@ -42,10 +43,17 @@ class UserResource extends Resource
                     ->tel(),
                 Forms\Components\Toggle::make('is_active')
                     ->required(),
-                Forms\Components\Select::make('roles')
+                Forms\Components\Select::make('role_ids')
                     ->label('Роли')
                     ->multiple()
-                    ->relationship('roles', 'name')
+                    ->options(Role::where('guard_name', 'web')->pluck('name', 'id'))
+                    ->afterStateHydrated(function (Forms\Components\Select $component, ?User $record) {
+                        if ($record) {
+                            $component->state($record->roles->pluck('id')->toArray());
+                        }
+                    })
+                    ->dehydrated(false)
+                    ->afterStateUpdated(function () {})
                     ->preload(),
             ]);
     }
