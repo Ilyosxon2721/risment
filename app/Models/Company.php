@@ -57,6 +57,16 @@ class Company extends Model
         return $this->hasMany(BillingInvoice::class);
     }
 
+    public function manager()
+    {
+        return $this->belongsTo(User::class, 'manager_user_id');
+    }
+
+    public function managerTasks()
+    {
+        return $this->hasMany(ManagerTask::class);
+    }
+
     public function getFormattedBalanceAttribute(): string
     {
         return number_format(abs($this->balance), 0, '', ' ') . ' ' . __('UZS');

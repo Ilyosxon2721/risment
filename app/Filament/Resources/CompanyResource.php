@@ -44,10 +44,20 @@ class CompanyResource extends Resource
                     ->columnSpanFull(),
                 Forms\Components\TextInput::make('status')
                     ->required(),
-                Forms\Components\TextInput::make('manager_user_id')
-                    ->numeric(),
-                Forms\Components\TextInput::make('subscription_plan_id')
-                    ->numeric(),
+                Forms\Components\Select::make('manager_user_id')
+                    ->label('Менеджер')
+                    ->relationship('manager', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->placeholder('Не назначен')
+                    ->nullable(),
+                Forms\Components\Select::make('subscription_plan_id')
+                    ->label('Тариф')
+                    ->relationship('subscriptionPlan', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->placeholder('Без тарифа')
+                    ->nullable(),
                 Forms\Components\DateTimePicker::make('plan_started_at'),
                 Forms\Components\TextInput::make('plan_status')
                     ->required(),
@@ -76,8 +86,9 @@ class CompanyResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('status')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('manager_user_id')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('manager.name')
+                    ->label('Менеджер')
+                    ->placeholder('—')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -117,6 +128,11 @@ class CompanyResource extends Resource
                         'trial' => 'Пробный',
                         'expired' => 'Истёк',
                     ]),
+                Tables\Filters\SelectFilter::make('manager_user_id')
+                    ->label('Менеджер')
+                    ->relationship('manager', 'name')
+                    ->searchable()
+                    ->preload(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

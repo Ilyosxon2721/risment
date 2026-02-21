@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Cabinet;
 use App\Http\Controllers\Controller;
 use App\Models\Inventory;
 use App\Models\Inbound;
+use App\Models\PricingRate;
 use App\Models\ShipmentFbo;
 use App\Models\Ticket;
 use App\Models\MonthlyUsage;
+use App\Services\PricingService;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -94,5 +96,38 @@ class DashboardController extends Controller
         ];
         
         return view('cabinet.dashboard', compact('stats', 'recentInbounds', 'recentShipments', 'plan', 'usage', 'overageEstimate', 'chartData'));
+    }
+
+    public function estimate(Request $request, PricingService $pricingService)
+    {
+        $validated = $request->validate([
+            'shipments_count' => 'required|integer|min:0',
+            'inbound_boxes' => 'required|integer|min:0',
+            'storage_boxes' => 'required|integer|min:0',
+        ]);
+
+        $company = $request->attributes->get('currentCompany');
+        $plan = $company->subscriptionPlan;
+
+        $shipmentsCount = $validated['shipments_count'];
+        $inboundBoxes = $validated['inbound_boxes'];
+        $storageBoxDays = $validated['storage_boxes'] * 30;
+
+        if ($plan) {
+            $result = $pricingService->calculatePlanCost(
+                $plan,
+                $shipmentsCount, 0, 0,
+                $storageBoxDays, 0,
+                $inboundBoxes
+            );
+        } else {
+            $result = $pricingService->calculatePerUnit(
+                $shipmentsCount, 0, 0,
+                $storageBoxDays, 0,
+                $inboundBoxes
+            );
+        }
+
+        return response()->json($result);
     }
 }

@@ -3,7 +3,9 @@
 namespace App\Console\Commands;
 
 use App\Models\BillableOperation;
+use App\Models\Company;
 use App\Models\Inventory;
+use App\Models\ManagerTask;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\SellermindAccountLink;
@@ -183,6 +185,26 @@ class ProcessSellermindQueues extends Command
                 'operation_date' => now()->toDateString(),
             ]);
 
+            // Create manager task for confirmation (if company has a manager)
+            $company = Company::find($link->company_id);
+            if ($company && $company->manager_user_id) {
+                ManagerTask::create([
+                    'company_id' => $link->company_id,
+                    'created_by' => $company->manager_user_id,
+                    'task_type' => ManagerTask::TYPE_PICKPACK,
+                    'source' => ManagerTask::SOURCE_SELLERMIND,
+                    'status' => ManagerTask::STATUS_PENDING,
+                    'source_type' => ShipmentFbo::class,
+                    'source_id' => $shipment->id,
+                    'details' => [
+                        'sellermind_order_id' => $sellermindOrderId,
+                        'marketplace' => $orderData['marketplace'] ?? 'unknown',
+                        'items_count' => $validItems->count(),
+                    ],
+                    'task_date' => now(),
+                ]);
+            }
+
             $this->info("Created shipment #{$shipment->id} from SellerMind order #{$sellermindOrderId} ({$validItems->count()} items)");
         });
     }
@@ -279,6 +301,23 @@ class ProcessSellermindQueues extends Command
                     'unit_cost' => 0,
                     'total_cost' => 0,
                     'operation_date' => now()->toDateString(),
+                ]);
+            }
+
+            // Create manager task for return confirmation
+            $company = Company::find($link->company_id);
+            if ($company && $company->manager_user_id && $totalUnits > 0) {
+                ManagerTask::create([
+                    'company_id' => $link->company_id,
+                    'created_by' => $company->manager_user_id,
+                    'task_type' => ManagerTask::TYPE_RETURN,
+                    'source' => ManagerTask::SOURCE_SELLERMIND,
+                    'status' => ManagerTask::STATUS_PENDING,
+                    'details' => [
+                        'return_qty' => $totalUnits,
+                        'items_count' => count($returnItems),
+                    ],
+                    'task_date' => now(),
                 ]);
             }
 

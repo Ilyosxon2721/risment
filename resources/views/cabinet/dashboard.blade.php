@@ -209,6 +209,53 @@
     </a>
 </div>
 
+<!-- Cost Calculator -->
+<div class="card mt-8" x-data="costCalculator()">
+    <h2 class="text-h3 font-heading mb-4">{{ __('Cost Calculator') }}</h2>
+    <p class="text-body-s text-text-muted mb-6">{{ __('Estimate your monthly costs') }}</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div>
+            <label class="block text-body-s font-semibold mb-2">{{ __('Shipments') }}</label>
+            <input type="number" x-model="shipments" min="0" class="input w-full" placeholder="0">
+        </div>
+        <div>
+            <label class="block text-body-s font-semibold mb-2">{{ __('Inbound boxes') }}</label>
+            <input type="number" x-model="inboundBoxes" min="0" class="input w-full" placeholder="0">
+        </div>
+        <div>
+            <label class="block text-body-s font-semibold mb-2">{{ __('Storage boxes') }}</label>
+            <input type="number" x-model="storageBoxes" min="0" class="input w-full" placeholder="0">
+        </div>
+    </div>
+
+    <button @click="calculate()" class="btn-brand px-6 py-3 rounded-btn text-white font-semibold" :disabled="loading">
+        <span x-show="!loading">{{ __('Calculate') }}</span>
+        <span x-show="loading">{{ __('Calculating...') }}</span>
+    </button>
+
+    <div x-show="result" x-transition class="mt-6 p-4 bg-bg-soft rounded-card">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+            <div>
+                <div class="text-body-s text-text-muted">{{ __('Shipments') }}</div>
+                <div class="font-semibold" x-text="formatNumber(result?.fbs_total || 0) + ' UZS'"></div>
+            </div>
+            <div>
+                <div class="text-body-s text-text-muted">{{ __('Inbound') }}</div>
+                <div class="font-semibold" x-text="formatNumber(result?.inbound_total || 0) + ' UZS'"></div>
+            </div>
+            <div>
+                <div class="text-body-s text-text-muted">{{ __('Storage') }}</div>
+                <div class="font-semibold" x-text="formatNumber(result?.storage_total || 0) + ' UZS'"></div>
+            </div>
+            <div>
+                <div class="text-body-s text-text-muted font-semibold">{{ __('Total') }}</div>
+                <div class="text-h4 font-heading text-brand" x-text="formatNumber(result?.total || 0) + ' UZS'"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -259,5 +306,38 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+function costCalculator() {
+    return {
+        shipments: 0,
+        inboundBoxes: 0,
+        storageBoxes: 0,
+        loading: false,
+        result: null,
+        async calculate() {
+            this.loading = true;
+            try {
+                const res = await fetch('{{ route("cabinet.calculator.estimate") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({
+                        shipments_count: parseInt(this.shipments) || 0,
+                        inbound_boxes: parseInt(this.inboundBoxes) || 0,
+                        storage_boxes: parseInt(this.storageBoxes) || 0,
+                    })
+                });
+                this.result = await res.json();
+            } catch (e) {
+                console.error(e);
+            }
+            this.loading = false;
+        },
+        formatNumber(n) {
+            return new Intl.NumberFormat('ru-RU').format(n);
+        }
+    }
+}
 @endpush
 @endsection

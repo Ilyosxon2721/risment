@@ -42,6 +42,11 @@ class UserResource extends Resource
                     ->tel(),
                 Forms\Components\Toggle::make('is_active')
                     ->required(),
+                Forms\Components\Select::make('roles')
+                    ->label('Роли')
+                    ->multiple()
+                    ->relationship('roles', 'name')
+                    ->preload(),
             ]);
     }
 
@@ -68,6 +73,10 @@ class UserResource extends Resource
                     ->searchable(),
                 Tables\Columns\IconColumn::make('is_active')
                     ->boolean(),
+                Tables\Columns\TextColumn::make('roles.name')
+                    ->label('Роли')
+                    ->badge()
+                    ->separator(','),
             ])
             ->filters([
                 //

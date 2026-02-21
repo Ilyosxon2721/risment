@@ -53,6 +53,7 @@ Route::prefix('cabinet')->name('cabinet.')->middleware(['auth', \App\Http\Middle
     
     // Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::post('/calculator/estimate', [DashboardController::class, 'estimate'])->name('calculator.estimate');
     
     // Inventory
     Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
@@ -133,6 +134,41 @@ Route::prefix('cabinet')->name('cabinet.')->middleware(['auth', \App\Http\Middle
     Route::put('/profile/locale', [ProfileController::class, 'updateLocale'])->name('profile.locale');
     Route::post('/profile/switch-company/{company}', [ProfileController::class, 'switchCompany'])->name('profile.switch-company');
 });
+
+// Manager Cabinet
+use App\Http\Controllers\Manager\DashboardController as ManagerDashboardController;
+use App\Http\Controllers\Manager\TaskController as ManagerTaskController;
+use App\Http\Controllers\Manager\ConfirmationController as ManagerConfirmationController;
+use App\Http\Controllers\Manager\BillingController as ManagerBillingController;
+
+Route::prefix('manager')->name('manager.')->middleware([
+    'auth',
+    \App\Http\Middleware\SetCabinetLocale::class,
+    \App\Http\Middleware\EnsureUserIsManager::class,
+    \App\Http\Middleware\SetManagerCompany::class,
+])->group(function () {
+    Route::get('/', [ManagerDashboardController::class, 'index'])->name('dashboard');
+    Route::post('/switch-company/{company}', [ManagerDashboardController::class, 'switchCompany'])->name('switch-company');
+
+    // Tasks
+    Route::get('/tasks', [ManagerTaskController::class, 'index'])->name('tasks.index');
+    Route::get('/tasks/create', [ManagerTaskController::class, 'create'])->name('tasks.create');
+    Route::post('/tasks', [ManagerTaskController::class, 'store'])->name('tasks.store');
+    Route::get('/tasks/{task}', [ManagerTaskController::class, 'show'])->name('tasks.show');
+
+    // SellerMind confirmations
+    Route::get('/confirmations', [ManagerConfirmationController::class, 'index'])->name('confirmations.index');
+    Route::post('/confirmations/{task}/confirm', [ManagerConfirmationController::class, 'confirm'])->name('confirmations.confirm');
+    Route::post('/confirmations/{task}/reject', [ManagerConfirmationController::class, 'reject'])->name('confirmations.reject');
+
+    // Billing overview
+    Route::get('/billing', [ManagerBillingController::class, 'index'])->name('billing.index');
+});
+
+// No-companies page (without SetManagerCompany middleware)
+Route::get('/manager/no-companies', function () {
+    return view('manager.no-companies');
+})->middleware(['auth', \App\Http\Middleware\SetCabinetLocale::class, \App\Http\Middleware\EnsureUserIsManager::class])->name('manager.no-companies');
 
 // Localized
 // Routes with locale prefix (public pages)

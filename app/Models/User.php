@@ -68,4 +68,9 @@ class User extends Authenticatable implements FilamentUser
             ->withPivot('role_in_company')
             ->withTimestamps();
     }
+
+    public function managedCompanies()
+    {
+        return $this->hasMany(Company::class, 'manager_user_id');
+    }
 }
