@@ -16,7 +16,8 @@ class EnsureUserIsManager
             return redirect()->route('login', ['locale' => 'ru']);
         }
 
-        if (!$user->hasRole('manager')) {
+        // Admin and manager roles can access the manager panel
+        if (!$user->hasAnyRole(['manager', 'admin'])) {
             abort(403, 'Доступ только для менеджеров');
         }
 

@@ -23,5 +23,8 @@ class EditUser extends EditRecord
         $roleIds = $this->data['role_ids'] ?? [];
         $roles = Role::whereIn('id', $roleIds)->get();
         $this->record->syncRoles($roles);
+
+        // Clear Spatie permission cache so changes take effect immediately
+        app(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
     }
 }

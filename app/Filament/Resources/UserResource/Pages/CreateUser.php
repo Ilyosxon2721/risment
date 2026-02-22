@@ -16,5 +16,7 @@ class CreateUser extends CreateRecord
         $roleIds = $this->data['role_ids'] ?? [];
         $roles = Role::whereIn('id', $roleIds)->get();
         $this->record->syncRoles($roles);
+
+        app(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
     }
 }

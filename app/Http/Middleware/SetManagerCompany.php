@@ -13,7 +13,12 @@ class SetManagerCompany
     {
         $user = $request->user();
 
-        $managedCompanies = Company::where('manager_user_id', $user->id)->get();
+        // Admin sees all companies, manager sees only assigned ones
+        if ($user->hasRole('admin')) {
+            $managedCompanies = Company::orderBy('name')->get();
+        } else {
+            $managedCompanies = Company::where('manager_user_id', $user->id)->get();
+        }
 
         if ($managedCompanies->isEmpty()) {
             return redirect()->route('manager.no-companies');
