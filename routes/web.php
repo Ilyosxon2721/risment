@@ -135,14 +135,25 @@ Route::prefix('cabinet')->name('cabinet.')->middleware(['auth', \App\Http\Middle
     Route::post('/profile/switch-company/{company}', [ProfileController::class, 'switchCompany'])->name('profile.switch-company');
 });
 
-// Manager Cabinet
+// Manager Authentication (separate guard)
+use App\Http\Controllers\Manager\AuthController as ManagerAuthController;
 use App\Http\Controllers\Manager\DashboardController as ManagerDashboardController;
 use App\Http\Controllers\Manager\TaskController as ManagerTaskController;
 use App\Http\Controllers\Manager\ConfirmationController as ManagerConfirmationController;
 use App\Http\Controllers\Manager\BillingController as ManagerBillingController;
 
+Route::prefix('manager')->name('manager.')->group(function () {
+    Route::get('login', [ManagerAuthController::class, 'showLoginForm'])
+        ->middleware('guest:manager')->name('login');
+    Route::post('login', [ManagerAuthController::class, 'login'])
+        ->middleware(['guest:manager', 'throttle:5,1'])->name('login.submit');
+    Route::post('logout', [ManagerAuthController::class, 'logout'])
+        ->middleware('auth:manager')->name('logout');
+});
+
+// Manager Cabinet (uses separate 'manager' guard)
 Route::prefix('manager')->name('manager.')->middleware([
-    'auth',
+    'auth:manager',
     \App\Http\Middleware\PanelSessionIsolation::class.':manager',
     \App\Http\Middleware\SetCabinetLocale::class,
     \App\Http\Middleware\EnsureUserIsManager::class,
@@ -169,7 +180,7 @@ Route::prefix('manager')->name('manager.')->middleware([
 // No-companies page (without SetManagerCompany middleware)
 Route::get('/manager/no-companies', function () {
     return view('manager.no-companies');
-})->middleware(['auth', \App\Http\Middleware\SetCabinetLocale::class, \App\Http\Middleware\EnsureUserIsManager::class])->name('manager.no-companies');
+})->middleware(['auth:manager', \App\Http\Middleware\SetCabinetLocale::class, \App\Http\Middleware\EnsureUserIsManager::class])->name('manager.no-companies');
 
 // Localized
 // Routes with locale prefix (public pages)

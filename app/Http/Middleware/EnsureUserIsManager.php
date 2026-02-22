@@ -10,25 +10,14 @@ class EnsureUserIsManager
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $user = $request->user();
+        $user = $request->user('manager');
 
         if (!$user) {
-            return redirect()->route('login', ['locale' => 'ru']);
+            return redirect()->route('manager.login');
         }
 
-        // Allow access if user has manager or admin Spatie role
         if ($user->hasAnyRole(['manager', 'admin'])) {
             return $next($request);
-        }
-
-        // Fallback: allow if user can access Filament admin panel
-        try {
-            $panel = \Filament\Facades\Filament::getPanel('admin');
-            if ($panel && method_exists($user, 'canAccessPanel') && $user->canAccessPanel($panel)) {
-                return $next($request);
-            }
-        } catch (\Exception $e) {
-            // Panel not found or other error — fall through to deny
         }
 
         abort(403, 'Доступ только для менеджеров');

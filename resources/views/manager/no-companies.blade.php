@@ -14,7 +14,7 @@
             </svg>
             <h2 class="text-h3 font-heading mb-4">Нет назначенных компаний</h2>
             <p class="text-text-muted mb-6">Вам пока не назначены компании для управления. Обратитесь к администратору.</p>
-            <form method="POST" action="{{ route('logout', ['locale' => app()->getLocale()]) }}">
+            <form method="POST" action="{{ route('manager.logout') }}">
                 @csrf
                 <button type="submit" class="text-brand hover:underline">Выйти</button>
             </form>

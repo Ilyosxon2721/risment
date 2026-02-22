@@ -21,8 +21,13 @@ return Application::configure(basePath: dirname(__DIR__))
             'payment/payme',
         ]);
         
-        // Use custom Authenticate middleware
-        $middleware->redirectGuestsTo(fn () => route('login', ['locale' => 'ru']));
+        // Redirect unauthenticated users based on panel
+        $middleware->redirectGuestsTo(function (\Illuminate\Http\Request $request) {
+            if (str_starts_with($request->path(), 'manager')) {
+                return route('manager.login');
+            }
+            return route('login', ['locale' => 'ru']);
+        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

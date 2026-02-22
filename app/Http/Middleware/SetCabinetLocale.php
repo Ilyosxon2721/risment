@@ -15,8 +15,10 @@ class SetCabinetLocale
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Get authenticated user's preferred locale
-        $user = $request->user();
+        // Resolve user from the correct guard based on active panel
+        $panel = session('active_panel', 'cabinet');
+        $guard = $panel === 'manager' ? 'manager' : null;
+        $user = $request->user($guard);
         
         if ($user && $user->locale) {
             $locale = $user->locale;

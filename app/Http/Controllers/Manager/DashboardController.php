@@ -45,7 +45,8 @@ class DashboardController extends Controller
 
     public function switchCompany(Request $request, Company $company)
     {
-        if ($company->manager_user_id !== auth()->id()) {
+        $user = auth('manager')->user();
+        if (!$user->hasRole('admin') && $company->manager_user_id !== $user->id) {
             abort(403);
         }
 

@@ -11,7 +11,7 @@ class SetManagerCompany
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $user = $request->user();
+        $user = $request->user('manager');
 
         // Admin sees all companies, manager sees only assigned ones
         if ($user->hasRole('admin')) {

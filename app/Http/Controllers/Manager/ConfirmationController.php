@@ -34,7 +34,7 @@ class ConfirmationController extends Controller
         DB::transaction(function () use ($task, $company, $billingService) {
             $task->update([
                 'status' => ManagerTask::STATUS_CONFIRMED,
-                'confirmed_by' => auth()->id(),
+                'confirmed_by' => auth('manager')->id(),
                 'confirmed_at' => now(),
             ]);
 
@@ -54,7 +54,7 @@ class ConfirmationController extends Controller
 
         $task->update([
             'status' => ManagerTask::STATUS_REJECTED,
-            'confirmed_by' => auth()->id(),
+            'confirmed_by' => auth('manager')->id(),
             'confirmed_at' => now(),
         ]);
 

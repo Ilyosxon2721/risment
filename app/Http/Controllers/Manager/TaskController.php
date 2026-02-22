@@ -63,8 +63,8 @@ class TaskController extends Controller
         DB::transaction(function () use ($validated, $company, $billingService) {
             $task = ManagerTask::create([
                 'company_id' => $company->id,
-                'created_by' => auth()->id(),
-                'confirmed_by' => auth()->id(),
+                'created_by' => auth('manager')->id(),
+                'confirmed_by' => auth('manager')->id(),
                 'task_type' => $validated['task_type'],
                 'source' => ManagerTask::SOURCE_MANUAL,
                 'status' => ManagerTask::STATUS_CONFIRMED,
