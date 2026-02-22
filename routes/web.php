@@ -43,7 +43,7 @@ Route::get('/register', function () {
 
 // Client Cabinet (NO locale prefix, uses user's saved locale preference)
 // IMPORTANT: Must be defined BEFORE {locale} routes to prevent wildcard capture
-Route::prefix('cabinet')->name('cabinet.')->middleware(['auth', \App\Http\Middleware\SetCabinetLocale::class, EnsureUserHasCompany::class])->group(function () {
+Route::prefix('cabinet')->name('cabinet.')->middleware(['auth', \App\Http\Middleware\PanelSessionIsolation::class.':cabinet', \App\Http\Middleware\SetCabinetLocale::class, EnsureUserHasCompany::class])->group(function () {
     // Company management (must be before dashboard for users without company)
     Route::get('/company/create', [\App\Http\Controllers\Cabinet\CompanyController::class, 'create'])->name('company.create');
     Route::post('/company', [\App\Http\Controllers\Cabinet\CompanyController::class, 'store'])->name('company.store');
@@ -143,6 +143,7 @@ use App\Http\Controllers\Manager\BillingController as ManagerBillingController;
 
 Route::prefix('manager')->name('manager.')->middleware([
     'auth',
+    \App\Http\Middleware\PanelSessionIsolation::class.':manager',
     \App\Http\Middleware\SetCabinetLocale::class,
     \App\Http\Middleware\EnsureUserIsManager::class,
     \App\Http\Middleware\SetManagerCompany::class,
