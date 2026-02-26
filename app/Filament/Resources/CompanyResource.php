@@ -5,6 +5,8 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\CompanyResource\Pages;
 use App\Filament\Resources\CompanyResource\RelationManagers;
 use App\Models\Company;
+use App\Models\SubscriptionPlan;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -46,16 +48,14 @@ class CompanyResource extends Resource
                     ->required(),
                 Forms\Components\Select::make('manager_user_id')
                     ->label('Менеджер')
-                    ->relationship('manager', 'name')
+                    ->options(fn () => User::orderBy('name')->pluck('name', 'id'))
                     ->searchable()
-                    ->preload()
                     ->placeholder('Не назначен')
                     ->nullable(),
                 Forms\Components\Select::make('subscription_plan_id')
                     ->label('Тариф')
-                    ->relationship('subscriptionPlan', 'name')
+                    ->options(fn () => SubscriptionPlan::orderBy('name')->pluck('name', 'id'))
                     ->searchable()
-                    ->preload()
                     ->placeholder('Без тарифа')
                     ->nullable(),
                 Forms\Components\DateTimePicker::make('plan_started_at'),
@@ -130,9 +130,8 @@ class CompanyResource extends Resource
                     ]),
                 Tables\Filters\SelectFilter::make('manager_user_id')
                     ->label('Менеджер')
-                    ->relationship('manager', 'name')
-                    ->searchable()
-                    ->preload(),
+                    ->options(fn () => User::orderBy('name')->pluck('name', 'id'))
+                    ->searchable(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
