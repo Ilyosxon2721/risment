@@ -12,8 +12,6 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class CompanyResource extends Resource
 {
@@ -49,13 +47,11 @@ class CompanyResource extends Resource
                 Forms\Components\Select::make('manager_user_id')
                     ->label('Менеджер')
                     ->options(fn () => User::orderBy('name')->pluck('name', 'id'))
-                    ->searchable()
                     ->placeholder('Не назначен')
                     ->nullable(),
                 Forms\Components\Select::make('subscription_plan_id')
                     ->label('Тариф')
                     ->options(fn () => SubscriptionPlan::orderBy('name')->pluck('name', 'id'))
-                    ->searchable()
                     ->placeholder('Без тарифа')
                     ->nullable(),
                 Forms\Components\DateTimePicker::make('plan_started_at'),
