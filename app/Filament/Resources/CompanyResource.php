@@ -51,7 +51,7 @@ class CompanyResource extends Resource
                     ->nullable(),
                 Forms\Components\Select::make('subscription_plan_id')
                     ->label('Тариф')
-                    ->options(fn () => SubscriptionPlan::orderBy('name')->pluck('name', 'id'))
+                    ->options(fn () => SubscriptionPlan::orderBy('name_ru')->pluck('name_ru', 'id'))
                     ->placeholder('Без тарифа')
                     ->nullable(),
                 Forms\Components\DateTimePicker::make('plan_started_at'),
