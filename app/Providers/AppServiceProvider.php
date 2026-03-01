@@ -14,6 +14,12 @@ class AppServiceProvider extends ServiceProvider
     {
         // Register TelegramService as singleton
         $this->app->singleton(\App\Services\TelegramService::class);
+
+        // Override Filament logout to preserve other guards' sessions
+        $this->app->bind(
+            \Filament\Http\Controllers\Auth\LogoutController::class,
+            \App\Http\Controllers\Filament\LogoutController::class,
+        );
     }
 
     /**
