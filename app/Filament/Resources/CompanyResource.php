@@ -126,8 +126,7 @@ class CompanyResource extends Resource
                     ]),
                 Tables\Filters\SelectFilter::make('manager_user_id')
                     ->label('Менеджер')
-                    ->options(fn () => User::orderBy('name')->pluck('name', 'id'))
-                    ->searchable(),
+                    ->options(fn () => User::orderBy('name')->pluck('name', 'id')),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
