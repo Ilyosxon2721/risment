@@ -14,7 +14,7 @@ class CompaniesRelationManager extends RelationManager
 
     protected static ?string $recordTitleAttribute = 'name';
     
-    protected static ?string $title = 'Компании';
+    protected static ?string $title = 'Компании (клиент)';
 
     public function form(Form $form): Form
     {
