@@ -12,6 +12,7 @@ class ManagerTask extends Model
     const TYPE_INBOUND = 'inbound';
     const TYPE_PICKPACK = 'pickpack';
     const TYPE_DELIVERY = 'delivery';
+    const TYPE_SHIPPING = 'shipping';  // Доставка товара (курьер/почта)
     const TYPE_STORAGE = 'storage';
     const TYPE_RETURN = 'return';
     const TYPE_PACKAGING = 'packaging';
@@ -107,7 +108,8 @@ class ManagerTask extends Model
         return match ($this->task_type) {
             self::TYPE_INBOUND => 'Приёмка',
             self::TYPE_PICKPACK => 'Сборка',
-            self::TYPE_DELIVERY => 'Отгрузка',
+            self::TYPE_DELIVERY => 'Отгрузка (МП)',
+            self::TYPE_SHIPPING => 'Доставка',
             self::TYPE_STORAGE => 'Хранение',
             self::TYPE_RETURN => 'Возврат',
             self::TYPE_PACKAGING => 'Упаковка',
@@ -124,7 +126,8 @@ class ManagerTask extends Model
         return [
             self::TYPE_INBOUND => 'Приёмка',
             self::TYPE_PICKPACK => 'Сборка',
-            self::TYPE_DELIVERY => 'Отгрузка',
+            self::TYPE_DELIVERY => 'Отгрузка (МП)',
+            self::TYPE_SHIPPING => 'Доставка',
             self::TYPE_STORAGE => 'Хранение',
             self::TYPE_RETURN => 'Возврат',
             self::TYPE_PACKAGING => 'Упаковка',

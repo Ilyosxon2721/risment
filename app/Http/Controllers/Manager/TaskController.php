@@ -67,6 +67,11 @@ class TaskController extends Controller
             'storage_bags' => 'nullable|integer|min:0',
             // Return
             'return_qty' => 'nullable|integer|min:1',
+            // Shipping (delivery)
+            'packages_count' => 'nullable|integer|min:1',
+            'delivery_address' => 'nullable|string|max:500',
+            'recipient_name' => 'nullable|string|max:100',
+            'recipient_phone' => 'nullable|string|max:20',
             // Packaging/Labeling/Photo
             'units_count' => 'nullable|integer|min:1',
             // Other/Custom
@@ -125,6 +130,12 @@ class TaskController extends Controller
                 break;
             case 'return':
                 $details['return_qty'] = $validated['return_qty'] ?? 0;
+                break;
+            case 'shipping':
+                $details['packages_count'] = $validated['packages_count'] ?? 0;
+                $details['delivery_address'] = $validated['delivery_address'] ?? '';
+                $details['recipient_name'] = $validated['recipient_name'] ?? '';
+                $details['recipient_phone'] = $validated['recipient_phone'] ?? '';
                 break;
             case 'packaging':
             case 'labeling':
@@ -254,6 +265,19 @@ class TaskController extends Controller
                             (int) $rate, $qty, $task->comment
                         );
                     }
+                }
+                break;
+
+            case ManagerTask::TYPE_SHIPPING:
+                $qty = $details['packages_count'] ?? 0;
+                if ($qty > 0) {
+                    $rate = PricingRate::where('code', 'SHIPPING_PACKAGE')->where('is_active', true)->value('value') ?? 25000;
+                    $address = $details['delivery_address'] ?? '';
+                    $items[] = $billingService->accrueManual(
+                        $company->id, 'shipping',
+                        'Доставка товаров', 'Tovarlarni yetkazish',
+                        (int) $rate, $qty, $task->comment ?: $address
+                    );
                 }
                 break;
 

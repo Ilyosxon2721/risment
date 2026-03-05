@@ -107,6 +107,31 @@
             </div>
         </div>
 
+        <!-- Shipping/Delivery Fields -->
+        <div id="fields_shipping" class="hidden space-y-4 mb-6 p-4 bg-bg-soft rounded-card">
+            <h4 class="font-semibold">🚚 Данные доставки</h4>
+            <div>
+                <label class="block text-body-s font-semibold mb-2">Количество мест *</label>
+                <input type="number" name="packages_count" class="input w-full" min="1" value="{{ old('packages_count', 1) }}" placeholder="1">
+                @error('packages_count') <p class="text-error text-body-s mt-1">{{ $message }}</p> @enderror
+            </div>
+            <div>
+                <label class="block text-body-s font-semibold mb-2">Адрес доставки</label>
+                <input type="text" name="delivery_address" class="input w-full" value="{{ old('delivery_address') }}" placeholder="г. Ташкент, ул. Навои 1">
+                @error('delivery_address') <p class="text-error text-body-s mt-1">{{ $message }}</p> @enderror
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-body-s font-semibold mb-2">Получатель</label>
+                    <input type="text" name="recipient_name" class="input w-full" value="{{ old('recipient_name') }}" placeholder="Иван Иванов">
+                </div>
+                <div>
+                    <label class="block text-body-s font-semibold mb-2">Телефон</label>
+                    <input type="text" name="recipient_phone" class="input w-full" value="{{ old('recipient_phone') }}" placeholder="+998901234567">
+                </div>
+            </div>
+        </div>
+
         <!-- Packaging/Labeling/Photo Fields -->
         <div id="fields_units" class="hidden space-y-4 mb-6 p-4 bg-bg-soft rounded-card">
             <h4 class="font-semibold" id="fields_units_title">Данные услуги</h4>
@@ -156,6 +181,7 @@ function toggleFields() {
     document.getElementById('fields_shipment').classList.add('hidden');
     document.getElementById('fields_storage').classList.add('hidden');
     document.getElementById('fields_return').classList.add('hidden');
+    document.getElementById('fields_shipping').classList.add('hidden');
     document.getElementById('fields_units').classList.add('hidden');
     document.getElementById('fields_other').classList.add('hidden');
 
@@ -167,6 +193,9 @@ function toggleFields() {
         case 'pickpack':
         case 'delivery':
             document.getElementById('fields_shipment').classList.remove('hidden');
+            break;
+        case 'shipping':
+            document.getElementById('fields_shipping').classList.remove('hidden');
             break;
         case 'storage':
             document.getElementById('fields_storage').classList.remove('hidden');
