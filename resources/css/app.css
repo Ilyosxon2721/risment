@@ -27,16 +27,22 @@
         @apply px-6 py-3 rounded-btn font-semibold transition duration-200 inline-block text-center;
     }
 
-    .btn-primary {
+    .btn-primary,
+    .btn-brand {
         @apply bg-brand text-white hover:bg-brand-dark;
     }
 
-    .btn-secondary {
+    .btn-secondary,
+    .btn-outline {
         @apply border-2 border-brand text-brand hover:bg-brand/5;
     }
 
     .btn-ghost {
         @apply text-brand hover:bg-brand/5;
+    }
+
+    .btn-danger {
+        @apply bg-error text-white hover:bg-error/90;
     }
 
     /* Cards */
