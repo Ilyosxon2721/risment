@@ -39,6 +39,7 @@ class BillingItem extends Model
         'comment',
         'meta',
         'created_by',
+        'manager_task_id',
     ];
 
     protected $casts = [
