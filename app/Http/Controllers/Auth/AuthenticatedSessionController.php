@@ -25,7 +25,15 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('cabinet.dashboard'));
+        // Get intended URL, but ignore admin/manager panel URLs
+        $intended = session()->pull('url.intended', route('cabinet.dashboard'));
+        $path = parse_url($intended, PHP_URL_PATH) ?? '';
+
+        if (str_starts_with($path, '/admin') || str_starts_with($path, '/manager')) {
+            $intended = route('cabinet.dashboard');
+        }
+
+        return redirect($intended);
     }
 
     /**
