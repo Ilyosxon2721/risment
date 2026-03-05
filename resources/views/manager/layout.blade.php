@@ -70,6 +70,31 @@
                     </svg>
                     <span>Биллинг</span>
                 </a>
+
+                <div class="mt-4 pt-4 border-t border-brand-border">
+                    <p class="px-4 text-body-xs text-text-muted font-semibold uppercase tracking-wider mb-2">Склад</p>
+                </div>
+
+                <a href="{{ route('manager.inventory.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-btn {{ request()->routeIs('manager.inventory.*') ? 'bg-brand text-white' : 'hover:bg-bg-soft' }} mt-1">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                    </svg>
+                    <span>Инвентарь</span>
+                </a>
+
+                <a href="{{ route('manager.shipments.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-btn {{ request()->routeIs('manager.shipments.*') ? 'bg-brand text-white' : 'hover:bg-bg-soft' }} mt-1">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
+                    </svg>
+                    <span>Отгрузки</span>
+                </a>
+
+                <a href="{{ route('manager.inbounds.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-btn {{ request()->routeIs('manager.inbounds.*') ? 'bg-brand text-white' : 'hover:bg-bg-soft' }} mt-1">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                    </svg>
+                    <span>Приёмки</span>
+                </a>
             </nav>
 
             <!-- Logout -->

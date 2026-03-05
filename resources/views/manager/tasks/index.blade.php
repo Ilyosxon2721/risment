@@ -12,14 +12,12 @@
 
 <!-- Filters -->
 <div class="flex gap-4 mb-6">
-    <form method="GET" class="flex gap-4">
+    <form method="GET" class="flex gap-4 flex-wrap">
         <select name="task_type" onchange="this.form.submit()" class="input">
             <option value="">Все типы</option>
-            <option value="inbound" {{ request('task_type') === 'inbound' ? 'selected' : '' }}>Приёмка</option>
-            <option value="pickpack" {{ request('task_type') === 'pickpack' ? 'selected' : '' }}>Сборка</option>
-            <option value="delivery" {{ request('task_type') === 'delivery' ? 'selected' : '' }}>Отгрузка</option>
-            <option value="storage" {{ request('task_type') === 'storage' ? 'selected' : '' }}>Хранение</option>
-            <option value="return" {{ request('task_type') === 'return' ? 'selected' : '' }}>Возврат</option>
+            @foreach(\App\Models\ManagerTask::getTaskTypes() as $value => $label)
+                <option value="{{ $value }}" {{ request('task_type') === $value ? 'selected' : '' }}>{{ $label }}</option>
+            @endforeach
         </select>
         <select name="status" onchange="this.form.submit()" class="input">
             <option value="">Все статусы</option>

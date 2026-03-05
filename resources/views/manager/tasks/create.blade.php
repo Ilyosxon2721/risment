@@ -17,11 +17,9 @@
             <label class="block text-body-s font-semibold mb-2">Тип задачи *</label>
             <select name="task_type" id="task_type" class="input w-full" required onchange="toggleFields()">
                 <option value="">Выберите тип</option>
-                <option value="inbound" {{ old('task_type') === 'inbound' ? 'selected' : '' }}>Приёмка</option>
-                <option value="pickpack" {{ old('task_type') === 'pickpack' ? 'selected' : '' }}>Сборка</option>
-                <option value="delivery" {{ old('task_type') === 'delivery' ? 'selected' : '' }}>Отгрузка</option>
-                <option value="storage" {{ old('task_type') === 'storage' ? 'selected' : '' }}>Хранение</option>
-                <option value="return" {{ old('task_type') === 'return' ? 'selected' : '' }}>Возврат</option>
+                @foreach(\App\Models\ManagerTask::getTaskTypes() as $value => $label)
+                    <option value="{{ $value }}" {{ old('task_type') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                @endforeach
             </select>
             @error('task_type') <p class="text-error text-body-s mt-1">{{ $message }}</p> @enderror
         </div>
@@ -35,7 +33,7 @@
 
         <!-- Inbound Fields -->
         <div id="fields_inbound" class="hidden space-y-4 mb-6 p-4 bg-bg-soft rounded-card">
-            <h4 class="font-semibold">Данные приёмки</h4>
+            <h4 class="font-semibold">📦 Данные приёмки</h4>
             <div>
                 <label class="block text-body-s font-semibold mb-2">Количество коробок *</label>
                 <input type="number" name="boxes_count" class="input w-full" min="1" value="{{ old('boxes_count') }}" placeholder="10">
@@ -49,11 +47,13 @@
 
         <!-- PickPack / Delivery Fields -->
         <div id="fields_shipment" class="hidden space-y-4 mb-6 p-4 bg-bg-soft rounded-card">
-            <h4 class="font-semibold">Выбор заказа</h4>
+            <h4 class="font-semibold">📋 Данные заказа</h4>
+
+            @if($shipments->count() > 0)
             <div>
-                <label class="block text-body-s font-semibold mb-2">Заказ (ShipmentFbo)</label>
-                <select name="shipment_id" class="input w-full">
-                    <option value="">Выберите заказ</option>
+                <label class="block text-body-s font-semibold mb-2">Выберите заказ из системы</label>
+                <select name="shipment_id" id="shipment_id" class="input w-full" onchange="toggleManualInput()">
+                    <option value="">— Или введите вручную —</option>
                     @foreach($shipments as $shipment)
                         <option value="{{ $shipment->id }}" {{ old('shipment_id') == $shipment->id ? 'selected' : '' }}>
                             #{{ $shipment->id }} — {{ $shipment->marketplace }} — {{ $shipment->status }} ({{ $shipment->created_at->format('d.m.Y') }})
@@ -62,11 +62,27 @@
                 </select>
                 @error('shipment_id') <p class="text-error text-body-s mt-1">{{ $message }}</p> @enderror
             </div>
+            @endif
+
+            <div id="manual_shipment_fields" class="{{ $shipments->count() > 0 ? 'hidden' : '' }} space-y-4 pt-4 border-t border-brand-border/50">
+                <p class="text-body-s text-text-muted">Ручной ввод (если заказа нет в системе):</p>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-body-s font-semibold mb-2">Кол-во единиц *</label>
+                        <input type="number" name="items_count" class="input w-full" min="1" value="{{ old('items_count') }}" placeholder="5">
+                        @error('items_count') <p class="text-error text-body-s mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-body-s font-semibold mb-2">Номер заказа</label>
+                        <input type="text" name="order_number" class="input w-full" value="{{ old('order_number') }}" placeholder="ORD-12345">
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Storage Fields -->
         <div id="fields_storage" class="hidden space-y-4 mb-6 p-4 bg-bg-soft rounded-card">
-            <h4 class="font-semibold">Данные хранения</h4>
+            <h4 class="font-semibold">🏢 Данные хранения</h4>
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="block text-body-s font-semibold mb-2">Коробки</label>
@@ -83,12 +99,33 @@
 
         <!-- Return Fields -->
         <div id="fields_return" class="hidden space-y-4 mb-6 p-4 bg-bg-soft rounded-card">
-            <h4 class="font-semibold">Данные возврата</h4>
+            <h4 class="font-semibold">↩️ Данные возврата</h4>
             <div>
                 <label class="block text-body-s font-semibold mb-2">Количество единиц *</label>
                 <input type="number" name="return_qty" class="input w-full" min="1" value="{{ old('return_qty') }}" placeholder="1">
                 @error('return_qty') <p class="text-error text-body-s mt-1">{{ $message }}</p> @enderror
             </div>
+        </div>
+
+        <!-- Packaging/Labeling/Photo Fields -->
+        <div id="fields_units" class="hidden space-y-4 mb-6 p-4 bg-bg-soft rounded-card">
+            <h4 class="font-semibold" id="fields_units_title">Данные услуги</h4>
+            <div>
+                <label class="block text-body-s font-semibold mb-2">Количество единиц *</label>
+                <input type="number" name="units_count" class="input w-full" min="1" value="{{ old('units_count') }}" placeholder="10">
+                @error('units_count') <p class="text-error text-body-s mt-1">{{ $message }}</p> @enderror
+            </div>
+        </div>
+
+        <!-- Other/Custom Fields -->
+        <div id="fields_other" class="hidden space-y-4 mb-6 p-4 bg-bg-soft rounded-card">
+            <h4 class="font-semibold">✏️ Произвольная услуга</h4>
+            <div>
+                <label class="block text-body-s font-semibold mb-2">Сумма (UZS) *</label>
+                <input type="number" name="custom_amount" class="input w-full" min="0" step="1000" value="{{ old('custom_amount') }}" placeholder="50000">
+                @error('custom_amount') <p class="text-error text-body-s mt-1">{{ $message }}</p> @enderror
+            </div>
+            <p class="text-body-s text-text-muted">Укажите сумму и опишите услугу в комментарии</p>
         </div>
 
         <!-- Comment -->
@@ -113,13 +150,70 @@
 <script>
 function toggleFields() {
     const type = document.getElementById('task_type').value;
-    document.getElementById('fields_inbound').classList.toggle('hidden', type !== 'inbound');
-    document.getElementById('fields_shipment').classList.toggle('hidden', type !== 'pickpack' && type !== 'delivery');
-    document.getElementById('fields_storage').classList.toggle('hidden', type !== 'storage');
-    document.getElementById('fields_return').classList.toggle('hidden', type !== 'return');
+
+    // Hide all field groups
+    document.getElementById('fields_inbound').classList.add('hidden');
+    document.getElementById('fields_shipment').classList.add('hidden');
+    document.getElementById('fields_storage').classList.add('hidden');
+    document.getElementById('fields_return').classList.add('hidden');
+    document.getElementById('fields_units').classList.add('hidden');
+    document.getElementById('fields_other').classList.add('hidden');
+
+    // Show relevant fields
+    switch(type) {
+        case 'inbound':
+            document.getElementById('fields_inbound').classList.remove('hidden');
+            break;
+        case 'pickpack':
+        case 'delivery':
+            document.getElementById('fields_shipment').classList.remove('hidden');
+            break;
+        case 'storage':
+            document.getElementById('fields_storage').classList.remove('hidden');
+            break;
+        case 'return':
+            document.getElementById('fields_return').classList.remove('hidden');
+            break;
+        case 'packaging':
+            document.getElementById('fields_units').classList.remove('hidden');
+            document.getElementById('fields_units_title').textContent = '📦 Упаковка товаров';
+            break;
+        case 'labeling':
+            document.getElementById('fields_units').classList.remove('hidden');
+            document.getElementById('fields_units_title').textContent = '🏷️ Маркировка товаров';
+            break;
+        case 'photo':
+            document.getElementById('fields_units').classList.remove('hidden');
+            document.getElementById('fields_units_title').textContent = '📸 Фотосъёмка товаров';
+            break;
+        case 'inventory_check':
+            document.getElementById('fields_units').classList.remove('hidden');
+            document.getElementById('fields_units_title').textContent = '📋 Инвентаризация';
+            break;
+        case 'other':
+            document.getElementById('fields_other').classList.remove('hidden');
+            break;
+    }
 }
+
+function toggleManualInput() {
+    const shipmentId = document.getElementById('shipment_id');
+    const manualFields = document.getElementById('manual_shipment_fields');
+
+    if (shipmentId && manualFields) {
+        if (shipmentId.value) {
+            manualFields.classList.add('hidden');
+        } else {
+            manualFields.classList.remove('hidden');
+        }
+    }
+}
+
 // Init on page load (for old() values)
-document.addEventListener('DOMContentLoaded', toggleFields);
+document.addEventListener('DOMContentLoaded', function() {
+    toggleFields();
+    toggleManualInput();
+});
 </script>
 @endpush
 @endsection

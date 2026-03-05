@@ -14,6 +14,11 @@ class ManagerTask extends Model
     const TYPE_DELIVERY = 'delivery';
     const TYPE_STORAGE = 'storage';
     const TYPE_RETURN = 'return';
+    const TYPE_PACKAGING = 'packaging';
+    const TYPE_LABELING = 'labeling';
+    const TYPE_PHOTO = 'photo';
+    const TYPE_INVENTORY = 'inventory_check';
+    const TYPE_OTHER = 'other';
 
     const SOURCE_MANUAL = 'manual';
     const SOURCE_SELLERMIND = 'sellermind';
@@ -105,8 +110,29 @@ class ManagerTask extends Model
             self::TYPE_DELIVERY => 'Отгрузка',
             self::TYPE_STORAGE => 'Хранение',
             self::TYPE_RETURN => 'Возврат',
+            self::TYPE_PACKAGING => 'Упаковка',
+            self::TYPE_LABELING => 'Маркировка',
+            self::TYPE_PHOTO => 'Фотосъёмка',
+            self::TYPE_INVENTORY => 'Инвентаризация',
+            self::TYPE_OTHER => 'Другое',
             default => $this->task_type,
         };
+    }
+
+    public static function getTaskTypes(): array
+    {
+        return [
+            self::TYPE_INBOUND => 'Приёмка',
+            self::TYPE_PICKPACK => 'Сборка',
+            self::TYPE_DELIVERY => 'Отгрузка',
+            self::TYPE_STORAGE => 'Хранение',
+            self::TYPE_RETURN => 'Возврат',
+            self::TYPE_PACKAGING => 'Упаковка',
+            self::TYPE_LABELING => 'Маркировка',
+            self::TYPE_PHOTO => 'Фотосъёмка',
+            self::TYPE_INVENTORY => 'Инвентаризация',
+            self::TYPE_OTHER => 'Другое',
+        ];
     }
 
     public function getStatusLabelAttribute(): string

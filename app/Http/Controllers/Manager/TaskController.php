@@ -48,16 +48,29 @@ class TaskController extends Controller
     {
         $company = $request->attributes->get('managerCompany');
 
+        $taskTypes = implode(',', array_keys(ManagerTask::getTaskTypes()));
+
         $validated = $request->validate([
-            'task_type' => 'required|in:inbound,pickpack,delivery,storage,return',
+            'task_type' => "required|in:{$taskTypes}",
             'task_date' => 'required|date',
             'comment' => 'nullable|string|max:500',
+            // Inbound
             'boxes_count' => 'nullable|integer|min:1',
             'reference' => 'nullable|string|max:100',
+            // Pickpack/Delivery with shipment
             'shipment_id' => 'nullable|exists:shipments_fbo,id',
+            // Pickpack/Delivery manual (without shipment)
+            'items_count' => 'nullable|integer|min:1',
+            'order_number' => 'nullable|string|max:100',
+            // Storage
             'storage_boxes' => 'nullable|integer|min:0',
             'storage_bags' => 'nullable|integer|min:0',
+            // Return
             'return_qty' => 'nullable|integer|min:1',
+            // Packaging/Labeling/Photo
+            'units_count' => 'nullable|integer|min:1',
+            // Other/Custom
+            'custom_amount' => 'nullable|numeric|min:0',
         ]);
 
         DB::transaction(function () use ($validated, $company, $billingService) {
@@ -103,6 +116,8 @@ class TaskController extends Controller
             case 'pickpack':
             case 'delivery':
                 $details['shipment_id'] = $validated['shipment_id'] ?? null;
+                $details['items_count'] = $validated['items_count'] ?? 0;
+                $details['order_number'] = $validated['order_number'] ?? '';
                 break;
             case 'storage':
                 $details['storage_boxes'] = $validated['storage_boxes'] ?? 0;
@@ -110,6 +125,17 @@ class TaskController extends Controller
                 break;
             case 'return':
                 $details['return_qty'] = $validated['return_qty'] ?? 0;
+                break;
+            case 'packaging':
+            case 'labeling':
+            case 'photo':
+                $details['units_count'] = $validated['units_count'] ?? 0;
+                break;
+            case 'inventory_check':
+                $details['units_count'] = $validated['units_count'] ?? 0;
+                break;
+            case 'other':
+                $details['custom_amount'] = $validated['custom_amount'] ?? 0;
                 break;
         }
 
@@ -152,6 +178,17 @@ class TaskController extends Controller
                         ]);
                         $items = $billingService->accrueForShipmentPickPack($shipment);
                     }
+                } else {
+                    // Manual pickpack without shipment
+                    $qty = $details['items_count'] ?? 0;
+                    if ($qty > 0) {
+                        $rate = PricingRate::where('code', 'PICKPACK_ITEM')->where('is_active', true)->value('value') ?? 5000;
+                        $items[] = $billingService->accrueManual(
+                            $company->id, 'pickpack',
+                            'Сборка заказа', 'Buyurtmani yig\'ish',
+                            (int) $rate, $qty, $task->comment ?: ($details['order_number'] ?? null)
+                        );
+                    }
                 }
                 break;
 
@@ -165,6 +202,17 @@ class TaskController extends Controller
                             'source_id' => $shipment->id,
                         ]);
                         $items = $billingService->accrueForShipmentDelivery($shipment);
+                    }
+                } else {
+                    // Manual delivery without shipment
+                    $qty = $details['items_count'] ?? 0;
+                    if ($qty > 0) {
+                        $rate = PricingRate::where('code', 'DELIVERY_MGT')->where('is_active', true)->value('value') ?? 10000;
+                        $items[] = $billingService->accrueManual(
+                            $company->id, 'shipping',
+                            'Отгрузка', 'Yuklash',
+                            (int) $rate, $qty, $task->comment ?: ($details['order_number'] ?? null)
+                        );
                     }
                 }
                 break;
@@ -206,6 +254,65 @@ class TaskController extends Controller
                             (int) $rate, $qty, $task->comment
                         );
                     }
+                }
+                break;
+
+            case ManagerTask::TYPE_PACKAGING:
+                $qty = $details['units_count'] ?? 0;
+                if ($qty > 0) {
+                    $rate = PricingRate::where('code', 'PACKAGING_UNIT')->where('is_active', true)->value('value') ?? 5000;
+                    $items[] = $billingService->accrueManual(
+                        $company->id, 'packaging',
+                        'Упаковка товаров', 'Tovarlarni qadoqlash',
+                        (int) $rate, $qty, $task->comment
+                    );
+                }
+                break;
+
+            case ManagerTask::TYPE_LABELING:
+                $qty = $details['units_count'] ?? 0;
+                if ($qty > 0) {
+                    $rate = PricingRate::where('code', 'LABELING_UNIT')->where('is_active', true)->value('value') ?? 3000;
+                    $items[] = $billingService->accrueManual(
+                        $company->id, 'labeling',
+                        'Маркировка товаров', 'Tovarlarni markalash',
+                        (int) $rate, $qty, $task->comment
+                    );
+                }
+                break;
+
+            case ManagerTask::TYPE_PHOTO:
+                $qty = $details['units_count'] ?? 0;
+                if ($qty > 0) {
+                    $rate = PricingRate::where('code', 'PHOTO_UNIT')->where('is_active', true)->value('value') ?? 15000;
+                    $items[] = $billingService->accrueManual(
+                        $company->id, 'photo',
+                        'Фотосъёмка товаров', 'Tovarlarni suratga olish',
+                        (int) $rate, $qty, $task->comment
+                    );
+                }
+                break;
+
+            case ManagerTask::TYPE_INVENTORY:
+                $qty = $details['units_count'] ?? 0;
+                if ($qty > 0) {
+                    $rate = PricingRate::where('code', 'INVENTORY_CHECK')->where('is_active', true)->value('value') ?? 2000;
+                    $items[] = $billingService->accrueManual(
+                        $company->id, 'inventory',
+                        'Инвентаризация', 'Inventarizatsiya',
+                        (int) $rate, $qty, $task->comment
+                    );
+                }
+                break;
+
+            case ManagerTask::TYPE_OTHER:
+                $amount = $details['custom_amount'] ?? 0;
+                if ($amount > 0) {
+                    $items[] = $billingService->accrueManual(
+                        $company->id, 'other',
+                        'Дополнительная услуга', 'Qo\'shimcha xizmat',
+                        (int) $amount, 1, $task->comment
+                    );
                 }
                 break;
         }

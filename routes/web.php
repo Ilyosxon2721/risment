@@ -175,6 +175,21 @@ Route::prefix('manager')->name('manager.')->middleware([
 
     // Billing overview
     Route::get('/billing', [ManagerBillingController::class, 'index'])->name('billing.index');
+
+    // Inventory
+    Route::get('/inventory', [\App\Http\Controllers\Manager\InventoryController::class, 'index'])->name('inventory.index');
+    Route::get('/inventory/{inventory}', [\App\Http\Controllers\Manager\InventoryController::class, 'show'])->name('inventory.show');
+    Route::post('/inventory/{inventory}/adjust', [\App\Http\Controllers\Manager\InventoryController::class, 'adjust'])->name('inventory.adjust');
+
+    // Shipments
+    Route::get('/shipments', [\App\Http\Controllers\Manager\ShipmentController::class, 'index'])->name('shipments.index');
+    Route::get('/shipments/{shipment}', [\App\Http\Controllers\Manager\ShipmentController::class, 'show'])->name('shipments.show');
+    Route::post('/shipments/{shipment}/status', [\App\Http\Controllers\Manager\ShipmentController::class, 'updateStatus'])->name('shipments.status');
+
+    // Inbounds
+    Route::get('/inbounds', [\App\Http\Controllers\Manager\InboundController::class, 'index'])->name('inbounds.index');
+    Route::get('/inbounds/{inbound}', [\App\Http\Controllers\Manager\InboundController::class, 'show'])->name('inbounds.show');
+    Route::post('/inbounds/{inbound}/receive', [\App\Http\Controllers\Manager\InboundController::class, 'receive'])->name('inbounds.receive');
 });
 
 // No-companies page (without SetManagerCompany middleware)
