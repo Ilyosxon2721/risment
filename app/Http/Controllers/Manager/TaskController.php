@@ -62,13 +62,18 @@ class TaskController extends Controller
             // Pickpack/Delivery manual (without shipment)
             'items_count' => 'nullable|integer|min:1',
             'order_number' => 'nullable|string|max:100',
+            'pickpack_rate' => 'nullable|numeric|min:0', // Manual rate for pickpack
             // Storage
             'storage_boxes' => 'nullable|integer|min:0',
             'storage_bags' => 'nullable|integer|min:0',
             // Return
             'return_qty' => 'nullable|integer|min:1',
-            // Shipping (delivery)
-            'packages_count' => 'nullable|integer|min:1',
+            'return_category' => 'nullable|in:micro,mgt,sgt,kgt',
+            // Shipping (delivery) - by category
+            'delivery_micro' => 'nullable|integer|min:0',
+            'delivery_mgt' => 'nullable|integer|min:0',
+            'delivery_sgt' => 'nullable|integer|min:0',
+            'delivery_kgt' => 'nullable|integer|min:0',
             'delivery_address' => 'nullable|string|max:500',
             'recipient_name' => 'nullable|string|max:100',
             'recipient_phone' => 'nullable|string|max:20',
@@ -123,6 +128,7 @@ class TaskController extends Controller
                 $details['shipment_id'] = $validated['shipment_id'] ?? null;
                 $details['items_count'] = $validated['items_count'] ?? 0;
                 $details['order_number'] = $validated['order_number'] ?? '';
+                $details['pickpack_rate'] = $validated['pickpack_rate'] ?? null;
                 break;
             case 'storage':
                 $details['storage_boxes'] = $validated['storage_boxes'] ?? 0;
@@ -130,9 +136,13 @@ class TaskController extends Controller
                 break;
             case 'return':
                 $details['return_qty'] = $validated['return_qty'] ?? 0;
+                $details['return_category'] = $validated['return_category'] ?? 'mgt';
                 break;
             case 'shipping':
-                $details['packages_count'] = $validated['packages_count'] ?? 0;
+                $details['delivery_micro'] = $validated['delivery_micro'] ?? 0;
+                $details['delivery_mgt'] = $validated['delivery_mgt'] ?? 0;
+                $details['delivery_sgt'] = $validated['delivery_sgt'] ?? 0;
+                $details['delivery_kgt'] = $validated['delivery_kgt'] ?? 0;
                 $details['delivery_address'] = $validated['delivery_address'] ?? '';
                 $details['recipient_name'] = $validated['recipient_name'] ?? '';
                 $details['recipient_phone'] = $validated['recipient_phone'] ?? '';
@@ -190,10 +200,10 @@ class TaskController extends Controller
                         $items = $billingService->accrueForShipmentPickPack($shipment);
                     }
                 } else {
-                    // Manual pickpack without shipment
+                    // Manual pickpack without shipment - use custom rate
                     $qty = $details['items_count'] ?? 0;
-                    if ($qty > 0) {
-                        $rate = PricingRate::where('code', 'PICKPACK_ITEM')->where('is_active', true)->value('value') ?? 5000;
+                    $rate = $details['pickpack_rate'] ?? null;
+                    if ($qty > 0 && $rate > 0) {
                         $items[] = $billingService->accrueManual(
                             $company->id, 'pickpack',
                             'Сборка заказа', 'Buyurtmani yig\'ish',
@@ -257,11 +267,12 @@ class TaskController extends Controller
             case ManagerTask::TYPE_RETURN:
                 $qty = $details['return_qty'] ?? 0;
                 if ($qty > 0) {
-                    $rate = PricingRate::where('code', 'DELIVERY_MGT')->where('is_active', true)->value('value') ?? 0;
+                    $category = strtoupper($details['return_category'] ?? 'MGT');
+                    $rate = PricingRate::where('code', "DELIVERY_{$category}")->where('is_active', true)->value('value') ?? 0;
                     if ($rate > 0) {
                         $items[] = $billingService->accrueManual(
                             $company->id, 'returns',
-                            'Обратная логистика', 'Qaytish logistikasi',
+                            "Обратная логистика ({$category})", "Qaytish logistikasi ({$category})",
                             (int) $rate, $qty, $task->comment
                         );
                     }
@@ -269,15 +280,20 @@ class TaskController extends Controller
                 break;
 
             case ManagerTask::TYPE_SHIPPING:
-                $qty = $details['packages_count'] ?? 0;
-                if ($qty > 0) {
-                    $rate = PricingRate::where('code', 'SHIPPING_PACKAGE')->where('is_active', true)->value('value') ?? 25000;
-                    $address = $details['delivery_address'] ?? '';
-                    $items[] = $billingService->accrueManual(
-                        $company->id, 'shipping',
-                        'Доставка товаров', 'Tovarlarni yetkazish',
-                        (int) $rate, $qty, $task->comment ?: $address
-                    );
+                $address = $details['delivery_address'] ?? '';
+                $categories = ['MICRO', 'MGT', 'SGT', 'KGT'];
+                foreach ($categories as $cat) {
+                    $qty = $details['delivery_' . strtolower($cat)] ?? 0;
+                    if ($qty > 0) {
+                        $rate = PricingRate::where('code', "DELIVERY_{$cat}")->where('is_active', true)->value('value') ?? 0;
+                        if ($rate > 0) {
+                            $items[] = $billingService->accrueManual(
+                                $company->id, 'shipping',
+                                "Доставка ({$cat})", "Yetkazib berish ({$cat})",
+                                (int) $rate, $qty, $task->comment ?: $address
+                            );
+                        }
+                    }
                 }
                 break;
 

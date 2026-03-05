@@ -66,11 +66,16 @@
 
             <div id="manual_shipment_fields" class="{{ $shipments->count() > 0 ? 'hidden' : '' }} space-y-4 pt-4 border-t border-brand-border/50">
                 <p class="text-body-s text-text-muted">Ручной ввод (если заказа нет в системе):</p>
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-3 gap-4">
                     <div>
                         <label class="block text-body-s font-semibold mb-2">Кол-во единиц *</label>
                         <input type="number" name="items_count" class="input w-full" min="1" value="{{ old('items_count') }}" placeholder="5">
                         @error('items_count') <p class="text-error text-body-s mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-body-s font-semibold mb-2">Ставка (UZS) *</label>
+                        <input type="number" name="pickpack_rate" class="input w-full" min="0" step="100" value="{{ old('pickpack_rate') }}" placeholder="5000">
+                        @error('pickpack_rate') <p class="text-error text-body-s mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div>
                         <label class="block text-body-s font-semibold mb-2">Номер заказа</label>
@@ -100,20 +105,45 @@
         <!-- Return Fields -->
         <div id="fields_return" class="hidden space-y-4 mb-6 p-4 bg-bg-soft rounded-card">
             <h4 class="font-semibold">↩️ Данные возврата</h4>
-            <div>
-                <label class="block text-body-s font-semibold mb-2">Количество единиц *</label>
-                <input type="number" name="return_qty" class="input w-full" min="1" value="{{ old('return_qty') }}" placeholder="1">
-                @error('return_qty') <p class="text-error text-body-s mt-1">{{ $message }}</p> @enderror
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-body-s font-semibold mb-2">Количество единиц *</label>
+                    <input type="number" name="return_qty" class="input w-full" min="1" value="{{ old('return_qty') }}" placeholder="1">
+                    @error('return_qty') <p class="text-error text-body-s mt-1">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <label class="block text-body-s font-semibold mb-2">Категория размера</label>
+                    <select name="return_category" class="input w-full">
+                        <option value="micro" {{ old('return_category') === 'micro' ? 'selected' : '' }}>MICRO (≤30 см)</option>
+                        <option value="mgt" {{ old('return_category', 'mgt') === 'mgt' ? 'selected' : '' }}>MGT (31-60 см)</option>
+                        <option value="sgt" {{ old('return_category') === 'sgt' ? 'selected' : '' }}>SGT (61-120 см)</option>
+                        <option value="kgt" {{ old('return_category') === 'kgt' ? 'selected' : '' }}>KGT (>120 см)</option>
+                    </select>
+                </div>
             </div>
         </div>
 
         <!-- Shipping/Delivery Fields -->
         <div id="fields_shipping" class="hidden space-y-4 mb-6 p-4 bg-bg-soft rounded-card">
             <h4 class="font-semibold">🚚 Данные доставки</h4>
-            <div>
-                <label class="block text-body-s font-semibold mb-2">Количество мест *</label>
-                <input type="number" name="packages_count" class="input w-full" min="1" value="{{ old('packages_count', 1) }}" placeholder="1">
-                @error('packages_count') <p class="text-error text-body-s mt-1">{{ $message }}</p> @enderror
+            <p class="text-body-s text-text-muted mb-3">Укажите количество по каждой категории размера:</p>
+            <div class="grid grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-body-s font-semibold mb-2">MICRO (≤30 см)</label>
+                    <input type="number" name="delivery_micro" class="input w-full" min="0" value="{{ old('delivery_micro', 0) }}">
+                </div>
+                <div>
+                    <label class="block text-body-s font-semibold mb-2">MGT (31-60 см)</label>
+                    <input type="number" name="delivery_mgt" class="input w-full" min="0" value="{{ old('delivery_mgt', 0) }}">
+                </div>
+                <div>
+                    <label class="block text-body-s font-semibold mb-2">SGT (61-120 см)</label>
+                    <input type="number" name="delivery_sgt" class="input w-full" min="0" value="{{ old('delivery_sgt', 0) }}">
+                </div>
+                <div>
+                    <label class="block text-body-s font-semibold mb-2">KGT (>120 см)</label>
+                    <input type="number" name="delivery_kgt" class="input w-full" min="0" value="{{ old('delivery_kgt', 0) }}">
+                </div>
             </div>
             <div>
                 <label class="block text-body-s font-semibold mb-2">Адрес доставки</label>
