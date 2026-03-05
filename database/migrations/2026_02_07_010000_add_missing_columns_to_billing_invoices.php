@@ -33,9 +33,16 @@ return new class extends Migration
         });
 
         // Backfill period from period_start for existing rows
-        \Illuminate\Support\Facades\DB::statement(
-            "UPDATE billing_invoices SET period = DATE_FORMAT(period_start, '%Y-%m') WHERE period IS NULL AND period_start IS NOT NULL"
-        );
+        $driver = \Illuminate\Support\Facades\DB::getDriverName();
+        if ($driver === 'mysql') {
+            \Illuminate\Support\Facades\DB::statement(
+                "UPDATE billing_invoices SET period = DATE_FORMAT(period_start, '%Y-%m') WHERE period IS NULL AND period_start IS NOT NULL"
+            );
+        } elseif ($driver === 'sqlite') {
+            \Illuminate\Support\Facades\DB::statement(
+                "UPDATE billing_invoices SET period = strftime('%Y-%m', period_start) WHERE period IS NULL AND period_start IS NOT NULL"
+            );
+        }
     }
 
     public function down(): void

@@ -416,8 +416,12 @@ class BillingService
         string $titleUz,
         int $unitPrice,
         float $qty,
-        ?string $comment = null
+        ?string $comment = null,
+        ?int $createdBy = null
     ): BillingItem {
+        // Determine creator - try manager guard first, then web
+        $creatorId = $createdBy ?? auth('manager')->id() ?? auth()->id();
+
         return BillingItem::createManual(
             $companyId,
             $scope,
@@ -425,7 +429,8 @@ class BillingService
             $titleUz,
             $unitPrice,
             $qty,
-            $comment
+            $comment,
+            $creatorId
         );
     }
 
