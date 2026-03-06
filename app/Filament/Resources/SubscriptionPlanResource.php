@@ -28,6 +28,15 @@ class SubscriptionPlanResource extends Resource
             ->schema([
                 Forms\Components\Section::make('Basic Information')
                     ->schema([
+                        Forms\Components\Select::make('billing_model')
+                            ->label('Модель биллинга')
+                            ->options([
+                                'subscription' => 'Подписка (фикс. абонплата)',
+                                'payg' => 'Pay as you go (по факту)',
+                            ])
+                            ->default('subscription')
+                            ->required(),
+
                         Forms\Components\TextInput::make('code')
                             ->required()
                             ->unique(ignoreRecord: true)

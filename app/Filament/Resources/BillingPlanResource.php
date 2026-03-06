@@ -24,6 +24,8 @@ class BillingPlanResource extends Resource
 
     protected static ?string $navigationGroup = 'Финансы';
 
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?int $navigationSort = 5;
 
     public static function form(Form $form): Form

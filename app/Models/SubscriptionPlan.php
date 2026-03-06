@@ -19,6 +19,7 @@ class SubscriptionPlan extends Model
     
     protected $fillable = [
         'code',
+        'billing_model',
         'name_ru',
         'name_uz',
         'description_ru',
