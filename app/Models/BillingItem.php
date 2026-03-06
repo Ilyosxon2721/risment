@@ -55,6 +55,23 @@ class BillingItem extends Model
         'status' => self::STATUS_ACCRUED,
     ];
 
+    protected static function booted(): void
+    {
+        // Deduct from company balance when a billing item is accrued
+        static::created(function (self $item) {
+            if ($item->status === self::STATUS_ACCRUED && $item->amount > 0) {
+                Company::where('id', $item->company_id)->decrement('balance', $item->amount);
+            }
+        });
+
+        // Restore balance when an item is voided
+        static::updated(function (self $item) {
+            if ($item->wasChanged('status') && $item->status === self::STATUS_VOID) {
+                Company::where('id', $item->company_id)->increment('balance', $item->amount);
+            }
+        });
+    }
+
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);

@@ -305,7 +305,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
-</script>
+
 function costCalculator() {
     return {
         shipments: 0,
@@ -339,5 +339,6 @@ function costCalculator() {
         }
     }
 }
+</script>
 @endpush
 @endsection
