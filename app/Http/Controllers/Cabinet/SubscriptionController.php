@@ -18,8 +18,10 @@ class SubscriptionController extends Controller
         // Get all subscription plans ordered by price
         $plans = SubscriptionPlan::orderBy('price_month')->get();
         
-        // Get user's current subscription if exists
-        $currentSubscription = $currentCompany->subscription;
+        // Get user's current subscription plan (via subscription_plan_id FK)
+        $currentSubscription = $currentCompany->subscription_plan_id
+            ? (object) ['plan_id' => $currentCompany->subscription_plan_id]
+            : null;
         
         return view('cabinet.subscription.choose', compact('plans', 'currentSubscription'));
     }
@@ -37,7 +39,7 @@ class SubscriptionController extends Controller
         $selectedPlan = SubscriptionPlan::findOrFail($request->plan_id);
         
         // Check if user is selecting their current plan
-        if ($currentCompany->subscription && $currentCompany->subscription->plan_id == $selectedPlan->id) {
+        if ($currentCompany->subscription_plan_id == $selectedPlan->id) {
             return redirect()
                 ->route('cabinet.dashboard')
                 ->with('info', __('You are already subscribed to this plan'));
@@ -69,7 +71,9 @@ class SubscriptionController extends Controller
         }
         
         $selectedPlan = SubscriptionPlan::findOrFail($planId);
-        $currentSubscription = $currentCompany->subscription;
+        $currentSubscription = $currentCompany->subscription_plan_id
+            ? (object) ['plan_id' => $currentCompany->subscription_plan_id]
+            : null;
         
         // Clear session
         session()->forget(['selected_plan_id', 'selected_plan_name']);
