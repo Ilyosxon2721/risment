@@ -38,9 +38,7 @@ class BillingSubscriptionResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('company_id')
                             ->label('Компания')
-                            ->relationship('company', 'name')
-                            ->searchable()
-                            ->preload()
+                            ->options(fn () => \App\Models\Company::orderBy('name')->pluck('name', 'id'))
                             ->required()
                             ->disabled(fn ($record) => $record !== null),
 
@@ -56,7 +54,6 @@ class BillingSubscriptionResource extends Resource
                                             : 'бесплатно'),
                                     ])
                             )
-                            ->searchable()
                             ->required()
                             ->native(false),
 

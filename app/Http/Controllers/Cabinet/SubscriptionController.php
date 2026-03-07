@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Cabinet;
 
 use App\Http\Controllers\Controller;
+use App\Models\BillingPlan;
+use App\Models\BillingSubscription;
 use App\Models\SubscriptionPlan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SubscriptionController extends Controller
 {
@@ -55,29 +58,53 @@ class SubscriptionController extends Controller
     }
     
     /**
-     * Show confirmation page after package selection
+     * Activate selected plan and show confirmation page
      */
     public function confirm(Request $request)
     {
         $currentCompany = $request->attributes->get('currentCompany');
-        
+
         // Get selected plan from session
         $planId = session('selected_plan_id');
-        
+
         if (!$planId) {
             return redirect()
                 ->route('cabinet.subscription.choose')
                 ->with('error', __('Please select a plan first'));
         }
-        
+
         $selectedPlan = SubscriptionPlan::findOrFail($planId);
         $currentSubscription = $currentCompany->subscription_plan_id
             ? (object) ['plan_id' => $currentCompany->subscription_plan_id]
             : null;
-        
+
         // Clear session
         session()->forget(['selected_plan_id', 'selected_plan_name']);
-        
+
+        // Save selection: update company's plan and create billing subscription record
+        DB::transaction(function () use ($currentCompany, $selectedPlan) {
+            // Update company's active subscription plan
+            $currentCompany->update(['subscription_plan_id' => $selectedPlan->id]);
+
+            // Cancel any previous active subscriptions
+            BillingSubscription::where('company_id', $currentCompany->id)
+                ->where('status', 'active')
+                ->update(['status' => 'cancelled']);
+
+            // Find corresponding BillingPlan by code (same codes in both tables)
+            $billingPlan = BillingPlan::where('code', $selectedPlan->code)->first();
+
+            if ($billingPlan) {
+                BillingSubscription::create([
+                    'company_id'      => $currentCompany->id,
+                    'billing_plan_id' => $billingPlan->id,
+                    'started_at'      => now(),
+                    'expires_at'      => null,
+                    'status'          => 'active',
+                ]);
+            }
+        });
+
         return view('cabinet.subscription.confirm', compact('selectedPlan', 'currentSubscription'));
     }
 }
