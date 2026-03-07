@@ -19,42 +19,118 @@
         <div class="text-right">
             <div class="text-h3 text-brand">{{ number_format($plan->price_month, 0, '', ' ') }} {{ __('UZS') }}</div>
             <div class="text-body-s text-text-muted">{{ __('/month') }}</div>
+            @php $activeSub = $currentCompany->billingSubscription; @endphp
+            @if($activeSub && $activeSub->expires_at)
+            <div class="text-body-s mt-1 {{ $activeSub->expires_at->diffInDays(now()) <= 5 ? 'text-warning font-semibold' : 'text-text-muted' }}">
+                {{ __('Valid until') }}: {{ $activeSub->expires_at->format('d.m.Y') }}
+            </div>
+            @endif
         </div>
     </div>
     
     <!-- Usage Grid -->
+    @php
+        $fbsUsed     = $usage?->fbs_shipments_count ?? 0;
+        $boxesUsed   = $usage?->storage_boxes_peak ?? 0;
+        $bagsUsed    = $usage?->storage_bags_peak ?? 0;
+        $inboundUsed = $usage?->inbound_boxes_count ?? 0;
+
+        $fbsLimit     = $plan->fbs_shipments_included ?: 0;
+        $boxesLimit   = $plan->storage_included_boxes ?: 0;
+        $bagsLimit    = $plan->storage_included_bags ?: 0;
+        $inboundLimit = $plan->inbound_included_boxes ?: 0;
+
+        $fbsPct     = $fbsLimit > 0     ? min(100, round($fbsUsed     / $fbsLimit     * 100)) : 100;
+        $boxesPct   = $boxesLimit > 0   ? min(100, round($boxesUsed   / $boxesLimit   * 100)) : 100;
+        $bagsPct    = $bagsLimit > 0    ? min(100, round($bagsUsed    / $bagsLimit    * 100)) : 100;
+        $inboundPct = $inboundLimit > 0 ? min(100, round($inboundUsed / $inboundLimit * 100)) : 100;
+    @endphp
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+
+        {{-- FBS Shipments --}}
         <div class="p-4 bg-bg-soft rounded-btn">
             <div class="text-body-s text-text-muted mb-1">{{ __('FBS shipments') }}</div>
-            <div class="text-h4 font-heading {{ ($usage && $usage->fbs_shipments_count > $plan->fbs_shipments_included) ? 'text-warning' : 'text-brand' }}">
-                {{ $usage ? $usage->fbs_shipments_count : 0 }}
+            <div class="flex items-baseline gap-1 mb-1">
+                <span class="text-h4 font-heading {{ $fbsUsed > $fbsLimit && $fbsLimit > 0 ? 'text-warning' : 'text-brand' }}">{{ $fbsUsed }}</span>
+                @if($fbsLimit > 0)
+                <span class="text-body-s text-text-muted">/ {{ $fbsLimit }}</span>
+                @endif
             </div>
-            <div class="text-body-s text-text-muted">{{ __('out of') }} {{ $plan->fbs_shipments_included }}</div>
+            @if($fbsLimit > 0)
+            <div class="w-full bg-gray-200 rounded-full h-1.5 mb-1">
+                <div class="h-1.5 rounded-full {{ $fbsPct >= 90 ? 'bg-warning' : 'bg-brand' }}" style="width: {{ $fbsPct }}%"></div>
+            </div>
+            <div class="text-body-s {{ $fbsUsed >= $fbsLimit ? 'text-warning font-semibold' : 'text-success' }}">
+                {{ __('Remaining') }}: {{ max(0, $fbsLimit - $fbsUsed) }}
+            </div>
+            @else
+            <div class="text-body-s text-text-muted">{{ __('Pay as you go') }}</div>
+            @endif
         </div>
-        
+
+        {{-- Storage Boxes --}}
         <div class="p-4 bg-bg-soft rounded-btn">
             <div class="text-body-s text-text-muted mb-1">{{ __('Boxes') }}</div>
-            <div class="text-h4 font-heading {{ ($usage && $usage->storage_boxes_peak > $plan->storage_included_boxes) ? 'text-warning' : 'text-brand' }}">
-                {{ $usage ? $usage->storage_boxes_peak : 0 }}
+            <div class="flex items-baseline gap-1 mb-1">
+                <span class="text-h4 font-heading {{ $boxesUsed > $boxesLimit && $boxesLimit > 0 ? 'text-warning' : 'text-brand' }}">{{ $boxesUsed }}</span>
+                @if($boxesLimit > 0)
+                <span class="text-body-s text-text-muted">/ {{ $boxesLimit }}</span>
+                @endif
             </div>
-            <div class="text-body-s text-text-muted">{{ __('out of') }} {{ $plan->storage_included_boxes }}</div>
+            @if($boxesLimit > 0)
+            <div class="w-full bg-gray-200 rounded-full h-1.5 mb-1">
+                <div class="h-1.5 rounded-full {{ $boxesPct >= 90 ? 'bg-warning' : 'bg-brand' }}" style="width: {{ $boxesPct }}%"></div>
+            </div>
+            <div class="text-body-s {{ $boxesUsed >= $boxesLimit ? 'text-warning font-semibold' : 'text-success' }}">
+                {{ __('Remaining') }}: {{ max(0, $boxesLimit - $boxesUsed) }}
+            </div>
+            @else
+            <div class="text-body-s text-text-muted">{{ __('Pay as you go') }}</div>
+            @endif
         </div>
-        
+
+        {{-- Storage Bags --}}
         <div class="p-4 bg-bg-soft rounded-btn">
             <div class="text-body-s text-text-muted mb-1">{{ __('Bags') }}</div>
-            <div class="text-h4 font-heading {{ ($usage && $usage->storage_bags_peak > $plan->storage_included_bags) ? 'text-warning' : 'text-brand' }}">
-                {{ $usage ? $usage->storage_bags_peak : 0 }}
+            <div class="flex items-baseline gap-1 mb-1">
+                <span class="text-h4 font-heading {{ $bagsUsed > $bagsLimit && $bagsLimit > 0 ? 'text-warning' : 'text-brand' }}">{{ $bagsUsed }}</span>
+                @if($bagsLimit > 0)
+                <span class="text-body-s text-text-muted">/ {{ $bagsLimit }}</span>
+                @endif
             </div>
-            <div class="text-body-s text-text-muted">{{ __('out of') }} {{ $plan->storage_included_bags }}</div>
+            @if($bagsLimit > 0)
+            <div class="w-full bg-gray-200 rounded-full h-1.5 mb-1">
+                <div class="h-1.5 rounded-full {{ $bagsPct >= 90 ? 'bg-warning' : 'bg-brand' }}" style="width: {{ $bagsPct }}%"></div>
+            </div>
+            <div class="text-body-s {{ $bagsUsed >= $bagsLimit ? 'text-warning font-semibold' : 'text-success' }}">
+                {{ __('Remaining') }}: {{ max(0, $bagsLimit - $bagsUsed) }}
+            </div>
+            @else
+            <div class="text-body-s text-text-muted">{{ __('Pay as you go') }}</div>
+            @endif
         </div>
-        
+
+        {{-- Inbound --}}
         <div class="p-4 bg-bg-soft rounded-btn">
             <div class="text-body-s text-text-muted mb-1">{{ __('Inbound') }}</div>
-            <div class="text-h4 font-heading {{ ($usage && $usage->inbound_boxes_count > $plan->inbound_included_boxes) ? 'text-warning' : 'text-brand' }}">
-                {{ $usage ? $usage->inbound_boxes_count : 0 }}
+            <div class="flex items-baseline gap-1 mb-1">
+                <span class="text-h4 font-heading {{ $inboundUsed > $inboundLimit && $inboundLimit > 0 ? 'text-warning' : 'text-brand' }}">{{ $inboundUsed }}</span>
+                @if($inboundLimit > 0)
+                <span class="text-body-s text-text-muted">/ {{ $inboundLimit }}</span>
+                @endif
             </div>
-            <div class="text-body-s text-text-muted">{{ __('out of') }} {{ $plan->inbound_included_boxes }}</div>
+            @if($inboundLimit > 0)
+            <div class="w-full bg-gray-200 rounded-full h-1.5 mb-1">
+                <div class="h-1.5 rounded-full {{ $inboundPct >= 90 ? 'bg-warning' : 'bg-brand' }}" style="width: {{ $inboundPct }}%"></div>
+            </div>
+            <div class="text-body-s {{ $inboundUsed >= $inboundLimit ? 'text-warning font-semibold' : 'text-success' }}">
+                {{ __('Remaining') }}: {{ max(0, $inboundLimit - $inboundUsed) }}
+            </div>
+            @else
+            <div class="text-body-s text-text-muted">{{ __('Pay as you go') }}</div>
+            @endif
         </div>
+
     </div>
     
     <!-- Overage Warning -->

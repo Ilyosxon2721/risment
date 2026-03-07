@@ -95,7 +95,8 @@ class DashboardController extends Controller
             'inbounds' => $chartInbounds,
         ];
         
-        return view('cabinet.dashboard', compact('stats', 'recentInbounds', 'recentShipments', 'plan', 'usage', 'overageEstimate', 'chartData'));
+        $currentCompany = $company;
+        return view('cabinet.dashboard', compact('stats', 'recentInbounds', 'recentShipments', 'plan', 'usage', 'overageEstimate', 'chartData', 'currentCompany'));
     }
 
     public function estimate(Request $request, PricingService $pricingService)

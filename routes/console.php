@@ -1,6 +1,7 @@
 <?php
 
 use App\Jobs\DailyStorageChargeJob;
+use App\Jobs\ExpireSubscriptionsJob;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
@@ -12,6 +13,11 @@ Artisan::command('inspire', function () {
 // Daily storage charge accrual (runs at 2:00 AM)
 Schedule::job(new DailyStorageChargeJob())
     ->dailyAt('02:00')
+    ->withoutOverlapping();
+
+// Daily subscription expiry check — downgrades to PAYG if expired (runs at 3:00 AM)
+Schedule::job(new ExpireSubscriptionsJob())
+    ->dailyAt('03:00')
     ->withoutOverlapping();
 
 // Monthly invoice generation (runs on 1st of each month at 6:00 AM)

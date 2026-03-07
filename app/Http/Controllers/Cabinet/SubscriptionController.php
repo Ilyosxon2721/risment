@@ -108,7 +108,7 @@ class SubscriptionController extends Controller
                     'company_id'      => $currentCompany->id,
                     'billing_plan_id' => $billingPlan->id,
                     'started_at'      => now(),
-                    'expires_at'      => null,
+                    'expires_at'      => $selectedPlan->price_month > 0 ? now()->addMonth() : null,
                     'status'          => 'active',
                 ]);
             }
