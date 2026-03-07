@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\BillingBalance;
 use App\Models\BillingItem;
 use App\Models\Company;
 use App\Models\Inventory;
@@ -50,6 +51,8 @@ class DailyStorageChargeJob implements ShouldQueue
                 continue;
             }
 
+            $companyAccrued = 0;
+
             // Accrue box storage
             if ($storage['boxes'] > 0 && $boxRate > 0) {
                 $item = $this->accrueStorageItem(
@@ -65,6 +68,7 @@ class DailyStorageChargeJob implements ShouldQueue
 
                 if ($item) {
                     $totalAccrued += $item->amount;
+                    $companyAccrued += $item->amount;
                 }
             }
 
@@ -83,7 +87,20 @@ class DailyStorageChargeJob implements ShouldQueue
 
                 if ($item) {
                     $totalAccrued += $item->amount;
+                    $companyAccrued += $item->amount;
                 }
+            }
+
+            // Charge BillingBalance for today's storage (after applying discounts)
+            if ($companyAccrued > 0) {
+                $chargeAmount = $company->applyDiscounts((float) $companyAccrued, 'overage');
+                $balance = BillingBalance::getOrCreate($company->id);
+                $balance->charge(
+                    $chargeAmount,
+                    "Хранение за {$this->date}",
+                    BillingItem::class,
+                    null
+                );
             }
 
             $companiesProcessed++;
