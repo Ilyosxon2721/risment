@@ -85,6 +85,16 @@ class SubscriptionPlan extends Model
         return $this->belongsToMany(OverageRule::class, 'plan_overage_rules');
     }
 
+    public function marketplaceServices(): BelongsToMany
+    {
+        return $this->belongsToMany(MarketplaceService::class, 'plan_marketplace_services');
+    }
+
+    public function serviceAddons(): BelongsToMany
+    {
+        return $this->belongsToMany(ServiceAddon::class, 'plan_service_addons');
+    }
+
     /**
      * Get localized display name based on current locale
      */

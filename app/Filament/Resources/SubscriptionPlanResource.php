@@ -3,6 +3,8 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\SubscriptionPlanResource\Pages;
+use App\Models\MarketplaceService;
+use App\Models\ServiceAddon;
 use App\Models\SubscriptionPlan;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -132,34 +134,68 @@ class SubscriptionPlanResource extends Resource
                             ->default(11000)
                             ->label('Per FBS MGT Shipment')
                             ->helperText('Малогабарит (Pick&Pack + доставка MGT)'),
-                        
+
                         Forms\Components\TextInput::make('over_fbs_sgt_fee')
                             ->numeric()
                             ->default(15000)
                             ->label('Per FBS SGT Shipment')
                             ->helperText('Среднегабарит (Pick&Pack + доставка SGT)'),
-                        
+
                         Forms\Components\TextInput::make('over_fbs_kgt_fee')
                             ->numeric()
                             ->default(27000)
                             ->label('Per FBS KGT Shipment')
                             ->helperText('Крупногабарит (Pick&Pack + доставка KGT)'),
-                        
+
                         Forms\Components\TextInput::make('over_storage_box_fee')
                             ->numeric()
                             ->default(300)
                             ->label('Per Storage Box/month'),
-                        
+
                         Forms\Components\TextInput::make('over_storage_bag_fee')
                             ->numeric()
                             ->default(500)
                             ->label('Per Storage Bag/month'),
-                        
+
                         Forms\Components\TextInput::make('over_inbound_box_fee')
                             ->numeric()
                             ->default(3000)
                             ->label('Per Inbound Box'),
                     ])->columns(3),
+
+                Forms\Components\Section::make('Маркетплейс-услуги')
+                    ->description('Маркетплейс-услуги, включённые в этот пакет')
+                    ->schema([
+                        Forms\Components\CheckboxList::make('marketplaceServices')
+                            ->label('')
+                            ->relationship('marketplaceServices', 'name_ru')
+                            ->options(fn () => MarketplaceService::where('is_active', true)
+                                ->orderBy('service_group')
+                                ->orderBy('sort')
+                                ->get()
+                                ->mapWithKeys(fn ($s) => [
+                                    $s->id => "[{$s->service_group}] {$s->name_ru}" . ($s->price > 0 ? ' — ' . number_format($s->price, 0, '', ' ') . ' UZS' : ''),
+                                ]))
+                            ->columns(2)
+                            ->gridDirection('row'),
+                    ]),
+
+                Forms\Components\Section::make('Дополнительные услуги')
+                    ->description('Доп. услуги (сервисы склада), включённые в пакет')
+                    ->schema([
+                        Forms\Components\CheckboxList::make('serviceAddons')
+                            ->label('')
+                            ->relationship('serviceAddons', 'title_ru')
+                            ->options(fn () => ServiceAddon::where('is_active', true)
+                                ->orderBy('scope')
+                                ->orderBy('sort')
+                                ->get()
+                                ->mapWithKeys(fn ($a) => [
+                                    $a->id => "[{$a->scope}] {$a->title_ru}" . ($a->value > 0 ? ' — ' . number_format($a->value, 0, '', ' ') . ' UZS' : ''),
+                                ]))
+                            ->columns(2)
+                            ->gridDirection('row'),
+                    ]),
             ]);
     }
 
