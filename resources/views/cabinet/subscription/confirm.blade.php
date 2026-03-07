@@ -26,8 +26,14 @@
                     <p class="text-body-s text-text-muted">{{ $selectedPlan->getDescription() }}</p>
                 </div>
                 <div class="text-right">
+                    @if($discountApplied)
+                    <div class="text-body-s text-text-muted line-through">{{ number_format($selectedPlan->price_month, 0, '', ' ') }} {{ __('UZS') }}</div>
+                    <div class="text-h3 text-success">{{ number_format($effectivePrice, 0, '', ' ') }} {{ __('UZS') }}</div>
+                    <div class="text-body-s text-success font-semibold">{{ __('per month') }} ({{ __('discount applied') }})</div>
+                    @else
                     <div class="text-h3 text-brand">{{ number_format($selectedPlan->price_month, 0, '', ' ') }} {{ __('UZS') }}</div>
                     <div class="text-body-s text-text-muted">{{ __('per month') }}</div>
+                    @endif
                 </div>
             </div>
 

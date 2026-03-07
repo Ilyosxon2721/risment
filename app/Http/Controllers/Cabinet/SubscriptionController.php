@@ -17,16 +17,19 @@ class SubscriptionController extends Controller
     public function choose(Request $request)
     {
         $currentCompany = $request->attributes->get('currentCompany');
-        
+
         // Get all subscription plans ordered by price
         $plans = SubscriptionPlan::orderBy('price_month')->get();
-        
+
         // Get user's current subscription plan (via subscription_plan_id FK)
         $currentSubscription = $currentCompany->subscription_plan_id
             ? (object) ['plan_id' => $currentCompany->subscription_plan_id]
             : null;
-        
-        return view('cabinet.subscription.choose', compact('plans', 'currentSubscription'));
+
+        // Load active subscription discounts for this company
+        $subscriptionDiscounts = $currentCompany->discounts()->active()->forTarget('subscription')->get();
+
+        return view('cabinet.subscription.choose', compact('plans', 'currentSubscription', 'subscriptionDiscounts'));
     }
     
     /**
@@ -81,17 +84,22 @@ class SubscriptionController extends Controller
         // Clear session
         session()->forget(['selected_plan_id', 'selected_plan_name']);
 
-        // Check if company has sufficient balance for subscription fee
-        if ($selectedPlan->price_month > 0 && $currentCompany->balance < $selectedPlan->price_month) {
+        // Apply subscription discounts to get effective price
+        $effectivePrice = $selectedPlan->price_month > 0
+            ? $currentCompany->applyDiscounts((float) $selectedPlan->price_month, 'subscription')
+            : 0;
+
+        // Check if company has sufficient balance for effective price
+        if ($effectivePrice > 0 && $currentCompany->balance < $effectivePrice) {
             return redirect()
                 ->route('cabinet.subscription.choose')
                 ->with('error', __('Insufficient balance. Please top up your balance before activating this plan. Required: :amount UZS', [
-                    'amount' => number_format($selectedPlan->price_month, 0, '', ' '),
+                    'amount' => number_format($effectivePrice, 0, '', ' '),
                 ]));
         }
 
         // Save selection: update company's plan and create billing subscription record
-        DB::transaction(function () use ($currentCompany, $selectedPlan) {
+        DB::transaction(function () use ($currentCompany, $selectedPlan, $effectivePrice) {
             // Update company's active subscription plan
             $currentCompany->update(['subscription_plan_id' => $selectedPlan->id]);
 
@@ -108,12 +116,14 @@ class SubscriptionController extends Controller
                     'company_id'      => $currentCompany->id,
                     'billing_plan_id' => $billingPlan->id,
                     'started_at'      => now(),
-                    'expires_at'      => $selectedPlan->price_month > 0 ? now()->addMonth() : null,
+                    'expires_at'      => $effectivePrice > 0 ? now()->addMonth() : null,
                     'status'          => 'active',
                 ]);
             }
         });
 
-        return view('cabinet.subscription.confirm', compact('selectedPlan', 'currentSubscription'));
+        $discountApplied = $effectivePrice < (float) $selectedPlan->price_month;
+
+        return view('cabinet.subscription.confirm', compact('selectedPlan', 'currentSubscription', 'effectivePrice', 'discountApplied'));
     }
 }

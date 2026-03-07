@@ -34,10 +34,26 @@
         <div class="text-center mb-6">
             <h3 class="text-h3 font-heading mb-2">{{ $plan->getName() }}</h3>
             <p class="text-body-s text-text-muted mb-4">{{ $plan->getDescription() }}</p>
+            @php
+                $effectivePlanPrice = $plan->price_month > 0
+                    ? $currentCompany->applyDiscounts((float) $plan->price_month, 'subscription')
+                    : 0;
+                $hasDiscount = $effectivePlanPrice < (float) $plan->price_month;
+            @endphp
+            @if($hasDiscount)
+            <div class="text-body-s text-text-muted line-through">
+                {{ number_format($plan->price_month, 0, '', ' ') }} {{ __('UZS') }}
+            </div>
+            <div class="text-h2 text-success font-heading">
+                {{ number_format($effectivePlanPrice, 0, '', ' ') }} <span class="text-body-m">{{ __('UZS') }}</span>
+            </div>
+            <div class="text-body-s text-success font-semibold">{{ __('per month') }} — {{ __('discount applied') }}</div>
+            @else
             <div class="text-h2 text-brand font-heading">
                 {{ number_format($plan->price_month, 0, '', ' ') }} <span class="text-body-m">{{ __('UZS') }}</span>
             </div>
             <div class="text-body-s text-text-muted">{{ __('per month') }}</div>
+            @endif
         </div>
         
         <!-- Features List -->

@@ -68,6 +68,24 @@ class Company extends Model
         return $this->hasMany(ManagerTask::class);
     }
 
+    public function discounts()
+    {
+        return $this->hasMany(CompanyDiscount::class);
+    }
+
+    /**
+     * Apply all active discounts for a given target to an amount.
+     * target: 'subscription' | 'overage' | 'all'
+     */
+    public function applyDiscounts(float $amount, string $target): float
+    {
+        $discounts = $this->discounts()->active()->forTarget($target)->get();
+        foreach ($discounts as $discount) {
+            $amount = $discount->apply($amount);
+        }
+        return $amount;
+    }
+
     public function getFormattedBalanceAttribute(): string
     {
         return number_format(abs($this->balance), 0, '', ' ') . ' ' . __('UZS');
