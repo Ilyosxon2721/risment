@@ -5,6 +5,8 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\CompanyResource\Pages;
 use App\Filament\Resources\CompanyResource\RelationManagers;
 use App\Models\BillingBalance;
+use App\Models\BillingBalanceTransaction;
+use App\Models\BillingItem;
 use App\Models\Company;
 use App\Models\SubscriptionPlan;
 use App\Models\User;
@@ -157,6 +159,47 @@ class CompanyResource extends Resource
                         $balance->topup((float) $data['amount'], $data['description']);
                         Notification::make()
                             ->title('Баланс пополнен: ' . number_format($data['amount'], 0, '', ' ') . ' UZS')
+                            ->success()->send();
+                    }),
+                Tables\Actions\Action::make('sync_balance')
+                    ->label('Синх. баланс')
+                    ->icon('heroicon-o-arrow-path')
+                    ->color('warning')
+                    ->requiresConfirmation()
+                    ->modalHeading('Синхронизировать баланс')
+                    ->modalDescription('Спишет разницу между начисленными услугами и уже записанными транзакциями за текущий месяц.')
+                    ->action(function (Company $record): void {
+                        $period = now()->format('Y-m');
+
+                        $itemsTotal = BillingItem::forCompany($record->id)
+                            ->forPeriod($period)
+                            ->whereIn('status', [BillingItem::STATUS_ACCRUED, BillingItem::STATUS_INVOICED])
+                            ->sum('amount');
+
+                        if ($itemsTotal <= 0) {
+                            Notification::make()->title('Нет начислений за ' . $period)->warning()->send();
+                            return;
+                        }
+
+                        $alreadyCharged = abs((float) BillingBalanceTransaction::where('company_id', $record->id)
+                            ->where('type', 'charge')
+                            ->whereYear('created_at', substr($period, 0, 4))
+                            ->whereMonth('created_at', substr($period, 5, 2))
+                            ->sum('amount'));
+
+                        $effectiveTotal = $record->applyDiscounts((float) $itemsTotal, 'overage');
+                        $gap = $effectiveTotal - $alreadyCharged;
+
+                        if ($gap <= 0) {
+                            Notification::make()->title('Баланс уже синхронизирован')->success()->send();
+                            return;
+                        }
+
+                        $balance = BillingBalance::getOrCreate($record->id);
+                        $balance->charge($gap, "Синхронизация начислений за {$period}", BillingItem::class, null);
+
+                        Notification::make()
+                            ->title('Списано: ' . number_format($gap, 0, '', ' ') . ' UZS')
                             ->success()->send();
                     }),
             ])
