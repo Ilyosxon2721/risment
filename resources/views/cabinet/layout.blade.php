@@ -177,6 +177,12 @@
                         {{ session('error') }}
                     </div>
                 @endif
+
+                @if(session('info'))
+                    <div class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-card text-blue-800">
+                        {{ session('info') }}
+                    </div>
+                @endif
                 
                 @yield('content')
             </div>

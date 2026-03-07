@@ -94,29 +94,34 @@
                 </div>
                 
             <!-- Auth buttons -->
+            @php
+                $navUser = Auth::user() ?? Auth::guard('manager')->user();
+            @endphp
             <div class="flex items-center gap-3">
-                @guest
+                @if($navUser)
+                    @if($navUser->hasAnyRole(['manager', 'admin']))
+                    <a href="/manager/" class="btn btn-secondary text-sm">
+                        Менеджер
+                    </a>
+                    @endif
+                    @if($navUser->hasRole('admin'))
+                    <a href="/admin/" class="btn btn-secondary text-sm">
+                        Админ
+                    </a>
+                    @endif
+                    @if(Auth::check())
+                    <a href="{{ route('cabinet.dashboard') }}" class="btn btn-primary text-sm">
+                        {{ __('Cabinet') }}
+                    </a>
+                    @endif
+                @else
                     <a href="{{ route('login', ['locale' => app()->getLocale()]) }}" class="btn btn-secondary text-sm">
                         {{ __('Login') }}
                     </a>
                     <a href="{{ route('register', ['locale' => app()->getLocale()]) }}" class="btn btn-primary text-sm">
                         {{ __('Register') }}
                     </a>
-                @else
-                    @if(Auth::user()->hasAnyRole(['manager', 'admin']))
-                    <a href="/manager/" class="btn btn-secondary text-sm">
-                        Менеджер
-                    </a>
-                    @endif
-                    @if(Auth::user()->hasRole('admin'))
-                    <a href="/admin/" class="btn btn-secondary text-sm">
-                        Админ
-                    </a>
-                    @endif
-                    <a href="{{ route('cabinet.dashboard') }}" class="btn btn-primary text-sm">
-                        {{ __('Cabinet') }}
-                    </a>
-                @endguest
+                @endif
             </div>
         </div>
     </header>
