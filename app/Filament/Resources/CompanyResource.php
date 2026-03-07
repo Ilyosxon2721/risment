@@ -4,11 +4,13 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\CompanyResource\Pages;
 use App\Filament\Resources\CompanyResource\RelationManagers;
+use App\Models\BillingBalance;
 use App\Models\Company;
 use App\Models\SubscriptionPlan;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -105,9 +107,16 @@ class CompanyResource extends Resource
                 Tables\Columns\TextColumn::make('billing_day')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('balance')
-                    ->numeric()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('billing_balance')
+                    ->label('Баланс')
+                    ->state(fn (Company $record): string => (function () use ($record) {
+                        $b = $record->billingBalance?->balance ?? 0;
+                        $sign = $b < 0 ? '−' : '+';
+                        return $sign . number_format(abs($b), 0, '', ' ') . ' UZS';
+                    })())
+                    ->color(fn (Company $record): string =>
+                        ($record->billingBalance?->balance ?? 0) < 0 ? 'danger' : 'success'
+                    ),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
@@ -130,6 +139,26 @@ class CompanyResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('topup')
+                    ->label('Пополнить')
+                    ->icon('heroicon-o-plus-circle')
+                    ->color('success')
+                    ->form([
+                        Forms\Components\TextInput::make('amount')
+                            ->label('Сумма (UZS)')
+                            ->numeric()->minValue(1)->required(),
+                        Forms\Components\TextInput::make('description')
+                            ->label('Описание')
+                            ->default('Пополнение баланса')
+                            ->required()->maxLength(255),
+                    ])
+                    ->action(function (Company $record, array $data): void {
+                        $balance = BillingBalance::getOrCreate($record->id);
+                        $balance->topup((float) $data['amount'], $data['description']);
+                        Notification::make()
+                            ->title('Баланс пополнен: ' . number_format($data['amount'], 0, '', ' ') . ' UZS')
+                            ->success()->send();
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -143,6 +172,7 @@ class CompanyResource extends Resource
         return [
             RelationManagers\UsersRelationManager::class,
             RelationManagers\DiscountsRelationManager::class,
+            RelationManagers\BalanceTransactionsRelationManager::class,
         ];
     }
 

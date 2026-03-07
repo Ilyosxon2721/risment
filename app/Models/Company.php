@@ -73,6 +73,11 @@ class Company extends Model
         return $this->hasMany(CompanyDiscount::class);
     }
 
+    public function billingTransactions()
+    {
+        return $this->hasMany(BillingBalanceTransaction::class);
+    }
+
     /**
      * Apply all active discounts for a given target to an amount.
      * target: 'subscription' | 'overage' | 'all'
