@@ -43,7 +43,7 @@ class AuthController extends Controller
             ])->onlyInput('email');
         }
 
-        $request->session()->regenerate();
+        $request->session()->regenerateToken();
 
         return redirect()->intended(route('manager.dashboard'));
     }

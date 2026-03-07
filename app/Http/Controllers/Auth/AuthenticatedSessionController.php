@@ -23,7 +23,7 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
-        $request->session()->regenerate();
+        $request->session()->regenerateToken();
 
         // Get intended URL, but ignore admin/manager panel URLs
         $intended = session()->pull('url.intended', route('cabinet.dashboard'));
@@ -43,8 +43,8 @@ class AuthenticatedSessionController extends Controller
     {
         Auth::guard('web')->logout();
 
-        $request->session()->invalidate();
-
+        // Only regenerate token, do NOT invalidate entire session
+        // (user might be logged into admin/manager panel in another tab)
         $request->session()->regenerateToken();
 
         return redirect('/');

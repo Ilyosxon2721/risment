@@ -27,7 +27,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->authGuard('admin')
-            ->login()
+            ->login(\App\Http\Pages\Auth\AdminLogin::class)
             ->brandName('RISMENT Admin')
             ->brandLogoHeight('2.5rem')
             ->favicon(asset('favicon.ico'))
