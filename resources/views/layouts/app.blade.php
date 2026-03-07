@@ -103,6 +103,16 @@
                         {{ __('Register') }}
                     </a>
                 @else
+                    @if(Auth::user()->hasAnyRole(['manager', 'admin']))
+                    <a href="/manager/" class="btn btn-secondary text-sm">
+                        Менеджер
+                    </a>
+                    @endif
+                    @if(Auth::user()->hasRole('admin'))
+                    <a href="/admin/" class="btn btn-secondary text-sm">
+                        Админ
+                    </a>
+                    @endif
                     <a href="{{ route('cabinet.dashboard') }}" class="btn btn-primary text-sm">
                         {{ __('Cabinet') }}
                     </a>
