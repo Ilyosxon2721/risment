@@ -20,6 +20,11 @@ Schedule::job(new ExpireSubscriptionsJob())
     ->dailyAt('03:00')
     ->withoutOverlapping();
 
+// Daily balance reconciliation — charges BillingBalance for any accrued items not yet charged (runs at 4:00 AM)
+Schedule::command('billing:sync-balance')
+    ->dailyAt('04:00')
+    ->withoutOverlapping();
+
 // Monthly invoice generation (runs on 1st of each month at 6:00 AM)
 Schedule::command('billing:generate-invoices --use-ledger')
     ->monthlyOn(1, '06:00')
