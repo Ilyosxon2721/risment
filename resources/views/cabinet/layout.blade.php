@@ -36,8 +36,11 @@
                 <div class="p-4 border-b border-brand-border">
                     <div class="font-semibold">{{ $currentCompany->name }}</div>
                     <div class="text-body-s text-text-muted">{{ $currentCompany->email }}</div>
-                    <div class="mt-2 text-body-s font-semibold {{ $currentCompany->balance < 0 ? 'text-error' : 'text-success' }}">
-                        {{ __('Balance') }}: {{ $currentCompany->formatted_balance }}
+                    @php $bal = $currentBillingBalance->balance ?? 0; @endphp
+                    <div class="mt-2 text-body-s font-semibold {{ $bal < 0 ? 'text-error' : 'text-success' }}">
+                        {{ __('Balance') }}:
+                        {{ $bal < 0 ? '−' : '' }}{{ number_format(abs($bal), 0, '', ' ') }} {{ __('UZS') }}
+                        <span class="font-normal opacity-70">({{ $bal < 0 ? __('Debt') : __('Credit') }})</span>
                     </div>
                 </div>
                 @endif

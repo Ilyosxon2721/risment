@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Cabinet;
 
 use App\Http\Controllers\Controller;
+use App\Models\BillingBalance;
 use App\Models\BillingPlan;
 use App\Models\BillingSubscription;
 use App\Models\SubscriptionPlan;
@@ -89,8 +90,9 @@ class SubscriptionController extends Controller
             ? $currentCompany->applyDiscounts((float) $selectedPlan->price_month, 'subscription')
             : 0;
 
-        // Check if company has sufficient balance for effective price
-        if ($effectivePrice > 0 && $currentCompany->balance < $effectivePrice) {
+        // Check if company has sufficient billing balance for subscription fee
+        $billingBalance = BillingBalance::getOrCreate($currentCompany->id);
+        if ($effectivePrice > 0 && $billingBalance->balance < $effectivePrice) {
             return redirect()
                 ->route('cabinet.subscription.choose')
                 ->with('error', __('Insufficient balance. Please top up your balance before activating this plan. Required: :amount UZS', [
@@ -99,7 +101,7 @@ class SubscriptionController extends Controller
         }
 
         // Save selection: update company's plan and create billing subscription record
-        DB::transaction(function () use ($currentCompany, $selectedPlan, $effectivePrice) {
+        DB::transaction(function () use ($currentCompany, $selectedPlan, $effectivePrice, $billingBalance) {
             // Update company's active subscription plan
             $currentCompany->update(['subscription_plan_id' => $selectedPlan->id]);
 
@@ -112,13 +114,23 @@ class SubscriptionController extends Controller
             $billingPlan = BillingPlan::where('code', $selectedPlan->code)->first();
 
             if ($billingPlan) {
-                BillingSubscription::create([
+                $sub = BillingSubscription::create([
                     'company_id'      => $currentCompany->id,
                     'billing_plan_id' => $billingPlan->id,
                     'started_at'      => now(),
                     'expires_at'      => $effectivePrice > 0 ? now()->addMonth() : null,
                     'status'          => 'active',
                 ]);
+
+                // Charge billing balance for subscription fee
+                if ($effectivePrice > 0) {
+                    $billingBalance->charge(
+                        $effectivePrice,
+                        "Подписка: {$selectedPlan->getName()}",
+                        BillingSubscription::class,
+                        $sub->id
+                    );
+                }
             }
         });
 

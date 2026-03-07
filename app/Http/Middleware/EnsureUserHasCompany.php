@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\BillingBalance;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -47,7 +48,10 @@ class EnsureUserHasCompany
             $currentCompany = $firstCompany;
         }
         
+        $billingBalance = BillingBalance::getOrCreate($currentCompany->id);
+
         view()->share('currentCompany', $currentCompany);
+        view()->share('currentBillingBalance', $billingBalance);
         $request->attributes->set('currentCompany', $currentCompany);
         
         return $next($request);
