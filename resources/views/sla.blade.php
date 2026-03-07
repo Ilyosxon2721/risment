@@ -6,69 +6,37 @@
 <section class="py-16">
     <div class="container-risment max-w-4xl">
         <h1 class="text-h1 font-heading text-center mb-12">
-            @if(app()->getLocale() === 'ru')
-                SLA и регламенты
-            @else
-                SLA va reglamentlar
-            @endif
+{{ __('SLA and Regulations') }}
         </h1>
         
         <div class="prose max-w-none">
             <div class="card mb-8">
                 <h2 class="text-h3 font-heading mb-4">
-                    @if(app()->getLocale() === 'ru')
-                        Сроки обработки
-                    @else
-                        Ishlov berish muddatlari
-                    @endif
+{{ __('Processing Times') }}
                 </h2>
                 <ul class="space-y-3">
                     <li class="flex justify-between items-center p-3 bg-bg-soft rounded-btn">
                         <span>
-                            @if(app()->getLocale() === 'ru')
-                                Приёмка товара
-                            @else
-                                Mahsulotni qabul qilish
-                            @endif
+{{ __('Goods Receiving') }}
                         </span>
                         <span class="font-semibold text-brand">
-                            @if(app()->getLocale() === 'ru')
-                                1-2 рабочих дня
-                            @else
-                                1-2 ish kuni
-                            @endif
+{{ __('1-2 business days') }}
                         </span>
                     </li>
                     <li class="flex justify-between items-center p-3 bg-bg-soft rounded-btn">
                         <span>
-                            @if(app()->getLocale() === 'ru')
-                                Сборка заказа FBS/DBS
-                            @else
-                                FBS/DBS buyurtmasini yig'ish
-                            @endif
+{{ __('FBS/DBS Order Assembly') }}
                         </span>
                         <span class="font-semibold text-brand">
-                            @if(app()->getLocale() === 'ru')
-                                В день заказа
-                            @else
-                                Buyurtma kunida
-                            @endif
+{{ __('Same day') }}
                         </span>
                     </li>
                     <li class="flex justify-between items-center p-3 bg-bg-soft rounded-btn">
                         <span>
-                            @if(app()->getLocale() === 'ru')
-                                Подготовка поставки FBO
-                            @else
-                                FBO etkazib berishni tayyorlash
-                            @endif
+{{ __('FBO Shipment Preparation') }}
                         </span>
                         <span class="font-semibold text-brand">
-                            @if(app()->getLocale() === 'ru')
-                                2-3 рабочих дня
-                            @else
-                                2-3 ish kuni
-                            @endif
+{{ __('2-3 business days') }}
                         </span>
                     </li>
                 </ul>
@@ -76,98 +44,50 @@
             
             <div class="card mb-8">
                 <h2 class="text-h3 font-heading mb-4">
-                    @if(app()->getLocale() === 'ru')
-                        Требования к упаковке
-                    @else
-                        Qadoqlash talablari
-                    @endif
+{{ __('Packaging Requirements') }}
                 </h2>
                 <p class="text-body-m text-text-muted mb-4">
-                    @if(app()->getLocale() === 'ru')
-                        Товар должен быть упакован согласно требованиям маркетплейса:
-                    @else
-                        Mahsulot marketplace talablariga muvofiq qadoqlangan bo'lishi kerak:
-                    @endif
+{{ __('Goods must be packaged according to marketplace requirements:') }}
                 </p>
                 <ul class="list-disc list-inside space-y-2 text-body-m text-text-muted">
                     <li>
-                        @if(app()->getLocale() === 'ru')
-                            Индивидуальная упаковка для каждой единицы
-                        @else
-                            Har bir birlik uchun individual qadoqlash
-                        @endif
+{{ __('Individual packaging for each unit') }}
                     </li>
                     <li>
-                        @if(app()->getLocale() === 'ru')
-                            Защита от повреждений при транспортировке
-                        @else
-                            Tashish vaqtida shikastlanishdan himoya
-                        @endif
+{{ __('Damage protection during transportation') }}
                     </li>
                     <li>
-                        @if(app()->getLocale() === 'ru')
-                            Маркировка со штрих-кодом
-                        @else
-                            Shtrix-kod bilan markalash
-                        @endif
+{{ __('Barcode labeling') }}
                     </li>
                 </ul>
             </div>
             
             <div class="card mb-8">
                 <h2 class="text-h3 font-heading mb-4">
-                    @if(app()->getLocale() === 'ru')
-                        Ответственность
-                    @else
-                        Mas'uliyat
-                    @endif
+{{ __('Responsibility') }}
                 </h2>
                 <p class="text-body-m text-text-muted mb-4">
-                    @if(app()->getLocale() === 'ru')
-                        RISMENT несёт ответственность за:
-                    @else
-                        RISMENT quyidagilar uchun javobgardir:
-                    @endif
+{{ __('RISMENT is responsible for:') }}
                 </p>
                 <ul class="list-disc list-inside space-y-2 text-body-m text-text-muted">
                     <li>
-                        @if(app()->getLocale() === 'ru')
-                            Сохранность товара на складе
-                        @else
-                            Ombordagi mahsulot xavfsizligi
-                        @endif
+{{ __('Product safety in the warehouse') }}
                     </li>
                     <li>
-                        @if(app()->getLocale() === 'ru')
-                            Точность комплектации заказов
-                        @else
-                            Buyurtmalarni to'plash aniqligi
-                        @endif
+{{ __('Order assembly accuracy') }}
                     </li>
                     <li>
-                        @if(app()->getLocale() === 'ru')
-                            Соблюдение сроков SLA
-                        @else
-                            SLA muddatlariga rioya qilish
-                        @endif
+{{ __('SLA compliance timelines') }}
                     </li>
                 </ul>
             </div>
             
             <div class="card gradient-brand text-white p-8">
                 <h3 class="text-h3 font-heading mb-4">
-                    @if(app()->getLocale() === 'ru')
-                        Особенности EDBS
-                    @else
-                        EDBS xususiyatlari
-                    @endif
+{{ __('EDBS Features') }}
                 </h3>
                 <p class="text-body-m opacity-90">
-                    @if(app()->getLocale() === 'ru')
-                        Отличаются по площадкам. Wildberries и Uzum имеют разные требования к маркировке и упаковке при работе по схеме EDBS.
-                    @else
-                        Platformalar bo'yicha farq qiladi. Wildberries va Uzum EDBS sxemasi bo'yicha ishlashda markalash va qadoqlashga turli talablarga ega.
-                    @endif
+{{ __('Varies by platform. Wildberries and Uzum have different labeling and packaging requirements for EDBS scheme.') }}
                 </p>
             </div>
         </div>

@@ -42,10 +42,10 @@
                     <span class="badge badge-success ml-2">{{ strtoupper($service->marketplace) }}</span>
                 </div>
                 <h3 class="text-h4 font-heading mb-3">
-                    {{ app()->getLocale() === 'ru' ? $service->title_ru : $service->title_uz }}
+                    {{ app()->getLocale() === 'en' ? ($service->title_en ?? $service->title_ru) : (app()->getLocale() === 'ru' ? $service->title_ru : $service->title_uz) }}
                 </h3>
                 <p class="text-body-s text-text-muted mb-4">
-                    {{ Str::limit(strip_tags(app()->getLocale() === 'ru' ? $service->content_ru : $service->content_uz), 150) }}
+                    {{ Str::limit(strip_tags(app()->getLocale() === 'en' ? ($service->content_en ?? $service->content_ru) : (app()->getLocale() === 'ru' ? $service->content_ru : $service->content_uz)), 150) }}
                 </p>
                 <a href="{{ route('services.show', ['locale' => app()->getLocale(), 'slug' => $service->slug]) }}" 
                    class="btn btn-secondary w-full">
@@ -54,13 +54,7 @@
             </div>
             @empty
             <div class="col-span-3 text-center py-12">
-                <p class="text-body-l text-text-muted">
-                    @if(app()->getLocale() === 'ru')
-                        Услуги не найдены
-                    @else
-                        Xizmatlar topilmadi
-                    @endif
-                </p>
+                <p class="text-body-l text-text-muted">{{ __('Services not found') }}</p>
             </div>
             @endforelse
         </div>

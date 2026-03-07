@@ -121,13 +121,17 @@
                         $currentParams = request()->route()->parameters();
                     @endphp
                     
-                    <a href="{{ route($currentRoute, array_merge($currentParams, ['locale' => 'ru'])) }}" 
+                    <a href="{{ route($currentRoute, array_merge($currentParams, ['locale' => 'ru'])) }}"
                        class="lang-btn px-4 py-2 rounded-btn {{ app()->getLocale() === 'ru' ? 'lang-btn-active' : 'lang-btn-inactive' }}">
                         RU
                     </a>
-                    <a href="{{ route($currentRoute, array_merge($currentParams, ['locale' => 'uz'])) }}" 
+                    <a href="{{ route($currentRoute, array_merge($currentParams, ['locale' => 'uz'])) }}"
                        class="lang-btn px-4 py-2 rounded-btn {{ app()->getLocale() === 'uz' ? 'lang-btn-active' : 'lang-btn-inactive' }}">
                         UZ
+                    </a>
+                    <a href="{{ route($currentRoute, array_merge($currentParams, ['locale' => 'en'])) }}"
+                       class="lang-btn px-4 py-2 rounded-btn {{ app()->getLocale() === 'en' ? 'lang-btn-active' : 'lang-btn-inactive' }}">
+                        EN
                     </a>
                 </div>
             </div>

@@ -141,7 +141,70 @@
                 ],
             ];
 
-            $faqs = app()->getLocale() === 'ru' ? $faqs_ru : $faqs_uz;
+            $faqs_en = [
+                [
+                    'q' => 'What is fulfillment and how is RISMENT different from a regular warehouse?',
+                    'a' => 'Fulfillment is more than just storage. RISMENT receives goods, manages inventory, assembles and packs orders, labels them, and ships to marketplaces or buyers. You get a turnkey process with transparent pricing.'
+                ],
+                [
+                    'q' => 'Which marketplaces do you work with?',
+                    'a' => 'We work with Uzum Market, Wildberries, Ozon, and Yandex Market. Additional platforms can be connected upon request.'
+                ],
+                [
+                    'q' => 'What schemes do you support: FBO, FBS, DBS?',
+                    'a' => '<strong>FBO</strong> — you ship batches to the marketplace warehouse through us.<br><strong>FBS</strong> — we assemble and pack orders, delivery is usually handled by the marketplace.<br><strong>DBS</strong> — delivery is done by the seller (can be through RISMENT by agreement).'
+                ],
+                [
+                    'q' => 'What is EDBS and why is it different across platforms?',
+                    'a' => 'EDBS is a term interpreted differently by different marketplaces. We clarify the scheme for each specific platform and fix the regulations in the contract to avoid surprises.'
+                ],
+                [
+                    'q' => 'How is "small/medium/large" item (MGT/SGT/LGT) determined?',
+                    'a' => 'The category is determined by the sum of three dimensions of the packaged item: <strong>L + W + H</strong> (cm):<br>• <strong>MGT:</strong> ≤ 60 cm<br>• <strong>SGT:</strong> 60–170 cm<br>• <strong>LGT:</strong> > 170 cm<br>If an order contains multiple items, the category is determined by the <strong>largest one</strong>.'
+                ],
+                [
+                    'q' => 'Do you label and prepare shipments for marketplace warehouses?',
+                    'a' => 'Yes. We sort, pack, label goods and boxes, form batches, and prepare documents/registries.'
+                ],
+                [
+                    'q' => 'Do you do order assembly (Pick&Pack) for FBS/DBS?',
+                    'a' => 'Yes. We assemble the order, pack it, add extra protection if needed (fragile/stretch/security bag), and transfer it for shipping.'
+                ],
+                [
+                    'q' => 'Is there a minimum volume to start?',
+                    'a' => 'No mandatory minimum volume, but for small volumes it\'s usually more cost-effective to start with a basic package. Our manager will help find the right format.'
+                ],
+                [
+                    'q' => 'How quickly do you process orders?',
+                    'a' => 'Processing time depends on workload and packaging requirements. In most cases, we work in "same day" or "next day" mode. Specific SLAs are set in the contract.'
+                ],
+                [
+                    'q' => 'Can I deliver goods without barcodes?',
+                    'a' => 'You can, but it slows down receiving and increases error risk. We recommend shipments with barcodes and correct SKU names. If there are no barcodes, we can help as a separate service.'
+                ],
+                [
+                    'q' => 'How do you track inventory?',
+                    'a' => 'Inventory is tracked by SKU/barcode with storage location binding. Clients can view data in their personal dashboard.'
+                ],
+                [
+                    'q' => 'What happens with defective or returned items?',
+                    'a' => 'We accept returns, inspect them per regulations, take photos, repack or classify as defective/write-off by agreement.'
+                ],
+                [
+                    'q' => 'Who is responsible for picking errors?',
+                    'a' => 'If the error occurred on RISMENT\'s side, we investigate via tracking/photos and compensate per contract terms. If the error is due to incorrect client data (SKU, barcodes, instructions), responsibility is defined in the regulations.'
+                ],
+                [
+                    'q' => 'Do you only work in Kokand?',
+                    'a' => 'The warehouse is located in Kokand. Shipments to marketplace warehouses and logistics are carried out according to an agreed schedule and terms.'
+                ],
+                [
+                    'q' => 'How to start working with RISMENT?',
+                    'a' => 'Leave a request on our website. We will clarify products, schemes (FBO/FBS/DBS), volumes, and prepare a contract, pricing plan, and regulations.'
+                ],
+            ];
+
+            $faqs = app()->getLocale() === 'ru' ? $faqs_ru : (app()->getLocale() === 'en' ? $faqs_en : $faqs_uz);
         @endphp
 
         <div class="space-y-4">

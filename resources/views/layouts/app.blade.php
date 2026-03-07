@@ -17,7 +17,7 @@
     <meta property="og:title" content="@yield('title', 'RISMENT - Fulfillment для маркетплейсов Узбекистана')">
     <meta property="og:description" content="@yield('description', 'Профессиональный фулфилмент для маркетплейсов Узбекистана. FBS, FBO, DBS услуги. Хранение, сборка, доставка. Работаем с Uzum, Wildberries, Ozon.')">
     <meta property="og:image" content="@yield('og_image', asset('images/og-image.jpg'))">
-    <meta property="og:locale" content="{{ app()->getLocale() === 'ru' ? 'ru_RU' : 'uz_UZ' }}">
+    <meta property="og:locale" content="{{ app()->getLocale() === 'ru' ? 'ru_RU' : (app()->getLocale() === 'en' ? 'en_US' : 'uz_UZ') }}">
     <meta property="og:site_name" content="RISMENT">
     
     {{-- Twitter Card --}}
@@ -83,13 +83,17 @@
             <div class="flex items-center gap-4">
                 <!-- Locale Switcher -->
                 <div class="flex gap-2">
-                    <a href="{{ route(Route::currentRouteName(), array_merge(request()->route()->parameters(), ['locale' => 'ru'])) }}" 
+                    <a href="{{ route(Route::currentRouteName(), array_merge(request()->route()->parameters(), ['locale' => 'ru'])) }}"
                        class="px-3 py-1 rounded-btn {{ app()->getLocale() === 'ru' ? 'bg-brand text-white' : 'bg-bg-soft hover:bg-bg-soft' }}">
                         RU
                     </a>
-                    <a href="{{ route(Route::currentRouteName(), array_merge(request()->route()->parameters(), ['locale' => 'uz'])) }}" 
+                    <a href="{{ route(Route::currentRouteName(), array_merge(request()->route()->parameters(), ['locale' => 'uz'])) }}"
                        class="px-3 py-1 rounded-btn {{ app()->getLocale() === 'uz' ? 'bg-brand text-white' : 'bg-bg-soft hover:bg-bg-soft' }}">
                         UZ
+                    </a>
+                    <a href="{{ route(Route::currentRouteName(), array_merge(request()->route()->parameters(), ['locale' => 'en'])) }}"
+                       class="px-3 py-1 rounded-btn {{ app()->getLocale() === 'en' ? 'bg-brand text-white' : 'bg-bg-soft hover:bg-bg-soft' }}">
+                        EN
                     </a>
                 </div>
                 
