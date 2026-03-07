@@ -2,6 +2,7 @@
 
 use App\Jobs\DailyStorageChargeJob;
 use App\Jobs\ExpireSubscriptionsJob;
+use App\Jobs\MonthlyPlanServicesJob;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
@@ -23,6 +24,11 @@ Schedule::job(new ExpireSubscriptionsJob())
 // Daily balance reconciliation — charges BillingBalance for any accrued items not yet charged (runs at 4:00 AM)
 Schedule::command('billing:sync-balance')
     ->dailyAt('04:00')
+    ->withoutOverlapping();
+
+// Monthly plan services billing — charges marketplace services and fixed addons (runs on 1st at 5:00 AM)
+Schedule::job(new MonthlyPlanServicesJob())
+    ->monthlyOn(1, '05:00')
     ->withoutOverlapping();
 
 // Monthly invoice generation (runs on 1st of each month at 6:00 AM)
