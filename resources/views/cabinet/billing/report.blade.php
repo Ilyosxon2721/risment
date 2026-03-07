@@ -37,10 +37,22 @@
     <!-- Current Month Charges -->
     <div class="card">
         <div class="text-body-s text-text-muted mb-2">{{ __('This Month') }}</div>
+        @if($discountInfo)
+        <div class="text-body-s text-text-muted line-through">
+            {{ number_format($discountInfo['original'], 0, '', ' ') }} {{ __('UZS') }}
+        </div>
+        <div class="text-h2 font-heading text-success">
+            {{ number_format($discountInfo['discounted'], 0, '', ' ') }} {{ __('UZS') }}
+        </div>
+        <div class="text-body-s text-success font-semibold">
+            {{ __('discount applied') }} −{{ number_format($discountInfo['saved'], 0, '', ' ') }} UZS
+        </div>
+        @else
         <div class="text-h2 font-heading text-warning">
             {{ $estimate ? number_format($estimate['total'], 0, '', ' ') : 0 }} {{ __('UZS') }}
         </div>
         <div class="text-body-s text-text-muted">{{ __('Current charges') }}</div>
+        @endif
     </div>
 
     <!-- Projected Month -->

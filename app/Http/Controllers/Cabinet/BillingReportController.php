@@ -52,6 +52,20 @@ class BillingReportController extends Controller
             $estimate['total'] = max($estimate['total'] ?? 0, $ledgerSummary['grand_total']);
         }
 
+        // Apply overage discounts to estimate totals for display
+        $discountInfo = null;
+        if (isset($estimate['total']) && $estimate['total'] > 0) {
+            $discountedTotal = $company->applyDiscounts((float) $estimate['total'], 'overage');
+            if ($discountedTotal < $estimate['total']) {
+                $discountInfo = [
+                    'original'   => $estimate['total'],
+                    'discounted' => $discountedTotal,
+                    'saved'      => $estimate['total'] - $discountedTotal,
+                ];
+                $estimate['total'] = $discountedTotal;
+            }
+        }
+
         // Recent invoices
         $recentInvoices = BillingInvoice::where('company_id', $companyId)
             ->orderByDesc('issue_date')
@@ -81,7 +95,8 @@ class BillingReportController extends Controller
             'recentInvoices',
             'recentTransactions',
             'chartData',
-            'sellermindLink'
+            'sellermindLink',
+            'discountInfo'
         ));
     }
 

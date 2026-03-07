@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Manager;
 
 use App\Http\Controllers\Controller;
+use App\Models\BillingBalance;
 use App\Models\BillingItem;
 use App\Models\ManagerTask;
 use App\Models\PricingRate;
@@ -362,6 +363,22 @@ class TaskController extends Controller
             if ($item instanceof BillingItem) {
                 $item->update(['manager_task_id' => $task->id]);
             }
+        }
+
+        // Deduct from BillingBalance: apply overage discounts, then charge
+        $rawTotal = collect($items)
+            ->filter(fn ($i) => $i instanceof BillingItem)
+            ->sum('amount');
+
+        if ($rawTotal > 0) {
+            $chargeAmount = $company->applyDiscounts((float) $rawTotal, 'overage');
+            $billingBalance = BillingBalance::getOrCreate($company->id);
+            $billingBalance->charge(
+                $chargeAmount,
+                "Задача #{$task->id}: {$task->task_type_label}",
+                ManagerTask::class,
+                $task->id
+            );
         }
     }
 }
