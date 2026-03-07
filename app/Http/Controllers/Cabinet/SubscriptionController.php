@@ -81,6 +81,15 @@ class SubscriptionController extends Controller
         // Clear session
         session()->forget(['selected_plan_id', 'selected_plan_name']);
 
+        // Check if company has sufficient balance for subscription fee
+        if ($selectedPlan->price_month > 0 && $currentCompany->balance < $selectedPlan->price_month) {
+            return redirect()
+                ->route('cabinet.subscription.choose')
+                ->with('error', __('Insufficient balance. Please top up your balance before activating this plan. Required: :amount UZS', [
+                    'amount' => number_format($selectedPlan->price_month, 0, '', ' '),
+                ]));
+        }
+
         // Save selection: update company's plan and create billing subscription record
         DB::transaction(function () use ($currentCompany, $selectedPlan) {
             // Update company's active subscription plan

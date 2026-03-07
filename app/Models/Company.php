@@ -8,6 +8,7 @@ class Company extends Model
 {
     protected $fillable = [
         'name', 'inn', 'contact_name', 'phone', 'email', 'address', 'status', 'manager_user_id',
+        'subscription_plan_id', 'balance',
     ];
     
     public function users()
