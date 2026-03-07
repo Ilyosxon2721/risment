@@ -38,6 +38,18 @@
                             {{ __('Profile') }}
                         </x-dropdown-link>
 
+                        @if(Auth::user()->hasAnyRole(['manager', 'admin']))
+                        <x-dropdown-link href="/manager/">
+                            Панель менеджера
+                        </x-dropdown-link>
+                        @endif
+
+                        @if(Auth::user()->hasRole('admin'))
+                        <x-dropdown-link href="/admin/">
+                            Панель администратора
+                        </x-dropdown-link>
+                        @endif
+
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout', ['locale' => app()->getLocale()]) }}">
                             @csrf
@@ -83,6 +95,18 @@
                 <x-responsive-nav-link :href="route('cabinet.profile')">
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
+
+                @if(Auth::user()->hasAnyRole(['manager', 'admin']))
+                <x-responsive-nav-link href="/manager/">
+                    Панель менеджера
+                </x-responsive-nav-link>
+                @endif
+
+                @if(Auth::user()->hasRole('admin'))
+                <x-responsive-nav-link href="/admin/">
+                    Панель администратора
+                </x-responsive-nav-link>
+                @endif
 
                 <!-- Authentication -->
                 <form method="POST" action="{{ route('logout', ['locale' => app()->getLocale()]) }}">
