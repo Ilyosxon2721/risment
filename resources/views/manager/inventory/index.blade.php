@@ -54,8 +54,8 @@
 
 <!-- Inventory Table -->
 <div class="bg-white rounded-card border border-brand-border">
-    <div class="overflow-x-auto">
-        <table class="w-full">
+    <div class="table-responsive relative">
+        <table class="w-full responsive-table">
             <thead class="bg-bg-soft">
                 <tr>
                     <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">SKU</th>
@@ -74,17 +74,17 @@
                     $stockClass = $item->qty_total == 0 ? 'text-error' : ($item->qty_total <= 10 ? 'text-warning' : 'text-success');
                 @endphp
                 <tr class="hover:bg-bg-soft">
-                    <td class="px-6 py-4 text-body-s font-mono">{{ $item->sku->sku ?? '-' }}</td>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 text-body-s font-mono" data-label="SKU">{{ $item->sku->sku ?? '-' }}</td>
+                    <td class="px-6 py-4" data-label="{{ __('Name') }}">
                         <div class="font-medium">{{ $item->sku->name ?? __('No name') }}</div>
                         @if($item->sku->category)
                             <div class="text-body-xs text-text-muted">{{ $item->sku->category }}</div>
                         @endif
                     </td>
-                    <td class="px-6 py-4 text-body-s font-mono">{{ $item->sku->barcode ?? '-' }}</td>
-                    <td class="px-6 py-4 text-right font-semibold {{ $stockClass }}">{{ number_format($item->qty_total) }}</td>
-                    <td class="px-6 py-4 text-right text-text-muted">{{ number_format($item->qty_reserved) }}</td>
-                    <td class="px-6 py-4 text-right font-semibold">{{ number_format($available) }}</td>
+                    <td class="px-6 py-4 text-body-s font-mono" data-label="{{ __('Barcode') }}">{{ $item->sku->barcode ?? '-' }}</td>
+                    <td class="px-6 py-4 text-right font-semibold {{ $stockClass }}" data-label="{{ __('Total') }}">{{ number_format($item->qty_total) }}</td>
+                    <td class="px-6 py-4 text-right text-text-muted" data-label="{{ __('Reserved') }}">{{ number_format($item->qty_reserved) }}</td>
+                    <td class="px-6 py-4 text-right font-semibold" data-label="{{ __('Available') }}">{{ number_format($available) }}</td>
                     <td class="px-6 py-4">
                         <button onclick="openAdjustModal({{ $item->id }}, '{{ $item->sku->name ?? $item->sku->sku }}', {{ $item->qty_total }})" class="text-brand hover:underline text-body-s">
                             {{ __('Adjustment') }}

@@ -30,8 +30,8 @@
 
 <!-- Tasks Table -->
 <div class="bg-white rounded-card border border-brand-border">
-    <div class="overflow-x-auto">
-        <table class="w-full">
+    <div class="table-responsive relative">
+        <table class="w-full responsive-table">
             <thead class="bg-bg-soft">
                 <tr>
                     <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">{{ __('Date') }}</th>
@@ -46,16 +46,16 @@
             <tbody class="divide-y divide-brand-border">
                 @forelse($tasks as $task)
                 <tr class="hover:bg-bg-soft">
-                    <td class="px-6 py-4 text-body-s">{{ $task->task_date->format('d.m.Y') }}</td>
-                    <td class="px-6 py-4 text-body-s">{{ $task->task_type_label }}</td>
-                    <td class="px-6 py-4 text-body-s">{{ $task->source_label }}</td>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 text-body-s" data-label="{{ __('Date') }}">{{ $task->task_date->format('d.m.Y') }}</td>
+                    <td class="px-6 py-4 text-body-s" data-label="{{ __('Type') }}">{{ $task->task_type_label }}</td>
+                    <td class="px-6 py-4 text-body-s" data-label="{{ __('Source') }}">{{ $task->source_label }}</td>
+                    <td class="px-6 py-4" data-label="{{ __('Status') }}">
                         <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-{{ $task->status_color }}-100 text-{{ $task->status_color }}-800">
                             {{ $task->status_label }}
                         </span>
                     </td>
-                    <td class="px-6 py-4 text-body-s font-semibold">{{ number_format($task->total_billed, 0, '', ' ') }} UZS</td>
-                    <td class="px-6 py-4 text-body-s text-text-muted">{{ \Illuminate\Support\Str::limit($task->comment, 40) }}</td>
+                    <td class="px-6 py-4 text-body-s font-semibold" data-label="{{ __('Charged') }}">{{ number_format($task->total_billed, 0, '', ' ') }} UZS</td>
+                    <td class="px-6 py-4 text-body-s text-text-muted" data-label="{{ __('Comment') }}">{{ \Illuminate\Support\Str::limit($task->comment, 40) }}</td>
                     <td class="px-6 py-4">
                         <a href="{{ route('manager.tasks.show', $task) }}" class="text-brand hover:underline text-body-s">{{ __('Details') }}</a>
                     </td>

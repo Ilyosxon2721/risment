@@ -46,8 +46,8 @@
 <!-- Products Table -->
 <div class="card">
     @if($skus->count() > 0)
-    <div class="overflow-x-auto">
-        <table class="table w-full">
+    <div class="table-responsive relative">
+        <table class="table w-full responsive-table">
             <thead>
                 <tr>
                     <th class="text-left">{{ __('Product') }}</th>
@@ -63,11 +63,11 @@
             <tbody>
                 @foreach($skus as $sku)
                 <tr>
-                    <td>
+                    <td data-label="{{ __('Product') }}">
                         <div class="flex items-center gap-3">
                             @if($sku->photo_path)
-                            <img src="{{ asset('storage/' . $sku->photo_path) }}" 
-                                 alt="{{ $sku->title }}" 
+                            <img src="{{ asset('storage/' . $sku->photo_path) }}"
+                                 alt="{{ $sku->title }}"
                                  class="w-12 h-12 rounded-btn object-cover">
                             @else
                             <div class="w-12 h-12 rounded-btn bg-bg-soft flex items-center justify-center">
@@ -81,20 +81,20 @@
                             </div>
                         </div>
                     </td>
-                    <td class="text-center font-mono">{{ $sku->sku_code }}</td>
-                    <td class="text-center font-mono">{{ $sku->barcode ?? '—' }}</td>
-                    <td class="text-center text-body-s">
+                    <td class="text-center font-mono" data-label="{{ __('SKU Code') }}">{{ $sku->sku_code }}</td>
+                    <td class="text-center font-mono" data-label="{{ __('Barcode') }}">{{ $sku->barcode ?? '—' }}</td>
+                    <td class="text-center text-body-s" data-label="{{ __('Dimensions') }}">
                         @if($sku->dims_l && $sku->dims_w && $sku->dims_h)
                         {{ $sku->dims_l }}×{{ $sku->dims_w }}×{{ $sku->dims_h }} см
                         @else
                         —
                         @endif
                     </td>
-                    <td class="text-center">{{ $sku->weight ? $sku->weight . ' кг' : '—' }}</td>
-                    <td class="text-center font-semibold">
+                    <td class="text-center" data-label="{{ __('Weight') }}">{{ $sku->weight ? $sku->weight . ' кг' : '—' }}</td>
+                    <td class="text-center font-semibold" data-label="{{ __('Stock') }}">
                         {{ $sku->inventory ? $sku->inventory->qty_total : 0 }}
                     </td>
-                    <td class="text-center">
+                    <td class="text-center" data-label="{{ __('Status') }}">
                         <span class="badge badge-{{ $sku->is_active ? 'success' : 'secondary' }}">
                             {{ $sku->is_active ? __('Active') : __('Inactive') }}
                         </span>
