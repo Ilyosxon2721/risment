@@ -6,27 +6,35 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     
     {{-- SEO Meta Tags --}}
-    <title>@yield('title', 'RISMENT - Fulfillment для маркетплейсов Узбекистана')</title>
-    <meta name="description" content="@yield('description', 'Профессиональный фулфилмент для маркетплейсов Узбекистана. FBS, FBO, DBS услуги. Хранение, сборка, доставка. Работаем с Uzum, Wildberries, Ozon.')">
-    <meta name="keywords" content="фулфилмент, fulfillment, Узбекистан, маркетплейс, FBS, FBO, DBS, хранение, логистика">
+    <title>@yield('title', __('RISMENT - Fulfillment for Uzbekistan marketplaces'))</title>
+    <meta name="description" content="@yield('description', __('Professional fulfillment for Uzbekistan marketplaces. FBS, FBO, DBS services. Storage, assembly, delivery. Working with Uzum, Wildberries, Ozon.'))">
+    <meta name="keywords" content="{{ __('fulfillment, Uzbekistan, marketplace, FBS, FBO, DBS, storage, logistics') }}">
     <link rel="canonical" href="{{ url()->current() }}">
     
     {{-- Open Graph / Facebook --}}
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url()->current() }}">
-    <meta property="og:title" content="@yield('title', 'RISMENT - Fulfillment для маркетплейсов Узбекистана')">
-    <meta property="og:description" content="@yield('description', 'Профессиональный фулфилмент для маркетплейсов Узбекистана. FBS, FBO, DBS услуги. Хранение, сборка, доставка. Работаем с Uzum, Wildberries, Ozon.')">
+    <meta property="og:title" content="@yield('title', __('RISMENT - Fulfillment for Uzbekistan marketplaces'))">
+    <meta property="og:description" content="@yield('description', __('Professional fulfillment for Uzbekistan marketplaces. FBS, FBO, DBS services. Storage, assembly, delivery. Working with Uzum, Wildberries, Ozon.'))">
     <meta property="og:image" content="@yield('og_image', asset('images/og-image.jpg'))">
-    <meta property="og:locale" content="{{ app()->getLocale() === 'ru' ? 'ru_RU' : 'uz_UZ' }}">
+    <meta property="og:locale" content="{{ app()->getLocale() === 'ru' ? 'ru_RU' : (app()->getLocale() === 'en' ? 'en_US' : 'uz_UZ') }}">
     <meta property="og:site_name" content="RISMENT">
     
     {{-- Twitter Card --}}
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="{{ url()->current() }}">
-    <meta name="twitter:title" content="@yield('title', 'RISMENT - Fulfillment для маркетплейсов Узбекистана')">
-    <meta name="twitter:description" content="@yield('description', 'Профессиональный фулфилмент для маркетплейсов Узбекистана. FBS, FBO, DBS услуги.')">
+    <meta name="twitter:title" content="@yield('title', __('RISMENT - Fulfillment for Uzbekistan marketplaces'))">
+    <meta name="twitter:description" content="@yield('description', __('Professional fulfillment for Uzbekistan marketplaces. FBS, FBO, DBS services.'))">
     <meta name="twitter:image" content="@yield('og_image', asset('images/og-image.jpg'))">
-    
+
+    {{-- PWA --}}
+    <link rel="manifest" href="/manifest.webmanifest">
+    <meta name="theme-color" content="#CB4FE4">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Risment">
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+
     {{-- Google Analytics --}}
     @if(config('services.google_analytics.id'))
     <script async src="https://www.googletagmanager.com/gtag/js?id={{ config('services.google_analytics.id') }}"></script>
@@ -83,13 +91,17 @@
             <div class="flex items-center gap-4">
                 <!-- Locale Switcher -->
                 <div class="flex gap-2">
-                    <a href="{{ route(Route::currentRouteName(), array_merge(request()->route()->parameters(), ['locale' => 'ru'])) }}" 
+                    <a href="{{ route(Route::currentRouteName(), array_merge(request()->route()->parameters(), ['locale' => 'ru'])) }}"
                        class="px-3 py-1 rounded-btn {{ app()->getLocale() === 'ru' ? 'bg-brand text-white' : 'bg-bg-soft hover:bg-bg-soft' }}">
                         RU
                     </a>
-                    <a href="{{ route(Route::currentRouteName(), array_merge(request()->route()->parameters(), ['locale' => 'uz'])) }}" 
+                    <a href="{{ route(Route::currentRouteName(), array_merge(request()->route()->parameters(), ['locale' => 'uz'])) }}"
                        class="px-3 py-1 rounded-btn {{ app()->getLocale() === 'uz' ? 'bg-brand text-white' : 'bg-bg-soft hover:bg-bg-soft' }}">
                         UZ
+                    </a>
+                    <a href="{{ route(Route::currentRouteName(), array_merge(request()->route()->parameters(), ['locale' => 'en'])) }}"
+                       class="px-3 py-1 rounded-btn {{ app()->getLocale() === 'en' ? 'bg-brand text-white' : 'bg-bg-soft hover:bg-bg-soft' }}">
+                        EN
                     </a>
                 </div>
                 
@@ -101,12 +113,12 @@
                 @if($navUser)
                     @if($navUser->hasAnyRole(['manager', 'admin']))
                     <a href="/manager/" class="btn btn-secondary text-sm">
-                        Менеджер
+                        {{ __('Manager') }}
                     </a>
                     @endif
                     @if($navUser->hasRole('admin'))
                     <a href="/admin/" class="btn btn-secondary text-sm">
-                        Админ
+                        {{ __('Admin') }}
                     </a>
                     @endif
                     @if(Auth::check())
@@ -175,5 +187,27 @@
     
     <!-- Alpine.js for interactive components -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((reg) => {
+                        reg.addEventListener('updatefound', () => {
+                            const newWorker = reg.installing;
+                            if (newWorker) {
+                                newWorker.addEventListener('statechange', () => {
+                                    if (newWorker.state === 'activated' && navigator.serviceWorker.controller) {
+                                        if (confirm('Доступна новая версия приложения. Обновить?')) {
+                                            window.location.reload();
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    })
+                    .catch((err) => console.log('[SW] Registration failed:', err));
+            });
+        }
+    </script>
 </body>
 </html>

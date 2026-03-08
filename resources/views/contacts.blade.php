@@ -49,58 +49,22 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="text-h4 font-heading mb-2">
-                                @if(app()->getLocale() === 'ru')
-                                    Адрес
-                                @else
-                                    Manzil
-                                @endif
-                            </h3>
-                            <p class="text-body-m text-text-muted">
-                                @if(app()->getLocale() === 'ru')
-                                    г. Ташкент, Узбекистан
-                                @else
-                                    Toshkent, O'zbekiston
-                                @endif
-                            </p>
+                            <h3 class="text-h4 font-heading mb-2">{{ __('Address') }}</h3>
+                            <p class="text-body-m text-text-muted">{{ __('Tashkent, Uzbekistan') }}</p>
                         </div>
                     </div>
                 </div>
                 
                 <div class="card">
-                    <h3 class="text-h4 font-heading mb-4">
-                        @if(app()->getLocale() === 'ru')
-                            Режим работы
-                        @else
-                            Ish vaqti
-                        @endif
-                    </h3>
-                    <p class="text-body-m text-text-muted mb-2">
-                        @if(app()->getLocale() === 'ru')
-                            Понедельник - Пятница: 9:00 - 18:00
-                        @else
-                            Dushanba - Juma: 9:00 - 18:00
-                        @endif
-                    </p>
-                    <p class="text-body-m text-text-muted">
-                        @if(app()->getLocale() === 'ru')
-                            Суббота - Воскресенье: Выходной
-                        @else
-                            Shanba - Yakshanba: Dam olish
-                        @endif
-                    </p>
+                    <h3 class="text-h4 font-heading mb-4">{{ __('Working Hours') }}</h3>
+                    <p class="text-body-m text-text-muted mb-2">{{ __('Monday - Friday: 9:00 - 18:00') }}</p>
+                    <p class="text-body-m text-text-muted">{{ __('Saturday - Sunday: Day off') }}</p>
                 </div>
             </div>
             
             <!-- Contact Form -->
             <div class="card">
-                <h2 class="text-h3 font-heading mb-6">
-                    @if(app()->getLocale() === 'ru')
-                        Оставить заявку
-                    @else
-                        So'rov qoldirish
-                    @endif
-                </h2>
+                <h2 class="text-h3 font-heading mb-6">{{ __('Submit a Request') }}</h2>
                 
                 {{-- Success Message --}}
                 @if(session('success'))
@@ -161,13 +125,7 @@
                     </div>
                     
                     <div>
-                        <label class="block text-body-s font-semibold mb-2">
-                            @if(app()->getLocale() === 'ru')
-                                Комментарий
-                            @else
-                                Izoh
-                            @endif
-                        </label>
+                        <label class="block text-body-s font-semibold mb-2">{{ __('Comment') }}</label>
                         <textarea name="comment" class="input @error('comment') border-red-500 @enderror" rows="4">{{ old('comment') }}</textarea>
                         @error('comment')
                             <p class="text-red-500 text-body-s mt-1">{{ $message }}</p>

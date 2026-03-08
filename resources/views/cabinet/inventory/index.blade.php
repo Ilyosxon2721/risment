@@ -39,8 +39,8 @@
 
 <!-- Inventory Table -->
 <div class="card">
-    <div class="overflow-x-auto">
-        <table class="w-full">
+    <div class="table-responsive relative">
+        <table class="w-full responsive-table">
             <thead>
                 <tr class="border-b border-brand-border">
                     <th class="text-left p-4">{{ __('SKU Code') }}</th>
@@ -55,13 +55,13 @@
             <tbody>
                 @forelse($inventory as $item)
                 <tr class="border-b border-brand-border hover:bg-bg-soft">
-                    <td class="p-4 font-semibold">{{ $item->sku->sku_code }}</td>
-                    <td class="p-4">{{ $item->sku->title }}</td>
-                    <td class="p-4">{{ $item->sku->barcode ?? '-' }}</td>
-                    <td class="p-4 text-right">{{ number_format($item->qty_total) }}</td>
-                    <td class="p-4 text-right text-warning">{{ number_format($item->qty_reserved) }}</td>
-                    <td class="p-4 text-right text-success font-semibold">{{ number_format($item->available_qty) }}</td>
-                    <td class="p-4">{{ $item->location_code ?? '-' }}</td>
+                    <td class="p-4 font-semibold" data-label="{{ __('SKU Code') }}">{{ $item->sku->sku_code }}</td>
+                    <td class="p-4" data-label="{{ __('Title') }}">{{ $item->sku->title }}</td>
+                    <td class="p-4" data-label="{{ __('Barcode') }}">{{ $item->sku->barcode ?? '-' }}</td>
+                    <td class="p-4 text-right" data-label="{{ __('Total') }}">{{ number_format($item->qty_total) }}</td>
+                    <td class="p-4 text-right text-warning" data-label="{{ __('Reserved') }}">{{ number_format($item->qty_reserved) }}</td>
+                    <td class="p-4 text-right text-success font-semibold" data-label="{{ __('Available') }}">{{ number_format($item->available_qty) }}</td>
+                    <td class="p-4" data-label="{{ __('Location') }}">{{ $item->location_code ?? '-' }}</td>
                 </tr>
                 @empty
                 <tr>

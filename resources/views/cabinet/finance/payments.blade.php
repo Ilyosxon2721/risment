@@ -17,38 +17,40 @@
 
 @if($payments->count() > 0)
 <div class="card overflow-hidden">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>{{ __('Payment Date') }}</th>
-                <th>{{ __('Invoice') }}</th>
-                <th>{{ __('Amount') }}</th>
-                <th>{{ __('Payment Method') }}</th>
-                <th>{{ __('Reference') }}</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($payments as $payment)
-            <tr>
-                <td class="font-semibold">{{ $payment->payment_date->format('d.m.Y') }}</td>
-                <td>
-                    @if($payment->invoice)
-                        <a href="{{ route('cabinet.finance.invoice', ['invoice' => $payment->invoice_id]) }}" class="text-brand hover:underline">
-                            {{ $payment->invoice->invoice_number }}
-                        </a>
-                    @else
-                        <span class="text-text-muted">{{ __('No invoice') }}</span>
-                    @endif
-                </td>
-                <td class="font-semibold text-success">
-                    {{ number_format($payment->amount, 0, '', ' ') }} {{ __('UZS') }}
-                </td>
-                <td>{{ $payment->getMethodLabel() }}</td>
-                <td>{{ $payment->reference ?? '—' }}</td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+    <div class="table-responsive relative">
+        <table class="table responsive-table">
+            <thead>
+                <tr>
+                    <th>{{ __('Payment Date') }}</th>
+                    <th>{{ __('Invoice') }}</th>
+                    <th>{{ __('Amount') }}</th>
+                    <th>{{ __('Payment Method') }}</th>
+                    <th>{{ __('Reference') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($payments as $payment)
+                <tr>
+                    <td class="font-semibold" data-label="{{ __('Payment Date') }}">{{ $payment->payment_date->format('d.m.Y') }}</td>
+                    <td data-label="{{ __('Invoice') }}">
+                        @if($payment->invoice)
+                            <a href="{{ route('cabinet.finance.invoice', ['invoice' => $payment->invoice_id]) }}" class="text-brand hover:underline">
+                                {{ $payment->invoice->invoice_number }}
+                            </a>
+                        @else
+                            <span class="text-text-muted">{{ __('No invoice') }}</span>
+                        @endif
+                    </td>
+                    <td class="font-semibold text-success" data-label="{{ __('Amount') }}">
+                        {{ number_format($payment->amount, 0, '', ' ') }} {{ __('UZS') }}
+                    </td>
+                    <td data-label="{{ __('Payment Method') }}">{{ $payment->getMethodLabel() }}</td>
+                    <td data-label="{{ __('Reference') }}">{{ $payment->reference ?? '—' }}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <!-- Pagination -->

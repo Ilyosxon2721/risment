@@ -32,36 +32,38 @@
 <!-- Invoices Table -->
 @if($invoices->count() > 0)
 <div class="card overflow-hidden">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>{{ __('Invoice Number') }}</th>
-                <th>{{ __('Issue Date') }}</th>
-                <th>{{ __('Due Date') }}</th>
-                <th>{{ __('Amount') }}</th>
-                <th>{{ __('Status') }}</th>
-                <th class="text-right">{{ __('Actions') }}</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($invoices as $invoice)
-            <tr>
-                <td class="font-semibold">{{ $invoice->invoice_number }}</td>
-                <td>{{ $invoice->issue_date->format('d.m.Y') }}</td>
-                <td>{{ $invoice->due_date->format('d.m.Y') }}</td>
-                <td class="font-semibold">{{ number_format($invoice->total, 0, '', ' ') }} {{ __('UZS') }}</td>
-                <td>
-                    <span class="badge {{ $invoice->getStatusBadgeClass() }}">{{ $invoice->getStatusLabel() }}</span>
-                </td>
-                <td class="text-right">
-                    <a href="{{ route('cabinet.finance.invoice', ['invoice' => $invoice->id]) }}" class="btn btn-sm btn-secondary">
-                        {{ __('View') }}
-                    </a>
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+    <div class="table-responsive relative">
+        <table class="table responsive-table">
+            <thead>
+                <tr>
+                    <th>{{ __('Invoice Number') }}</th>
+                    <th>{{ __('Issue Date') }}</th>
+                    <th>{{ __('Due Date') }}</th>
+                    <th>{{ __('Amount') }}</th>
+                    <th>{{ __('Status') }}</th>
+                    <th class="text-right">{{ __('Actions') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($invoices as $invoice)
+                <tr>
+                    <td class="font-semibold" data-label="{{ __('Invoice Number') }}">{{ $invoice->invoice_number }}</td>
+                    <td data-label="{{ __('Issue Date') }}">{{ $invoice->issue_date->format('d.m.Y') }}</td>
+                    <td data-label="{{ __('Due Date') }}">{{ $invoice->due_date->format('d.m.Y') }}</td>
+                    <td class="font-semibold" data-label="{{ __('Amount') }}">{{ number_format($invoice->total, 0, '', ' ') }} {{ __('UZS') }}</td>
+                    <td data-label="{{ __('Status') }}">
+                        <span class="badge {{ $invoice->getStatusBadgeClass() }}">{{ $invoice->getStatusLabel() }}</span>
+                    </td>
+                    <td class="text-right" data-label="{{ __('Actions') }}">
+                        <a href="{{ route('cabinet.finance.invoice', ['invoice' => $invoice->id]) }}" class="btn btn-sm btn-secondary">
+                            {{ __('View') }}
+                        </a>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <!-- Pagination -->

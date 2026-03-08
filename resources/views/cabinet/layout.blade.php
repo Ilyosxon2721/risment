@@ -4,18 +4,61 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    {{-- PWA --}}
+    <link rel="manifest" href="/manifest.webmanifest">
+    <meta name="theme-color" content="#CB4FE4">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Risment">
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+
     <title>@yield('title', 'Cabinet') - RISMENT</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-body antialiased bg-bg">
-    <div class="min-h-screen flex">
+    <div class="min-h-screen flex" x-data="{ sidebarOpen: false }">
+        <!-- Mobile Top Bar -->
+        <div class="md:hidden fixed top-0 left-0 right-0 z-30 bg-white shadow-sm flex items-center h-14 px-4">
+            <button @click="sidebarOpen = true" class="p-2 -ml-2 rounded-btn hover:bg-bg-soft" aria-label="Open menu">
+                <svg class="w-6 h-6 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+            <span class="flex-1 text-center text-h3 font-heading gradient-brand bg-clip-text text-transparent">RISMENT</span>
+            <div class="w-10"></div>
+        </div>
+
+        <!-- Sidebar Backdrop (mobile only) -->
+        <div
+            x-show="sidebarOpen"
+            x-transition:enter="transition-opacity ease-out duration-300"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="transition-opacity ease-in duration-200"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            @click="sidebarOpen = false"
+            class="fixed inset-0 z-40 bg-black/50 md:hidden"
+        ></div>
+
         <!-- Sidebar -->
-        <aside class="w-64 bg-white border-r border-brand-border flex-shrink-0 sticky top-0 h-screen overflow-y-auto">
-            <div class="p-6 border-b border-brand-border">
-                <h1 class="text-h3 font-heading gradient-brand bg-clip-text text-transparent">RISMENT</h1>
-                <p class="text-body-s text-text-muted mt-1">{{ __('Client Cabinet') }}</p>
+        <aside
+            :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+            class="fixed inset-y-0 left-0 z-50 w-72 md:w-64 bg-white border-r border-brand-border flex-shrink-0 overflow-y-auto transform transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:z-auto"
+        >
+            <div class="p-6 border-b border-brand-border flex items-center justify-between">
+                <div>
+                    <h1 class="text-h3 font-heading gradient-brand bg-clip-text text-transparent">RISMENT</h1>
+                    <p class="text-body-s text-text-muted mt-1">{{ __('Client Cabinet') }}</p>
+                </div>
+                <button @click="sidebarOpen = false" class="md:hidden p-2 rounded-btn hover:bg-bg-soft" aria-label="Close menu">
+                    <svg class="w-5 h-5 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
             </div>
-            
+
             <!-- Company Selector -->
             @if(isset($currentCompany) && $currentCompany)
                 @if(Auth::user()->companies->count() > 1)
@@ -49,7 +92,7 @@
                 <div class="font-semibold text-text-muted">{{ __('No company selected') }}</div>
             </div>
             @endif
-            
+
             <!-- Navigation -->
             <nav class="p-4">
                 <a href="{{ route('cabinet.dashboard') }}" class="flex items-center gap-3 px-4 py-3 rounded-btn {{ request()->routeIs('cabinet.dashboard') ? 'bg-brand text-white' : 'hover:bg-bg-soft' }}">
@@ -58,49 +101,49 @@
                     </svg>
                     <span>{{ __('Dashboard') }}</span>
                 </a>
-                
+
                 <a href="{{ route('cabinet.inventory.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-btn {{ request()->routeIs('cabinet.inventory.*') ? 'bg-brand text-white' : 'hover:bg-bg-soft' }} mt-1">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
                     </svg>
                     <span>{{ __('Inventory') }}</span>
                 </a>
-                
+
                 <a href="{{ route('cabinet.products.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-btn {{ request()->routeIs('cabinet.products.*') ? 'bg-brand text-white' : 'hover:bg-bg-soft' }} mt-1">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
                     </svg>
                     <span>{{ __('Products') }}</span>
                 </a>
-                
+
                 <a href="{{ route('cabinet.inbounds.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-btn {{ request()->routeIs('cabinet.inbounds.*') ? 'bg-brand text-white' : 'hover:bg-bg-soft' }} mt-1">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
                     </svg>
                     <span>{{ __('Inbounds') }}</span>
                 </a>
-                
+
                 <a href="{{ route('cabinet.shipments.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-btn {{ request()->routeIs('cabinet.shipments.*') ? 'bg-brand text-white' : 'hover:bg-bg-soft' }} mt-1">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
                     </svg>
                     <span>{{ __('Shipments') }}</span>
                 </a>
-                
+
                 <a href="{{ route('cabinet.tickets.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-btn {{ request()->routeIs('cabinet.tickets.*') ? 'bg-brand text-white' : 'hover:bg-bg-soft' }} mt-1">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
                     </svg>
                     <span>{{ __('Tickets') }}</span>
                 </a>
-                
+
                 <a href="{{ route('cabinet.finance.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-btn {{ request()->routeIs('cabinet.finance.*') ? 'bg-brand text-white' : 'hover:bg-bg-soft' }} mt-1">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                     <span>{{ __('Finance') }}</span>
                 </a>
-                
+
                 <a href="{{ route('cabinet.billing.report') }}" class="flex items-center gap-3 px-4 py-3 rounded-btn {{ request()->routeIs('cabinet.billing.*') ? 'bg-brand text-white' : 'hover:bg-bg-soft' }} mt-1">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
@@ -128,7 +171,7 @@
                     </svg>
                     <span>{{ __('Company') }}</span>
                 </a>
-                
+
                 <a href="{{ route('cabinet.profile') }}" class="flex items-center gap-3 px-4 py-3 rounded-btn {{ request()->routeIs('cabinet.profile') ? 'bg-brand text-white' : 'hover:bg-bg-soft' }} mt-1">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
@@ -137,7 +180,7 @@
                 </a>
 
             </nav>
-            
+
             <!-- Language Switcher -->
             <div class="p-4 border-t border-brand-border">
                 <label class="text-body-s font-semibold text-text-muted mb-2 block">{{ __('Language') }}</label>
@@ -151,9 +194,9 @@
                     </select>
                 </form>
             </div>
-            
+
             <!-- Logout -->
-            <div class="absolute bottom-0 w-64 p-4 border-t border-brand-border bg-white">
+            <div class="absolute bottom-0 w-72 md:w-64 p-4 border-t border-brand-border bg-white">
                 <form method="POST" action="{{ route('logout', ['locale' => app()->getLocale()]) }}">
                     @csrf
                     <button type="submit" class="w-full flex items-center gap-3 px-4 py-3 rounded-btn hover:bg-bg-soft text-error">
@@ -165,16 +208,18 @@
                 </form>
             </div>
         </aside>
-        
+
         <!-- Main Content -->
-        <main class="flex-1 overflow-auto">
-            <div class="p-8">
+        <main class="flex-1 overflow-auto md:ml-0">
+            <!-- Spacer for mobile top bar -->
+            <div class="h-14 md:hidden"></div>
+            <div class="p-4 md:p-8">
                 @if(session('success'))
                     <div class="mb-6 p-4 bg-success/10 border border-success rounded-card text-success">
                         {{ session('success') }}
                     </div>
                 @endif
-                
+
                 @if(session('error'))
                     <div class="mb-6 p-4 bg-error/10 border border-error rounded-card text-error">
                         {{ session('error') }}
@@ -186,12 +231,12 @@
                         {{ session('info') }}
                     </div>
                 @endif
-                
+
                 @yield('content')
             </div>
         </main>
     </div>
-    
+
     <script>
         function switchCompany(companyId) {
             fetch(`/cabinet/profile/switch-company/${companyId}`, {
@@ -206,5 +251,45 @@
         }
     </script>
     @stack('scripts')
+    @include('components.bottom-nav')
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((reg) => {
+                        reg.addEventListener('updatefound', () => {
+                            const newWorker = reg.installing;
+                            if (newWorker) {
+                                newWorker.addEventListener('statechange', () => {
+                                    if (newWorker.state === 'activated' && navigator.serviceWorker.controller) {
+                                        if (confirm('Доступна новая версия приложения. Обновить?')) {
+                                            window.location.reload();
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    })
+                    .catch((err) => console.log('[SW] Registration failed:', err));
+            });
+        }
+    </script>
+    <script>
+        // Touch swipe to open/close sidebar
+        let touchStartX = 0;
+        let touchEndX = 0;
+        document.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            const diff = touchEndX - touchStartX;
+            if (diff > 80 && touchStartX < 30) {
+                // Swipe right from left edge - open
+                document.querySelector('[x-data]').__x.$data.sidebarOpen = true;
+            } else if (diff < -80) {
+                // Swipe left - close
+                document.querySelector('[x-data]').__x.$data.sidebarOpen = false;
+            }
+        }, { passive: true });
+    </script>
 </body>
 </html>

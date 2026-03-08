@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Нет компаний - RISMENT</title>
+    <title>{{ __('No companies') }} - RISMENT</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-body antialiased bg-bg">
@@ -12,11 +12,11 @@
             <svg class="w-16 h-16 mx-auto text-text-muted mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
             </svg>
-            <h2 class="text-h3 font-heading mb-4">Нет назначенных компаний</h2>
-            <p class="text-text-muted mb-6">Вам пока не назначены компании для управления. Обратитесь к администратору.</p>
+            <h2 class="text-h3 font-heading mb-4">{{ __('No assigned companies') }}</h2>
+            <p class="text-text-muted mb-6">{{ __('You have no assigned companies yet. Contact the administrator.') }}</p>
             <form method="POST" action="{{ route('manager.logout') }}">
                 @csrf
-                <button type="submit" class="text-brand hover:underline">Выйти</button>
+                <button type="submit" class="text-brand hover:underline">{{ __('Logout') }}</button>
             </form>
         </div>
     </div>

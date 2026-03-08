@@ -28,8 +28,8 @@
 </div>
 @else
 <div class="card">
-    <div class="overflow-x-auto">
-        <table class="w-full">
+    <div class="table-responsive relative">
+        <table class="w-full responsive-table">
             <thead class="bg-bg-soft">
                 <tr>
                     <th class="px-4 py-3 text-left text-body-s font-semibold">ID</th>
@@ -45,26 +45,26 @@
             <tbody>
                 @foreach($shipments as $shipment)
                 <tr class="border-t border-brand-border hover:bg-bg-soft transition">
-                    <td class="px-4 py-3 font-mono text-body-s">#{{ $shipment->id }}</td>
-                    <td class="px-4 py-3">
+                    <td class="px-4 py-3 font-mono text-body-s" data-label="ID">#{{ $shipment->id }}</td>
+                    <td class="px-4 py-3" data-label="{{ __('Marketplace') }}">
                         <span class="font-semibold">{{ __(ucfirst($shipment->marketplace)) }}</span>
                     </td>
-                    <td class="px-4 py-3">{{ $shipment->warehouse_name }}</td>
-                    <td class="px-4 py-3">
-                        <span class="badge badge-{{ 
-                            $shipment->status === 'draft' ? 'warning' : 
-                            ($shipment->status === 'shipped' ? 'success' : 'info') 
+                    <td class="px-4 py-3" data-label="{{ __('Warehouse') }}">{{ $shipment->warehouse_name }}</td>
+                    <td class="px-4 py-3" data-label="{{ __('Status') }}">
+                        <span class="badge badge-{{
+                            $shipment->status === 'draft' ? 'warning' :
+                            ($shipment->status === 'shipped' ? 'success' : 'info')
                         }}">
                             {{ __(ucfirst($shipment->status)) }}
                         </span>
                     </td>
-                    <td class="px-4 py-3 text-right">{{ $shipment->items->count() }}</td>
-                    <td class="px-4 py-3">
+                    <td class="px-4 py-3 text-right" data-label="{{ __('Items') }}">{{ $shipment->items->count() }}</td>
+                    <td class="px-4 py-3" data-label="{{ __('Planned Date') }}">
                         {{ $shipment->planned_at ? \Carbon\Carbon::parse($shipment->planned_at)->format('d.m.Y') : '-' }}
                     </td>
-                    <td class="px-4 py-3">{{ $shipment->created_at->format('d.m.Y') }}</td>
-                    <td class="px-4 py-3 text-right">
-                        <a href="{{ route('cabinet.shipments.show', ['shipment' => $shipment]) }}" 
+                    <td class="px-4 py-3" data-label="{{ __('Created') }}">{{ $shipment->created_at->format('d.m.Y') }}</td>
+                    <td class="px-4 py-3 text-right" data-label="{{ __('Actions') }}">
+                        <a href="{{ route('cabinet.shipments.show', ['shipment' => $shipment]) }}"
                            class="text-brand hover:underline text-body-s">
                             {{ __('View') }}
                         </a>

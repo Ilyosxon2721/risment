@@ -1,23 +1,23 @@
 @extends('manager.layout')
 
-@section('title', 'Биллинг')
+@section('title', __('Billing'))
 
 @section('content')
 <div class="mb-8">
-    <h2 class="text-h2 font-heading">Биллинг — {{ $company->name }}</h2>
-    <p class="text-text-muted mt-1">Период: {{ now()->translatedFormat('F Y') }}</p>
+    <h2 class="text-h2 font-heading">{{ __('Billing') }} — {{ $company->name }}</h2>
+    <p class="text-text-muted mt-1">{{ __('Period') }}: {{ now()->translatedFormat('F Y') }}</p>
 </div>
 
 <!-- Summary Cards -->
 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
     @php
         $scopes = [
-            'inbound' => 'Приёмка',
-            'pickpack' => 'Сборка',
-            'shipping' => 'Доставка',
-            'storage' => 'Хранение',
-            'returns' => 'Возвраты',
-            'other' => 'Прочее',
+            'inbound' => __('Receiving'),
+            'pickpack' => __('Pick & Pack'),
+            'shipping' => __('Shipping'),
+            'storage' => __('Storage'),
+            'returns' => __('Returns'),
+            'other' => __('Other'),
         ];
     @endphp
     @foreach($scopes as $scope => $label)
@@ -34,8 +34,8 @@
 <!-- Grand Total -->
 <div class="bg-white rounded-card border border-brand-border p-6 mb-8 flex justify-between items-center">
     <div>
-        <div class="text-text-muted">Итого за период</div>
-        <div class="text-body-s text-text-muted">{{ $summary['item_count'] }} начислений</div>
+        <div class="text-text-muted">{{ __('Total for period') }}</div>
+        <div class="text-body-s text-text-muted">{{ $summary['item_count'] }} {{ __('charges') }}</div>
     </div>
     <div class="text-h2 font-heading">{{ number_format($summary['grand_total'], 0, '', ' ') }} UZS</div>
 </div>
@@ -43,18 +43,18 @@
 <!-- Recent Items -->
 <div class="bg-white rounded-card border border-brand-border">
     <div class="p-6 border-b border-brand-border">
-        <h3 class="text-h4 font-heading">Последние начисления</h3>
+        <h3 class="text-h4 font-heading">{{ __('Recent charges') }}</h3>
     </div>
     <div class="overflow-x-auto">
         <table class="w-full">
             <thead class="bg-bg-soft">
                 <tr>
-                    <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">Дата</th>
-                    <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">Описание</th>
-                    <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">Раздел</th>
-                    <th class="px-6 py-3 text-right text-body-s font-semibold text-text-muted">Цена</th>
-                    <th class="px-6 py-3 text-right text-body-s font-semibold text-text-muted">Кол-во</th>
-                    <th class="px-6 py-3 text-right text-body-s font-semibold text-text-muted">Сумма</th>
+                    <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">{{ __('Date') }}</th>
+                    <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">{{ __('Description') }}</th>
+                    <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">{{ __('Section') }}</th>
+                    <th class="px-6 py-3 text-right text-body-s font-semibold text-text-muted">{{ __('Price') }}</th>
+                    <th class="px-6 py-3 text-right text-body-s font-semibold text-text-muted">{{ __('Qty') }}</th>
+                    <th class="px-6 py-3 text-right text-body-s font-semibold text-text-muted">{{ __('Amount') }}</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-brand-border">
@@ -73,7 +73,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="px-6 py-8 text-center text-text-muted">Начислений за текущий период нет</td>
+                    <td colspan="6" class="px-6 py-8 text-center text-text-muted">{{ __('No charges for current period') }}</td>
                 </tr>
                 @endforelse
             </tbody>

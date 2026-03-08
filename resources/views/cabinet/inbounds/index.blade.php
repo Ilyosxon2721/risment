@@ -9,8 +9,8 @@
 </div>
 
 <div class="card">
-    <div class="overflow-x-auto">
-        <table class="w-full">
+    <div class="table-responsive relative">
+        <table class="w-full responsive-table">
             <thead>
                 <tr class="border-b border-brand-border">
                     <th class="text-left p-4">{{ __('Reference') }}</th>
@@ -23,15 +23,15 @@
             <tbody>
                 @forelse($inbounds as $inbound)
                 <tr class="border-b border-brand-border hover:bg-bg-soft">
-                    <td class="p-4 font-semibold">{{ $inbound->reference }}</td>
-                    <td class="p-4">{{ $inbound->planned_at ? $inbound->planned_at->format('d.m.Y') : '-' }}</td>
-                    <td class="p-4">
+                    <td class="p-4 font-semibold" data-label="{{ __('Reference') }}">{{ $inbound->reference }}</td>
+                    <td class="p-4" data-label="{{ __('Planned Date') }}">{{ $inbound->planned_at ? $inbound->planned_at->format('d.m.Y') : '-' }}</td>
+                    <td class="p-4" data-label="{{ __('Status') }}">
                         <span class="badge badge-{{ $inbound->status === 'received' ? 'success' : ($inbound->status === 'draft' ? 'warning' : 'info') }}">
                             {{ ucfirst($inbound->status) }}
                         </span>
                     </td>
-                    <td class="p-4">{{ $inbound->created_at->format('d.m.Y H:i') }}</td>
-                    <td class="p-4 text-right">
+                    <td class="p-4" data-label="{{ __('Created') }}">{{ $inbound->created_at->format('d.m.Y H:i') }}</td>
+                    <td class="p-4 text-right" data-label="{{ __('Actions') }}">
                         <a href="{{ route('cabinet.inbounds.show', $inbound) }}" class="text-brand hover:underline">{{ __('View') }}</a>
                     </td>
                 </tr>

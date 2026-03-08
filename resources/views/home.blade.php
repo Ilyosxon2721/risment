@@ -8,18 +8,10 @@
     <div class="container-risment">
         <div class="max-w-3xl">
             <h1 class="text-h1 font-heading mb-6">
-                @if(app()->getLocale() === 'ru')
-                    Фулфилмент для маркетплейсов Узбекистана
-                @else
-                    O'zbekiston marketplace'lari uchun fulfillment
-                @endif
+                {{ __('Fulfillment for Uzbekistan Marketplaces') }}
             </h1>
             <p class="text-body-l mb-8 opacity-90">
-                @if(app()->getLocale() === 'ru')
-                    Профессиональное хранение, упаковка и доставка для Uzum, Wildberries, Ozon, Yandex Market
-                @else
-                    Uzum, Wildberries, Ozon, Yandex Market uchun professional saqlash, qadoqlash va yetkazish
-                @endif
+                {{ __('Professional storage, packaging and delivery for Uzum, Wildberries, Ozon, Yandex Market') }}
             </p>
             <div class="flex gap-4">
                 <a href="{{ route('calculator', ['locale' => app()->getLocale()]) }}" class="btn btn-primary bg-white text-brand hover:bg-gray-100">
@@ -44,20 +36,8 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                     </svg>
                 </div>
-                <h3 class="text-h4 font-heading mb-3">
-                    @if(app()->getLocale() === 'ru')
-                        SLA гарантии
-                    @else
-                        SLA kafolatlar
-                    @endif
-                </h3>
-                <p class="text-body-s text-text-muted">
-                    @if(app()->getLocale() === 'ru')
-                        Прозрачные сроки на каждый процесс
-                    @else
-                        Har bir jarayon uchun shaffof muddatlar
-                    @endif
-                </p>
+                <h3 class="text-h4 font-heading mb-3">{{ __('SLA Guarantees') }}</h3>
+                <p class="text-body-s text-text-muted">{{ __('Transparent timelines for every process') }}</p>
             </div>
             
             <div class="card text-center">
@@ -66,20 +46,8 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                     </svg>
                 </div>
-                <h3 class="text-h4 font-heading mb-3">
-                    @if(app()->getLocale() === 'ru')
-                        Личный кабинет
-                    @else
-                        Shaxsiy kabinet
-                    @endif
-                </h3>
-                <p class="text-body-s text-text-muted">
-                    @if(app()->getLocale() === 'ru')
-                        Онлайн контроль остатков и отгрузок 24/7
-                    @else
-                        Onlayn qoldiqlar va jo'natmalarni 24/7 nazorat qilish
-                    @endif
-                </p>
+                <h3 class="text-h4 font-heading mb-3">{{ __('Personal Dashboard') }}</h3>
+                <p class="text-body-s text-text-muted">{{ __('Online 24/7 monitoring of inventory and shipments') }}</p>
             </div>
             
             <div class="card text-center">
@@ -89,20 +57,8 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
                     </svg>
                 </div>
-                <h3 class="text-h4 font-heading mb-3">
-                    @if(app()->getLocale() === 'ru')
-                        Фотофиксация
-                    @else
-                        Fotoga olish
-                    @endif
-                </h3>
-                <p class="text-body-s text-text-muted">
-                    @if(app()->getLocale() === 'ru')
-                        Фото каждой приёмки и отгрузки
-                    @else
-                        Har bir qabul va jo'natma fotosuratlari
-                    @endif
-                </p>
+                <h3 class="text-h4 font-heading mb-3">{{ __('Photo Documentation') }}</h3>
+                <p class="text-body-s text-text-muted">{{ __('Photos of every receiving and shipment') }}</p>
             </div>
         </div>
     </div>
@@ -115,33 +71,33 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="card hover:shadow-lg transition">
                 <div class="text-4xl mb-4">📦</div>
-                <h3 class="text-h4 font-heading mb-2">{{ __('service_fbs_title') }}</h3>
-                <p class="text-body-s text-text-muted">{{ __('service_fbs_desc') }}</p>
+                <h3 class="text-h4 font-heading mb-2">{{ __('FBS Service') }}</h3>
+                <p class="text-body-s text-text-muted">{{ __('We store, pack and ship your orders to marketplace') }}</p>
             </div>
             <div class="card hover:shadow-lg transition">
                 <div class="text-4xl mb-4">🏠</div>
-                <h3 class="text-h4 font-heading mb-2">{{ __('service_storage_title') }}</h3>
-                <p class="text-body-s text-text-muted">{{ __('service_storage_desc') }}</p>
+                <h3 class="text-h4 font-heading mb-2">{{ __('Warehouse Storage') }}</h3>
+                <p class="text-body-s text-text-muted">{{ __('Safe storage with climate control and 24/7 security') }}</p>
             </div>
             <div class="card hover:shadow-lg transition">
                 <div class="text-4xl mb-4">🚚</div>
-                <h3 class="text-h4 font-heading mb-2">{{ __('service_delivery_title') }}</h3>
-                <p class="text-body-s text-text-muted">{{ __('service_delivery_desc') }}</p>
+                <h3 class="text-h4 font-heading mb-2">{{ __('Delivery to Marketplace') }}</h3>
+                <p class="text-body-s text-text-muted">{{ __('Fast delivery to marketplace warehouses') }}</p>
             </div>
             <div class="card hover:shadow-lg transition">
                 <div class="text-4xl mb-4">📸</div>
-                <h3 class="text-h4 font-heading mb-2">{{ __('service_photo_title') }}</h3>
-                <p class="text-body-s text-text-muted">{{ __('service_photo_desc') }}</p>
+                <h3 class="text-h4 font-heading mb-2">{{ __('Photo Documentation') }}</h3>
+                <p class="text-body-s text-text-muted">{{ __('Photo of every receiving and shipment for full transparency') }}</p>
             </div>
             <div class="card hover:shadow-lg transition">
                 <div class="text-4xl mb-4">📊</div>
-                <h3 class="text-h4 font-heading mb-2">{{ __('service_analytics_title') }}</h3>
-                <p class="text-body-s text-text-muted">{{ __('service_analytics_desc') }}</p>
+                <h3 class="text-h4 font-heading mb-2">{{ __('Analytics & Reporting') }}</h3>
+                <p class="text-body-s text-text-muted">{{ __('Real-time inventory and shipment tracking in your dashboard') }}</p>
             </div>
             <div class="card hover:shadow-lg transition">
                 <div class="text-4xl mb-4">🔄</div>
-                <h3 class="text-h4 font-heading mb-2">{{ __('service_returns_title') }}</h3>
-                <p class="text-body-s text-text-muted">{{ __('service_returns_desc') }}</p>
+                <h3 class="text-h4 font-heading mb-2">{{ __('Returns Processing') }}</h3>
+                <p class="text-body-s text-text-muted">{{ __('Quick and accurate processing of marketplace returns') }}</p>
             </div>
         </div>
     </div>
@@ -154,23 +110,23 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div class="text-center">
                 <div class="w-20 h-20 rounded-full bg-brand/10 text-brand flex items-center justify-center mx-auto mb-4 font-bold text-h2">1</div>
-                <h3 class="text-h4 font-heading mb-2">{{ __('step1_title') }}</h3>
-                <p class="text-body-s text-text-muted">{{ __('step1_desc') }}</p>
+                <h3 class="text-h4 font-heading mb-2">{{ __('Application') }}</h3>
+                <p class="text-body-s text-text-muted">{{ __('Leave a request or call us') }}</p>
             </div>
             <div class="text-center">
                 <div class="w-20 h-20 rounded-full bg-brand/10 text-brand flex items-center justify-center mx-auto mb-4 font-bold text-h2">2</div>
-                <h3 class="text-h4 font-heading mb-2">{{ __('step2_title') }}</h3>
-                <p class="text-body-s text-text-muted">{{ __('step2_desc') }}</p>
+                <h3 class="text-h4 font-heading mb-2">{{ __('Agreement') }}</h3>
+                <p class="text-body-s text-text-muted">{{ __('We sign the contract and set up dashboard access') }}</p>
             </div>
             <div class="text-center">
                 <div class="w-20 h-20 rounded-full bg-brand/10 text-brand flex items-center justify-center mx-auto mb-4 font-bold text-h2">3</div>
-                <h3 class="text-h4 font-heading mb-2">{{ __('step3_title') }}</h3>
-                <p class="text-body-s text-text-muted">{{ __('step3_desc') }}</p>
+                <h3 class="text-h4 font-heading mb-2">{{ __('Goods Delivery') }}</h3>
+                <p class="text-body-s text-text-muted">{{ __('You deliver goods to our warehouse') }}</p>
             </div>
             <div class="text-center">
                 <div class="w-20 h-20 rounded-full bg-brand/10 text-brand flex items-center justify-center mx-auto mb-4 font-bold text-h2">4</div>
-                <h3 class="text-h4 font-heading mb-2">{{ __('step4_title') }}</h3>
-                <p class="text-body-s text-text-muted">{{ __('step4_desc') }}</p>
+                <h3 class="text-h4 font-heading mb-2">{{ __('Fulfillment') }}</h3>
+                <p class="text-body-s text-text-muted">{{ __('We store, pack and deliver your orders') }}</p>
             </div>
         </div>
     </div>
@@ -183,19 +139,19 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div class="card text-center bg-white">
                 <div class="text-h1 text-brand mb-2">10K+</div>
-                <div class="text-body-m text-text-muted">{{ __('stat_orders') }}</div>
+                <div class="text-body-m text-text-muted">{{ __('Orders processed') }}</div>
             </div>
             <div class="card text-center bg-white">
                 <div class="text-h1 text-success mb-2">99%</div>
-                <div class="text-body-m text-text-muted">{{ __('stat_sla') }}</div>
+                <div class="text-body-m text-text-muted">{{ __('SLA compliance') }}</div>
             </div>
             <div class="card text-center bg-white">
                 <div class="text-h1 text-brand mb-2">24/7</div>
-                <div class="text-body-m text-text-muted">{{ __('stat_support') }}</div>
+                <div class="text-body-m text-text-muted">{{ __('Support available') }}</div>
             </div>
             <div class="card text-center bg-white">
                 <div class="text-h1 text-brand mb-2">5K+</div>
-                <div class="text-body-m text-text-muted">{{ __('stat_warehouse') }}</div>
+                <div class="text-body-m text-text-muted">{{ __('m² warehouse space') }}</div>
             </div>
         </div>
     </div>
@@ -227,32 +183,32 @@
                 </div>
             </div>
             <div>
-                <h3 class="text-h3 font-heading mb-4">{{ __('warehouse_title') }}</h3>
-                <p class="text-body-m text-text-muted mb-6">{{ __('warehouse_address') }}</p>
+                <h3 class="text-h3 font-heading mb-4">{{ __('Modern Warehouse in Tashkent') }}</h3>
+                <p class="text-body-m text-text-muted mb-6">{{ __('Tashkent, Uzbekistan') }}</p>
                 <div class="space-y-3">
                     <div class="flex items-start gap-3">
                         <svg class="w-6 h-6 text-brand flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                         </svg>
-                        <span class="text-body-s">{{ __('warehouse_feature1') }}</span>
+                        <span class="text-body-s">{{ __('5,000+ m² of storage space') }}</span>
                     </div>
                     <div class="flex items-start gap-3">
                         <svg class="w-6 h-6 text-brand flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                         </svg>
-                        <span class="text-body-s">{{ __('warehouse_feature2') }}</span>
+                        <span class="text-body-s">{{ __('Temperature and humidity control') }}</span>
                     </div>
                     <div class="flex items-start gap-3">
                         <svg class="w-6 h-6 text-brand flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                         </svg>
-                        <span class="text-body-s">{{ __('warehouse_feature3') }}</span>
+                        <span class="text-body-s">{{ __('24/7 security system') }}</span>
                     </div>
                     <div class="flex items-start gap-3">
                         <svg class="w-6 h-6 text-brand flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                         </svg>
-                        <span class="text-body-s">{{ __('warehouse_feature4') }}</span>
+                        <span class="text-body-s">{{ __('Modern WMS system') }}</span>
                     </div>
                 </div>
             </div>
@@ -273,10 +229,10 @@
                     </svg>
                     @endfor
                 </div>
-                <p class="text-body-s mb-4">{{ __('testimonial1_text') }}</p>
+                <p class="text-body-s mb-4">{{ __('Excellent service! We transferred all our logistics to RISMENT and have not regretted it.') }}</p>
                 <div class="border-t border-brand-border pt-3">
-                    <div class="font-semibold">{{ __('testimonial1_author') }}</div>
-                    <div class="text-body-s text-text-muted">{{ __('testimonial1_category') }}</div>
+                    <div class="font-semibold">{{ __('Akbar Karimov') }}</div>
+                    <div class="text-body-s text-text-muted">{{ __('Electronics') }}</div>
                 </div>
             </div>
             <div class="card bg-white">
@@ -287,10 +243,10 @@
                     </svg>
                     @endfor
                 </div>
-                <p class="text-body-s mb-4">{{ __('testimonial2_text') }}</p>
+                <p class="text-body-s mb-4">{{ __('Fast and high quality. SLA is always met, the dashboard is very convenient.') }}</p>
                 <div class="border-t border-brand-border pt-3">
-                    <div class="font-semibold">{{ __('testimonial2_author') }}</div>
-                    <div class="text-body-s text-text-muted">{{ __('testimonial2_category') }}</div>
+                    <div class="font-semibold">{{ __('Maria Ivanova') }}</div>
+                    <div class="text-body-s text-text-muted">{{ __('Clothing') }}</div>
                 </div>
             </div>
             <div class="card bg-white">
@@ -301,10 +257,10 @@
                     </svg>
                     @endfor
                 </div>
-                <p class="text-body-s mb-4">{{ __('testimonial3_text') }}</p>
+                <p class="text-body-s mb-4">{{ __('Working with RISMENT since 2023. The best fulfillment in Uzbekistan.') }}</p>
                 <div class="border-t border-brand-border pt-3">
-                    <div class="font-semibold">{{ __('testimonial3_author') }}</div>
-                    <div class="text-body-s text-text-muted">{{ __('testimonial3_category') }}</div>
+                    <div class="font-semibold">{{ __('Bobur Rakhimov') }}</div>
+                    <div class="text-body-s text-text-muted">{{ __('Cosmetics') }}</div>
                 </div>
             </div>
         </div>
@@ -318,48 +274,48 @@
         <div class="space-y-4">
             <details class="card group">
                 <summary class="cursor-pointer font-semibold text-body-l flex justify-between items-center">
-                    {{ __('faq1_q') }}
+                    {{ __('What is fulfillment?') }}
                     <svg class="w-5 h-5 text-brand transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
                 </summary>
-                <p class="text-body-s text-text-muted mt-3 pt-3 border-t border-brand-border">{{ __('faq1_a') }}</p>
+                <p class="text-body-s text-text-muted mt-3 pt-3 border-t border-brand-border">{{ __('Fulfillment is a comprehensive service including storage, packaging and delivery of goods for online stores and marketplace sellers.') }}</p>
             </details>
             <details class="card group">
                 <summary class="cursor-pointer font-semibold text-body-l flex justify-between items-center">
-                    {{ __('faq2_q') }}
+                    {{ __('What marketplaces do you work with?') }}
                     <svg class="w-5 h-5 text-brand transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
                 </summary>
-                <p class="text-body-s text-text-muted mt-3 pt-3 border-t border-brand-border">{{ __('faq2_a') }}</p>
+                <p class="text-body-s text-text-muted mt-3 pt-3 border-t border-brand-border">{{ __('We work with Uzum, Wildberries, Ozon and Yandex Market.') }}</p>
             </details>
             <details class="card group">
                 <summary class="cursor-pointer font-semibold text-body-l flex justify-between items-center">
-                    {{ __('faq3_q') }}
+                    {{ __('What is FBS?') }}
                     <svg class="w-5 h-5 text-brand transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
                 </summary>
-                <p class="text-body-s text-text-muted mt-3 pt-3 border-t border-brand-border">{{ __('faq3_a') }}</p>
+                <p class="text-body-s text-text-muted mt-3 pt-3 border-t border-brand-border">{{ __('FBS (Fulfillment by Seller) means the seller stores goods in our warehouse, and we handle assembly and delivery to the marketplace.') }}</p>
             </details>
             <details class="card group">
                 <summary class="cursor-pointer font-semibold text-body-l flex justify-between items-center">
-                    {{ __('faq4_q') }}
+                    {{ __('How quickly do you process orders?') }}
                     <svg class="w-5 h-5 text-brand transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
                 </summary>
-                <p class="text-body-s text-text-muted mt-3 pt-3 border-t border-brand-border">{{ __('faq4_a') }}</p>
+                <p class="text-body-s text-text-muted mt-3 pt-3 border-t border-brand-border">{{ __('Orders are assembled on the same day. Delivery to the marketplace warehouse takes 1-2 business days.') }}</p>
             </details>
             <details class="card group">
                 <summary class="cursor-pointer font-semibold text-body-l flex justify-between items-center">
-                    {{ __('faq5_q') }}
+                    {{ __('How do I start working with you?') }}
                     <svg class="w-5 h-5 text-brand transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
                 </summary>
-                <p class="text-body-s text-text-muted mt-3 pt-3 border-t border-brand-border">{{ __('faq5_a') }}</p>
+                <p class="text-body-s text-text-muted mt-3 pt-3 border-t border-brand-border">{{ __('Leave a request on our website or call us. We will discuss terms, sign the contract and you can start delivering goods to our warehouse.') }}</p>
             </details>
         </div>
     </div>
@@ -369,20 +325,8 @@
 <section class="py-16 bg-bg-soft">
     <div class="container-risment">
         <div class="card gradient-brand text-white text-center p-12">
-            <h2 class="text-h2 font-heading mb-4">
-                @if(app()->getLocale() === 'ru')
-                    Готовы начать?
-                @else
-                    Boshlashga tayyormisiz?
-                @endif
-            </h2>
-            <p class="text-body-l mb-6 opacity-90">
-                @if(app()->getLocale() === 'ru')
-                    Рассчитайте стоимость или свяжитесь с нами
-                @else
-                    Narxni hisoblang yoki biz bilan bog'laning
-                @endif
-            </p>
+            <h2 class="text-h2 font-heading mb-4">{{ __('Ready to start?') }}</h2>
+            <p class="text-body-l mb-6 opacity-90">{{ __('Calculate the cost or contact us') }}</p>
             <div class="flex gap-4 justify-center">
                 <a href="{{ route('calculator', ['locale' => app()->getLocale()]) }}" class="btn btn-primary bg-white text-brand hover:bg-gray-100">
                     {{ __('Calculate') }}

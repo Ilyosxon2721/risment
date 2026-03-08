@@ -21,7 +21,7 @@ class SetLocale
         $locale = $request->segment(1);
 
         // If no locale in URL (e.g., cabinet routes), use session or default
-        if (!in_array($locale, ['ru', 'uz'])) {
+        if (!in_array($locale, ['ru', 'uz', 'en'])) {
             $locale = Session::get('locale', config('app.locale', 'ru'));
         }
 

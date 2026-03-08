@@ -40,13 +40,13 @@
 
                         @if(Auth::user()->hasAnyRole(['manager', 'admin']))
                         <x-dropdown-link href="/manager/">
-                            Панель менеджера
+                            {{ __('Manager Panel') }}
                         </x-dropdown-link>
                         @endif
 
                         @if(Auth::user()->hasRole('admin'))
                         <x-dropdown-link href="/admin/">
-                            Панель администратора
+                            {{ __('Admin Panel') }}
                         </x-dropdown-link>
                         @endif
 
@@ -98,13 +98,13 @@
 
                 @if(Auth::user()->hasAnyRole(['manager', 'admin']))
                 <x-responsive-nav-link href="/manager/">
-                    Панель менеджера
+                    {{ __('Manager Panel') }}
                 </x-responsive-nav-link>
                 @endif
 
                 @if(Auth::user()->hasRole('admin'))
                 <x-responsive-nav-link href="/admin/">
-                    Панель администратора
+                    {{ __('Admin Panel') }}
                 </x-responsive-nav-link>
                 @endif
 
