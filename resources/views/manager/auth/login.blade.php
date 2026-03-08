@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Вход менеджера - RISMENT</title>
+    <title>{{ __('Manager Login') }} - RISMENT</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-body antialiased bg-bg">
@@ -12,11 +12,11 @@
         <div class="w-full max-w-md">
             <div class="text-center mb-8">
                 <h1 class="text-h2 font-heading gradient-brand bg-clip-text text-transparent">RISMENT</h1>
-                <p class="text-body-m text-text-muted mt-2">Панель менеджера</p>
+                <p class="text-body-m text-text-muted mt-2">{{ __('Manager Panel') }}</p>
             </div>
 
             <div class="bg-white rounded-card border border-brand-border p-8">
-                <h2 class="text-h3 font-heading text-brand-dark mb-6 text-center">Вход в систему</h2>
+                <h2 class="text-h3 font-heading text-brand-dark mb-6 text-center">{{ __('System Login') }}</h2>
 
                 @if(session('status'))
                     <div class="mb-4 p-3 bg-success/10 border border-success rounded text-success text-body-s">
@@ -38,7 +38,7 @@
                     </div>
 
                     <div>
-                        <label for="password" class="block text-body-m font-semibold text-brand-dark mb-2">Пароль</label>
+                        <label for="password" class="block text-body-m font-semibold text-brand-dark mb-2">{{ __('Password') }}</label>
                         <input id="password" type="password" name="password"
                                required autocomplete="current-password"
                                class="input w-full" placeholder="••••••••">
@@ -50,11 +50,11 @@
                     <div class="flex items-center">
                         <input id="remember" type="checkbox" name="remember"
                                class="rounded border-brand-border text-brand focus:ring-brand">
-                        <label for="remember" class="ml-2 text-body-s text-brand-dark">Запомнить меня</label>
+                        <label for="remember" class="ml-2 text-body-s text-brand-dark">{{ __('Remember me') }}</label>
                     </div>
 
                     <button type="submit" class="btn btn-primary w-full text-body-l font-semibold py-3">
-                        Войти
+                        {{ __('Sign in') }}
                     </button>
                 </form>
             </div>

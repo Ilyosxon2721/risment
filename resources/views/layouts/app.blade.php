@@ -6,16 +6,16 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     
     {{-- SEO Meta Tags --}}
-    <title>@yield('title', 'RISMENT - Fulfillment для маркетплейсов Узбекистана')</title>
-    <meta name="description" content="@yield('description', 'Профессиональный фулфилмент для маркетплейсов Узбекистана. FBS, FBO, DBS услуги. Хранение, сборка, доставка. Работаем с Uzum, Wildberries, Ozon.')">
-    <meta name="keywords" content="фулфилмент, fulfillment, Узбекистан, маркетплейс, FBS, FBO, DBS, хранение, логистика">
+    <title>@yield('title', __('RISMENT - Fulfillment for Uzbekistan marketplaces'))</title>
+    <meta name="description" content="@yield('description', __('Professional fulfillment for Uzbekistan marketplaces. FBS, FBO, DBS services. Storage, assembly, delivery. Working with Uzum, Wildberries, Ozon.'))">
+    <meta name="keywords" content="{{ __('fulfillment, Uzbekistan, marketplace, FBS, FBO, DBS, storage, logistics') }}">
     <link rel="canonical" href="{{ url()->current() }}">
     
     {{-- Open Graph / Facebook --}}
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url()->current() }}">
-    <meta property="og:title" content="@yield('title', 'RISMENT - Fulfillment для маркетплейсов Узбекистана')">
-    <meta property="og:description" content="@yield('description', 'Профессиональный фулфилмент для маркетплейсов Узбекистана. FBS, FBO, DBS услуги. Хранение, сборка, доставка. Работаем с Uzum, Wildberries, Ozon.')">
+    <meta property="og:title" content="@yield('title', __('RISMENT - Fulfillment for Uzbekistan marketplaces'))">
+    <meta property="og:description" content="@yield('description', __('Professional fulfillment for Uzbekistan marketplaces. FBS, FBO, DBS services. Storage, assembly, delivery. Working with Uzum, Wildberries, Ozon.'))">
     <meta property="og:image" content="@yield('og_image', asset('images/og-image.jpg'))">
     <meta property="og:locale" content="{{ app()->getLocale() === 'ru' ? 'ru_RU' : (app()->getLocale() === 'en' ? 'en_US' : 'uz_UZ') }}">
     <meta property="og:site_name" content="RISMENT">
@@ -23,8 +23,8 @@
     {{-- Twitter Card --}}
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="{{ url()->current() }}">
-    <meta name="twitter:title" content="@yield('title', 'RISMENT - Fulfillment для маркетплейсов Узбекистана')">
-    <meta name="twitter:description" content="@yield('description', 'Профессиональный фулфилмент для маркетплейсов Узбекистана. FBS, FBO, DBS услуги.')">
+    <meta name="twitter:title" content="@yield('title', __('RISMENT - Fulfillment for Uzbekistan marketplaces'))">
+    <meta name="twitter:description" content="@yield('description', __('Professional fulfillment for Uzbekistan marketplaces. FBS, FBO, DBS services.'))">
     <meta name="twitter:image" content="@yield('og_image', asset('images/og-image.jpg'))">
     
     {{-- Google Analytics --}}
@@ -105,12 +105,12 @@
                 @if($navUser)
                     @if($navUser->hasAnyRole(['manager', 'admin']))
                     <a href="/manager/" class="btn btn-secondary text-sm">
-                        Менеджер
+                        {{ __('Manager') }}
                     </a>
                     @endif
                     @if($navUser->hasRole('admin'))
                     <a href="/admin/" class="btn btn-secondary text-sm">
-                        Админ
+                        {{ __('Admin') }}
                     </a>
                     @endif
                     @if(Auth::check())

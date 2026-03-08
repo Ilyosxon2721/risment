@@ -13,14 +13,14 @@
         <aside class="w-64 bg-white border-r border-brand-border flex-shrink-0 sticky top-0 h-screen overflow-y-auto">
             <div class="p-6 border-b border-brand-border">
                 <h1 class="text-h3 font-heading gradient-brand bg-clip-text text-transparent">RISMENT</h1>
-                <p class="text-body-s text-text-muted mt-1">Панель менеджера</p>
+                <p class="text-body-s text-text-muted mt-1">{{ __('Manager Panel') }}</p>
             </div>
 
             <!-- Company Selector -->
             @if(isset($managerCompany) && $managerCompany)
                 @if(isset($managedCompanies) && $managedCompanies->count() > 1)
                 <div class="p-4 border-b border-brand-border">
-                    <label class="text-body-s font-semibold text-text-muted">Компания</label>
+                    <label class="text-body-s font-semibold text-text-muted">{{ __('Company') }}</label>
                     <select onchange="switchManagerCompany(this.value)" class="input mt-2 w-full">
                         @foreach($managedCompanies as $mc)
                             <option value="{{ $mc->id }}" {{ $managerCompany->id == $mc->id ? 'selected' : '' }}>
@@ -43,14 +43,14 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                     </svg>
-                    <span>Главная</span>
+                    <span>{{ __('Home') }}</span>
                 </a>
 
                 <a href="{{ route('manager.tasks.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-btn {{ request()->routeIs('manager.tasks.*') ? 'bg-brand text-white' : 'hover:bg-bg-soft' }} mt-1">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
                     </svg>
-                    <span>Задачи</span>
+                    <span>{{ __('Tasks') }}</span>
                 </a>
 
                 @php $pendingCount = isset($managerCompany) ? \App\Models\ManagerTask::forCompany($managerCompany->id)->pending()->count() : 0; @endphp
@@ -58,7 +58,7 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
-                    <span>Подтверждения</span>
+                    <span>{{ __('Confirmations') }}</span>
                     @if($pendingCount > 0)
                         <span class="ml-auto bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{{ $pendingCount }}</span>
                     @endif
@@ -68,32 +68,32 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                     </svg>
-                    <span>Биллинг</span>
+                    <span>{{ __('Billing') }}</span>
                 </a>
 
                 <div class="mt-4 pt-4 border-t border-brand-border">
-                    <p class="px-4 text-body-xs text-text-muted font-semibold uppercase tracking-wider mb-2">Склад</p>
+                    <p class="px-4 text-body-xs text-text-muted font-semibold uppercase tracking-wider mb-2">{{ __('Warehouse') }}</p>
                 </div>
 
                 <a href="{{ route('manager.inventory.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-btn {{ request()->routeIs('manager.inventory.*') ? 'bg-brand text-white' : 'hover:bg-bg-soft' }} mt-1">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
                     </svg>
-                    <span>Инвентарь</span>
+                    <span>{{ __('Inventory') }}</span>
                 </a>
 
                 <a href="{{ route('manager.shipments.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-btn {{ request()->routeIs('manager.shipments.*') ? 'bg-brand text-white' : 'hover:bg-bg-soft' }} mt-1">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
                     </svg>
-                    <span>Отгрузки</span>
+                    <span>{{ __('Shipments') }}</span>
                 </a>
 
                 <a href="{{ route('manager.inbounds.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-btn {{ request()->routeIs('manager.inbounds.*') ? 'bg-brand text-white' : 'hover:bg-bg-soft' }} mt-1">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
                     </svg>
-                    <span>Приёмки</span>
+                    <span>{{ __('Inbounds') }}</span>
                 </a>
             </nav>
 
@@ -105,7 +105,7 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                         </svg>
-                        <span>Выйти</span>
+                        <span>{{ __('Logout') }}</span>
                     </button>
                 </form>
             </div>

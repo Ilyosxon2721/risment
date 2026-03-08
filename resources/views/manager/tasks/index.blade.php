@@ -1,12 +1,12 @@
 @extends('manager.layout')
 
-@section('title', 'Задачи')
+@section('title', __('Tasks'))
 
 @section('content')
 <div class="flex justify-between items-center mb-8">
-    <h2 class="text-h2 font-heading">Задачи</h2>
+    <h2 class="text-h2 font-heading">{{ __('Tasks') }}</h2>
     <a href="{{ route('manager.tasks.create') }}" class="btn-brand px-6 py-3 rounded-btn text-white font-semibold">
-        + Добавить задачу
+        {{ __('+ Add task') }}
     </a>
 </div>
 
@@ -14,16 +14,16 @@
 <div class="flex gap-4 mb-6">
     <form method="GET" class="flex gap-4 flex-wrap">
         <select name="task_type" onchange="this.form.submit()" class="input">
-            <option value="">Все типы</option>
+            <option value="">{{ __('All types') }}</option>
             @foreach(\App\Models\ManagerTask::getTaskTypes() as $value => $label)
                 <option value="{{ $value }}" {{ request('task_type') === $value ? 'selected' : '' }}>{{ $label }}</option>
             @endforeach
         </select>
         <select name="status" onchange="this.form.submit()" class="input">
-            <option value="">Все статусы</option>
-            <option value="pending_confirmation" {{ request('status') === 'pending_confirmation' ? 'selected' : '' }}>Ожидает</option>
-            <option value="confirmed" {{ request('status') === 'confirmed' ? 'selected' : '' }}>Подтверждён</option>
-            <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>Отклонён</option>
+            <option value="">{{ __('All statuses') }}</option>
+            <option value="pending_confirmation" {{ request('status') === 'pending_confirmation' ? 'selected' : '' }}>{{ __('Pending') }}</option>
+            <option value="confirmed" {{ request('status') === 'confirmed' ? 'selected' : '' }}>{{ __('Confirmed') }}</option>
+            <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>{{ __('Rejected') }}</option>
         </select>
     </form>
 </div>
@@ -34,12 +34,12 @@
         <table class="w-full">
             <thead class="bg-bg-soft">
                 <tr>
-                    <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">Дата</th>
-                    <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">Тип</th>
-                    <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">Источник</th>
-                    <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">Статус</th>
-                    <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">Начислено</th>
-                    <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">Комментарий</th>
+                    <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">{{ __('Date') }}</th>
+                    <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">{{ __('Type') }}</th>
+                    <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">{{ __('Source') }}</th>
+                    <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">{{ __('Status') }}</th>
+                    <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">{{ __('Charged') }}</th>
+                    <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">{{ __('Comment') }}</th>
                     <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted"></th>
                 </tr>
             </thead>
@@ -57,12 +57,12 @@
                     <td class="px-6 py-4 text-body-s font-semibold">{{ number_format($task->total_billed, 0, '', ' ') }} UZS</td>
                     <td class="px-6 py-4 text-body-s text-text-muted">{{ \Illuminate\Support\Str::limit($task->comment, 40) }}</td>
                     <td class="px-6 py-4">
-                        <a href="{{ route('manager.tasks.show', $task) }}" class="text-brand hover:underline text-body-s">Подробнее</a>
+                        <a href="{{ route('manager.tasks.show', $task) }}" class="text-brand hover:underline text-body-s">{{ __('Details') }}</a>
                     </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="7" class="px-6 py-8 text-center text-text-muted">Задач нет</td>
+                    <td colspan="7" class="px-6 py-8 text-center text-text-muted">{{ __('No tasks') }}</td>
                 </tr>
                 @endforelse
             </tbody>

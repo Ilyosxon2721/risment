@@ -1,10 +1,10 @@
 @extends('manager.layout')
 
-@section('title', 'Панель менеджера')
+@section('title', __('Manager Panel'))
 
 @section('content')
 <div class="mb-8">
-    <h2 class="text-h2 font-heading">Панель менеджера</h2>
+    <h2 class="text-h2 font-heading">{{ __('Manager Panel') }}</h2>
     <p class="text-text-muted mt-1">{{ $company->name }}</p>
 </div>
 
@@ -13,7 +13,7 @@
     <div class="bg-white rounded-card border border-brand-border p-6">
         <div class="flex items-center justify-between">
             <div>
-                <div class="text-body-s text-text-muted">Ожидают подтверждения</div>
+                <div class="text-body-s text-text-muted">{{ __('Awaiting confirmation') }}</div>
                 <div class="text-h2 font-heading mt-2 {{ $pendingCount > 0 ? 'text-warning' : 'text-success' }}">{{ $pendingCount }}</div>
             </div>
             <div class="w-12 h-12 rounded-full bg-warning/10 flex items-center justify-center">
@@ -26,7 +26,7 @@
     <div class="bg-white rounded-card border border-brand-border p-6">
         <div class="flex items-center justify-between">
             <div>
-                <div class="text-body-s text-text-muted">Задач за месяц</div>
+                <div class="text-body-s text-text-muted">{{ __('Tasks this month') }}</div>
                 <div class="text-h2 font-heading mt-2">{{ $tasksThisMonth }}</div>
             </div>
             <div class="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center">
@@ -39,7 +39,7 @@
     <div class="bg-white rounded-card border border-brand-border p-6">
         <div class="flex items-center justify-between">
             <div>
-                <div class="text-body-s text-text-muted">Начислено за месяц</div>
+                <div class="text-body-s text-text-muted">{{ __('Billed this month') }}</div>
                 <div class="text-h3 font-heading mt-2">{{ number_format($billedThisMonth, 0, '', ' ') }}</div>
                 <div class="text-body-xs text-text-muted">UZS</div>
             </div>
@@ -53,10 +53,10 @@
     <div class="bg-white rounded-card border border-brand-border p-6">
         <div class="flex items-center justify-between">
             <div>
-                <div class="text-body-s text-text-muted">SKU на складе</div>
+                <div class="text-body-s text-text-muted">{{ __('SKU in warehouse') }}</div>
                 <div class="text-h2 font-heading mt-2">{{ number_format($inventoryStats['total_skus']) }}</div>
                 @if($inventoryStats['low_stock'] > 0)
-                    <div class="text-body-xs text-warning">{{ $inventoryStats['low_stock'] }} с низким остатком</div>
+                    <div class="text-body-xs text-warning">{{ $inventoryStats['low_stock'] }} {{ __('with low stock') }}</div>
                 @endif
             </div>
             <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
@@ -77,7 +77,7 @@
             </svg>
         </div>
         <div>
-            <div class="text-body-s text-text-muted">Активные отгрузки</div>
+            <div class="text-body-s text-text-muted">{{ __('Active shipments') }}</div>
             <div class="text-h4 font-semibold">{{ $activeShipments }}</div>
         </div>
     </div>
@@ -88,7 +88,7 @@
             </svg>
         </div>
         <div>
-            <div class="text-body-s text-text-muted">Ожидают приёмки</div>
+            <div class="text-body-s text-text-muted">{{ __('Awaiting inbound') }}</div>
             <div class="text-h4 font-semibold">{{ $pendingInbounds }}</div>
         </div>
     </div>
@@ -99,7 +99,7 @@
             </svg>
         </div>
         <div>
-            <div class="text-body-s text-text-muted">Единиц на складе</div>
+            <div class="text-body-s text-text-muted">{{ __('Units in warehouse') }}</div>
             <div class="text-h4 font-semibold">{{ number_format($inventoryStats['total_units']) }}</div>
         </div>
     </div>
@@ -109,7 +109,7 @@
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
     <!-- Billing Trend Chart -->
     <div class="bg-white rounded-card border border-brand-border p-6">
-        <h3 class="text-h4 font-heading mb-4">Биллинг за 6 месяцев</h3>
+        <h3 class="text-h4 font-heading mb-4">{{ __('Billing for 6 months') }}</h3>
         <div class="h-48">
             <canvas id="billingTrendChart"></canvas>
         </div>
@@ -117,14 +117,14 @@
 
     <!-- Tasks by Type Chart -->
     <div class="bg-white rounded-card border border-brand-border p-6">
-        <h3 class="text-h4 font-heading mb-4">Задачи за месяц по типам</h3>
+        <h3 class="text-h4 font-heading mb-4">{{ __('Tasks by type this month') }}</h3>
         @if(array_sum($tasksByType) > 0)
         <div class="h-48">
             <canvas id="tasksByTypeChart"></canvas>
         </div>
         @else
         <div class="h-48 flex items-center justify-center text-text-muted">
-            Нет данных за текущий месяц
+            {{ __('No data for current month') }}
         </div>
         @endif
     </div>
@@ -133,20 +133,20 @@
 <!-- Billing by Scope -->
 @if(array_sum($billingByScope) > 0)
 <div class="bg-white rounded-card border border-brand-border p-6 mb-8">
-    <h3 class="text-h4 font-heading mb-4">Начисления по категориям (текущий месяц)</h3>
+    <h3 class="text-h4 font-heading mb-4">{{ __('Charges by category (current month)') }}</h3>
     <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
         @php
             $scopeLabels = [
-                'inbound' => 'Приёмка',
-                'pickpack' => 'Сборка',
-                'shipping' => 'Доставка',
-                'storage' => 'Хранение',
-                'returns' => 'Возвраты',
-                'packaging' => 'Упаковка',
-                'labeling' => 'Маркировка',
-                'photo' => 'Фото',
-                'inventory' => 'Инвентаризация',
-                'other' => 'Другое',
+                'inbound' => __('Receiving'),
+                'pickpack' => __('Pick & Pack'),
+                'shipping' => __('Shipping'),
+                'storage' => __('Storage'),
+                'returns' => __('Returns'),
+                'packaging' => __('Packaging'),
+                'labeling' => __('Labeling'),
+                'photo' => __('Photo'),
+                'inventory' => __('Inventory check'),
+                'other' => __('Other'),
             ];
             $scopeColors = [
                 'inbound' => 'blue',
@@ -174,36 +174,36 @@
 <!-- Quick Actions -->
 <div class="flex gap-4 mb-8 flex-wrap">
     <a href="{{ route('manager.tasks.create') }}" class="btn-brand px-6 py-3 rounded-btn text-white font-semibold">
-        + Добавить задачу
+        {{ __('+ Add task') }}
     </a>
     @if($pendingCount > 0)
     <a href="{{ route('manager.confirmations.index') }}" class="btn-outline px-6 py-3 rounded-btn border-2 border-brand text-brand font-semibold">
-        Подтверждения ({{ $pendingCount }})
+        {{ __('Confirmations') }} ({{ $pendingCount }})
     </a>
     @endif
     <a href="{{ route('manager.inventory.index') }}" class="px-6 py-3 rounded-btn border border-brand-border hover:bg-bg-soft font-semibold">
-        Инвентарь
+        {{ __('Inventory') }}
     </a>
     <a href="{{ route('manager.shipments.index') }}" class="px-6 py-3 rounded-btn border border-brand-border hover:bg-bg-soft font-semibold">
-        Отгрузки
+        {{ __('Shipments') }}
     </a>
 </div>
 
 <!-- Recent Tasks -->
 <div class="bg-white rounded-card border border-brand-border">
     <div class="p-6 border-b border-brand-border flex justify-between items-center">
-        <h3 class="text-h4 font-heading">Последние задачи</h3>
-        <a href="{{ route('manager.tasks.index') }}" class="text-brand hover:underline text-body-s">Все задачи →</a>
+        <h3 class="text-h4 font-heading">{{ __('Recent tasks') }}</h3>
+        <a href="{{ route('manager.tasks.index') }}" class="text-brand hover:underline text-body-s">{{ __('All tasks') }} →</a>
     </div>
     <div class="overflow-x-auto">
         <table class="w-full">
             <thead class="bg-bg-soft">
                 <tr>
-                    <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">Дата</th>
-                    <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">Тип</th>
-                    <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">Источник</th>
-                    <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">Статус</th>
-                    <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">Начислено</th>
+                    <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">{{ __('Date') }}</th>
+                    <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">{{ __('Type') }}</th>
+                    <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">{{ __('Source') }}</th>
+                    <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">{{ __('Status') }}</th>
+                    <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">{{ __('Charged') }}</th>
                     <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted"></th>
                 </tr>
             </thead>
@@ -220,12 +220,12 @@
                     </td>
                     <td class="px-6 py-4 text-body-s font-semibold">{{ number_format($task->total_billed, 0, '', ' ') }} UZS</td>
                     <td class="px-6 py-4">
-                        <a href="{{ route('manager.tasks.show', $task) }}" class="text-brand hover:underline text-body-s">Подробнее</a>
+                        <a href="{{ route('manager.tasks.show', $task) }}" class="text-brand hover:underline text-body-s">{{ __('Details') }}</a>
                     </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="px-6 py-8 text-center text-text-muted">Задач пока нет</td>
+                    <td colspan="6" class="px-6 py-8 text-center text-text-muted">{{ __('No tasks yet') }}</td>
                 </tr>
                 @endforelse
             </tbody>
@@ -244,7 +244,7 @@ if (billingTrendCtx) {
         data: {
             labels: {!! json_encode(array_column($billingTrend, 'month')) !!},
             datasets: [{
-                label: 'Начисления',
+                label: @json(__('Charges')),
                 data: {!! json_encode(array_column($billingTrend, 'amount')) !!},
                 backgroundColor: 'rgba(203, 79, 228, 0.5)',
                 borderColor: 'rgb(203, 79, 228)',
