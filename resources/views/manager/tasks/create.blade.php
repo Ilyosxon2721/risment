@@ -114,10 +114,10 @@
                 <div>
                     <label class="block text-body-s font-semibold mb-2">{{ __('Size category') }}</label>
                     <select name="return_category" class="input w-full">
-                        <option value="micro" {{ old('return_category') === 'micro' ? 'selected' : '' }}>MICRO (≤30 см)</option>
-                        <option value="mgt" {{ old('return_category', 'mgt') === 'mgt' ? 'selected' : '' }}>MGT (31-60 см)</option>
-                        <option value="sgt" {{ old('return_category') === 'sgt' ? 'selected' : '' }}>SGT (61-120 см)</option>
-                        <option value="kgt" {{ old('return_category') === 'kgt' ? 'selected' : '' }}>KGT (>120 см)</option>
+                        <option value="micro" {{ old('return_category') === 'micro' ? 'selected' : '' }}>MICRO (≤30 {{ __('cm') }})</option>
+                        <option value="mgt" {{ old('return_category', 'mgt') === 'mgt' ? 'selected' : '' }}>MGT (31-60 {{ __('cm') }})</option>
+                        <option value="sgt" {{ old('return_category') === 'sgt' ? 'selected' : '' }}>SGT (61-120 {{ __('cm') }})</option>
+                        <option value="kgt" {{ old('return_category') === 'kgt' ? 'selected' : '' }}>KGT (>120 {{ __('cm') }})</option>
                     </select>
                 </div>
             </div>
@@ -129,31 +129,31 @@
             <p class="text-body-s text-text-muted mb-3">{{ __('Specify quantity for each size category:') }}</p>
             <div class="grid grid-cols-4 gap-4">
                 <div>
-                    <label class="block text-body-s font-semibold mb-2">MICRO (≤30 см)</label>
+                    <label class="block text-body-s font-semibold mb-2">MICRO (≤30 {{ __('cm') }})</label>
                     <input type="number" name="delivery_micro" class="input w-full" min="0" value="{{ old('delivery_micro', 0) }}">
                 </div>
                 <div>
-                    <label class="block text-body-s font-semibold mb-2">MGT (31-60 см)</label>
+                    <label class="block text-body-s font-semibold mb-2">MGT (31-60 {{ __('cm') }})</label>
                     <input type="number" name="delivery_mgt" class="input w-full" min="0" value="{{ old('delivery_mgt', 0) }}">
                 </div>
                 <div>
-                    <label class="block text-body-s font-semibold mb-2">SGT (61-120 см)</label>
+                    <label class="block text-body-s font-semibold mb-2">SGT (61-120 {{ __('cm') }})</label>
                     <input type="number" name="delivery_sgt" class="input w-full" min="0" value="{{ old('delivery_sgt', 0) }}">
                 </div>
                 <div>
-                    <label class="block text-body-s font-semibold mb-2">KGT (>120 см)</label>
+                    <label class="block text-body-s font-semibold mb-2">KGT (>120 {{ __('cm') }})</label>
                     <input type="number" name="delivery_kgt" class="input w-full" min="0" value="{{ old('delivery_kgt', 0) }}">
                 </div>
             </div>
             <div>
                 <label class="block text-body-s font-semibold mb-2">{{ __('Delivery address') }}</label>
-                <input type="text" name="delivery_address" class="input w-full" value="{{ old('delivery_address') }}" placeholder="г. Ташкент, ул. Навои 1">
+                <input type="text" name="delivery_address" class="input w-full" value="{{ old('delivery_address') }}" placeholder="{{ __('Tashkent, Navoi st. 1') }}">
                 @error('delivery_address') <p class="text-error text-body-s mt-1">{{ $message }}</p> @enderror
             </div>
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="block text-body-s font-semibold mb-2">{{ __('Recipient') }}</label>
-                    <input type="text" name="recipient_name" class="input w-full" value="{{ old('recipient_name') }}" placeholder="Иван Иванов">
+                    <input type="text" name="recipient_name" class="input w-full" value="{{ old('recipient_name') }}" placeholder="{{ __('John Doe') }}">
                 </div>
                 <div>
                     <label class="block text-body-s font-semibold mb-2">{{ __('Phone') }}</label>
@@ -186,7 +186,7 @@
         <!-- Comment -->
         <div class="mb-6">
             <label class="block text-body-s font-semibold mb-2">{{ __('Comment') }}</label>
-            <textarea name="comment" class="input w-full" rows="3" placeholder="Дополнительная информация...">{{ old('comment') }}</textarea>
+            <textarea name="comment" class="input w-full" rows="3" placeholder="{{ __('Additional information...') }}">{{ old('comment') }}</textarea>
             @error('comment') <p class="text-error text-body-s mt-1">{{ $message }}</p> @enderror
         </div>
 
@@ -235,19 +235,19 @@ function toggleFields() {
             break;
         case 'packaging':
             document.getElementById('fields_units').classList.remove('hidden');
-            document.getElementById('fields_units_title').textContent = '📦 Упаковка товаров';
+            document.getElementById('fields_units_title').textContent = '📦 {{ __("Product packaging") }}';
             break;
         case 'labeling':
             document.getElementById('fields_units').classList.remove('hidden');
-            document.getElementById('fields_units_title').textContent = '🏷️ Маркировка товаров';
+            document.getElementById('fields_units_title').textContent = '🏷️ {{ __("Product labeling") }}';
             break;
         case 'photo':
             document.getElementById('fields_units').classList.remove('hidden');
-            document.getElementById('fields_units_title').textContent = '📸 Фотосъёмка товаров';
+            document.getElementById('fields_units_title').textContent = '📸 {{ __("Product photography") }}';
             break;
         case 'inventory_check':
             document.getElementById('fields_units').classList.remove('hidden');
-            document.getElementById('fields_units_title').textContent = '📋 Инвентаризация';
+            document.getElementById('fields_units_title').textContent = '📋 {{ __("Inventory check") }}';
             break;
         case 'other':
             document.getElementById('fields_other').classList.remove('hidden');

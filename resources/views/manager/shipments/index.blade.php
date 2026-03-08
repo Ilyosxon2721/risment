@@ -45,7 +45,7 @@
             <option value="uzum" {{ request('marketplace') === 'uzum' ? 'selected' : '' }}>Uzum</option>
             <option value="wb" {{ request('marketplace') === 'wb' ? 'selected' : '' }}>Wildberries</option>
             <option value="ozon" {{ request('marketplace') === 'ozon' ? 'selected' : '' }}>Ozon</option>
-            <option value="yandex" {{ request('marketplace') === 'yandex' ? 'selected' : '' }}>Яндекс</option>
+            <option value="yandex" {{ request('marketplace') === 'yandex' ? 'selected' : '' }}>Yandex</option>
         </select>
     </form>
 </div>

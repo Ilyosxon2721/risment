@@ -112,7 +112,7 @@
     <div class="bg-white rounded-card p-6 max-w-md w-full mx-4">
         <h3 class="text-h4 font-heading mb-4">{{ __('Stock adjustment') }}</h3>
         <p class="text-body-s text-text-muted mb-4">
-            <span id="adjustSkuName"></span> (текущий остаток: <strong id="adjustCurrentQty"></strong>)
+            <span id="adjustSkuName"></span> ({{ __('current stock') }}: <strong id="adjustCurrentQty"></strong>)
         </p>
         <form id="adjustForm" method="POST">
             @csrf
@@ -130,7 +130,7 @@
             </div>
             <div class="mb-6">
                 <label class="block text-body-s font-semibold mb-2">{{ __('Reason') }} *</label>
-                <input type="text" name="reason" class="input w-full" required placeholder="Инвентаризация, пересорт, брак...">
+                <input type="text" name="reason" class="input w-full" required placeholder="{{ __('Inventory check, regrading, defect...') }}">
             </div>
             <div class="flex gap-4">
                 <button type="submit" class="btn-brand px-6 py-3 rounded-btn text-white font-semibold">
