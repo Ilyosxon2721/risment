@@ -43,7 +43,7 @@
     {{-- Products Table --}}
     <div class="card" x-data="{ expandedProducts: [] }">
         @if($products->count() > 0)
-            <div class="overflow-x-auto">
+            <div class="table-responsive relative">
                 <table class="w-full">
                     <thead class="bg-bg-soft border-b-2 border-brand-border">
                         <tr>

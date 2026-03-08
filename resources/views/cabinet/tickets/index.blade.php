@@ -28,8 +28,8 @@
 </div>
 @else
 <div class="card">
-    <div class="overflow-x-auto">
-        <table class="w-full">
+    <div class="table-responsive relative">
+        <table class="w-full responsive-table">
             <thead class="bg-bg-soft">
                 <tr>
                     <th class="px-4 py-3 text-left text-body-s font-semibold">ID</th>
@@ -43,27 +43,27 @@
             <tbody>
                 @foreach($tickets as $ticket)
                 <tr class="border-t border-brand-border hover:bg-bg-soft transition">
-                    <td class="px-4 py-3 font-mono text-body-s">#{{ $ticket->id }}</td>
-                    <td class="px-4 py-3 font-semibold">{{ $ticket->subject }}</td>
-                    <td class="px-4 py-3">
-                        <span class="badge badge-{{ 
-                            $ticket->priority === 'low' ? 'info' : 
-                            ($ticket->priority === 'high' ? 'error' : 'warning') 
+                    <td class="px-4 py-3 font-mono text-body-s" data-label="ID">#{{ $ticket->id }}</td>
+                    <td class="px-4 py-3 font-semibold" data-label="{{ __('Subject') }}">{{ $ticket->subject }}</td>
+                    <td class="px-4 py-3" data-label="{{ __('Priority') }}">
+                        <span class="badge badge-{{
+                            $ticket->priority === 'low' ? 'info' :
+                            ($ticket->priority === 'high' ? 'error' : 'warning')
                         }}">
                             {{ __(ucfirst($ticket->priority)) }}
                         </span>
                     </td>
-                    <td class="px-4 py-3">
-                        <span class="badge badge-{{ 
-                            $ticket->status === 'closed' ? 'secondary' : 
-                            ($ticket->status === 'open' ? 'success' : 'warning') 
+                    <td class="px-4 py-3" data-label="{{ __('Status') }}">
+                        <span class="badge badge-{{
+                            $ticket->status === 'closed' ? 'secondary' :
+                            ($ticket->status === 'open' ? 'success' : 'warning')
                         }}">
                             {{ __(ucfirst($ticket->status)) }}
                         </span>
                     </td>
-                    <td class="px-4 py-3">{{ $ticket->created_at->format('d.m.Y H:i') }}</td>
-                    <td class="px-4 py-3 text-right">
-                        <a href="{{ route('cabinet.tickets.show', ['ticket' => $ticket]) }}" 
+                    <td class="px-4 py-3" data-label="{{ __('Created') }}">{{ $ticket->created_at->format('d.m.Y H:i') }}</td>
+                    <td class="px-4 py-3 text-right" data-label="{{ __('Actions') }}">
+                        <a href="{{ route('cabinet.tickets.show', ['ticket' => $ticket]) }}"
                            class="text-brand hover:underline text-body-s">
                             {{ __('View') }}
                         </a>

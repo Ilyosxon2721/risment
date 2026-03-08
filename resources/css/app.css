@@ -96,3 +96,235 @@
         @apply bg-clip-text text-transparent;
     }
 }
+
+/* ================================================
+   PWA Standalone Mode Styles
+   ================================================ */
+
+/* Viewport fit for iPhone notch / Dynamic Island */
+@supports (padding: env(safe-area-inset-top)) {
+    .pwa-safe-area {
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+    }
+}
+
+/* Bottom navigation - hidden by default, shown only in PWA standalone mode */
+.pwa-bottom-nav {
+    display: none;
+}
+
+@media (display-mode: standalone) {
+    .pwa-bottom-nav {
+        display: block;
+    }
+
+    /* Add padding at bottom for bottom nav (56px nav + safe area) */
+    .pwa-main-content {
+        padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px));
+    }
+
+    /* Hide web footer in standalone mode */
+    .web-footer {
+        display: none;
+    }
+}
+
+/* Also support iOS standalone detection */
+@media (display-mode: standalone), (display-mode: fullscreen) {
+    .pwa-bottom-nav {
+        display: block;
+    }
+}
+
+/* ================================================
+   Mobile Sidebar Styles
+   ================================================ */
+
+/* Sidebar backdrop */
+.sidebar-backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
+    transition: opacity 0.3s ease;
+}
+
+/* Sidebar slide transition */
+.sidebar-slide {
+    transition: transform 0.3s ease;
+}
+
+/* Mobile top bar */
+.mobile-top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    height: 56px;
+    background-color: white;
+    border-bottom: 1px solid var(--color-border, #E9ECF2);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+}
+
+/* ================================================
+   Responsive Tables
+   ================================================ */
+
+/* Horizontal scroll wrapper for tables on mobile */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -1rem;
+    padding: 0 1rem;
+}
+
+.table-responsive table {
+    min-width: 640px;
+}
+
+/* Fade hint for scrollable tables */
+.table-responsive::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 24px;
+    background: linear-gradient(to right, transparent, white);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.table-responsive.is-scrollable::after {
+    opacity: 1;
+}
+
+/* Card view for lists on mobile */
+@media (max-width: 639px) {
+    .responsive-table thead {
+        display: none;
+    }
+
+    .responsive-table tbody tr {
+        display: block;
+        background: white;
+        border-radius: 12px;
+        padding: 12px 16px;
+        margin-bottom: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+        border: 1px solid var(--color-border, #E9ECF2);
+    }
+
+    .responsive-table tbody td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 4px 0;
+        border: none;
+        font-size: 14px;
+    }
+
+    .responsive-table tbody td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--color-text-muted, #5E6278);
+        font-size: 12px;
+        margin-right: 8px;
+        flex-shrink: 0;
+    }
+
+    .responsive-table tbody td:first-child {
+        font-weight: 600;
+        font-size: 15px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--color-border, #E9ECF2);
+        margin-bottom: 4px;
+    }
+}
+
+/* ================================================
+   Responsive Forms
+   ================================================ */
+
+@media (max-width: 639px) {
+    /* Stack form columns */
+    .form-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Full-width buttons on mobile */
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .form-actions .btn,
+    .form-actions button,
+    .form-actions a.btn {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* ================================================
+   Pull-to-Refresh Indicator
+   ================================================ */
+
+.pull-to-refresh {
+    position: fixed;
+    top: -50px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: top 0.3s ease;
+}
+
+.pull-to-refresh.visible {
+    top: 16px;
+}
+
+.pull-to-refresh .spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #E9ECF2;
+    border-top-color: #CB4FE4;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ================================================
+   Standalone Mode Tweaks
+   ================================================ */
+
+@media (display-mode: standalone) {
+    /* Prevent text selection on nav elements (app-like feel) */
+    nav, .mobile-top-bar, .pwa-bottom-nav {
+        -webkit-user-select: none;
+        user-select: none;
+    }
+
+    /* Smoother scrolling */
+    html {
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Disable pull-to-refresh browser default (we handle it ourselves) */
+    body {
+        overscroll-behavior-y: contain;
+    }
+}
