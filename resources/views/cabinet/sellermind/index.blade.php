@@ -4,14 +4,14 @@
 
 @section('content')
 <div class="mb-8">
-    <h1 class="text-h1 font-heading">{{ __('SellerMind Integration') }}</h1>
+    <h1 class="text-xl sm:text-h1 font-heading">{{ __('SellerMind Integration') }}</h1>
     <p class="text-body-m text-text-muted mt-2">{{ __('Connect your SellerMind account for marketplace synchronization') }}</p>
 </div>
 
 @if($link && $link->isActive())
     <!-- Active Connection -->
     <div class="card mb-8 border-2 border-success">
-        <div class="flex justify-between items-start">
+        <div class="flex flex-col sm:flex-row justify-between items-start gap-4">
             <div>
                 <div class="flex items-center gap-3 mb-4">
                     <div class="w-3 h-3 rounded-full bg-success animate-pulse"></div>
@@ -118,15 +118,15 @@
             </ol>
         </div>
 
-        <div class="mt-6 flex items-center gap-4">
+        <div class="mt-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
             <form method="POST" action="{{ route('cabinet.sellermind.disconnect') }}">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="btn btn-outline text-text-muted">{{ __('Cancel') }}</button>
+                <button type="submit" class="btn btn-outline text-text-muted min-h-[44px] w-full sm:w-auto">{{ __('Cancel') }}</button>
             </form>
             <form method="POST" action="{{ route('cabinet.sellermind.generate') }}">
                 @csrf
-                <button type="submit" class="btn btn-outline">{{ __('Regenerate Token') }}</button>
+                <button type="submit" class="btn btn-outline min-h-[44px] w-full sm:w-auto">{{ __('Regenerate Token') }}</button>
             </form>
         </div>
     </div>

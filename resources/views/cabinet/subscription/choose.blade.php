@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="mb-8">
-    <h1 class="text-h1 font-heading">{{ __('Choose Your Package') }}</h1>
+    <h1 class="text-xl sm:text-h1 font-heading">{{ __('Choose Your Package') }}</h1>
     <p class="text-body-m text-text-muted mt-2">{{ __('Select the plan that best fits your business needs') }}</p>
 </div>
 

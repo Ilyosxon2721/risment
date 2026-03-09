@@ -5,7 +5,7 @@
 @section('content')
 <section class="py-16">
     <div class="container-risment max-w-6xl">
-        <h1 class="text-h1 font-heading text-center mb-12">{{ __('Contacts') }}</h1>
+        <h1 class="text-2xl sm:text-h1 font-heading text-center mb-8 sm:mb-12">{{ __('Contacts') }}</h1>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
             <!-- Contact Info -->

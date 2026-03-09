@@ -3,9 +3,9 @@
 @section('title', __('About') . ' - RISMENT')
 
 @section('content')
-<section class="gradient-brand text-white py-20">
+<section class="gradient-brand text-white py-12 sm:py-20">
     <div class="container-risment text-center">
-        <h1 class="text-h1 font-heading mb-6">
+        <h1 class="text-2xl sm:text-h1 font-heading mb-6">
             {{ __('About RISMENT') }}
         </h1>
         <p class="text-body-l max-w-3xl mx-auto opacity-90">
@@ -78,7 +78,7 @@
             </div>
         </div>
 
-        <div class="card gradient-brand text-white text-center p-8">
+        <div class="card gradient-brand text-white text-center p-6 sm:p-8">
             <h2 class="text-h2 font-heading mb-4">
                 {{ __('Ready to start working?') }}
             </h2>

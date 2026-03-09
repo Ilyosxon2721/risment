@@ -11,7 +11,7 @@
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
             </svg>
         </div>
-        <h1 class="text-h1 font-heading mb-2">{{ __('Package Activated!') }}</h1>
+        <h1 class="text-xl sm:text-h1 font-heading mb-2">{{ __('Package Activated!') }}</h1>
         <p class="text-body-m text-text-muted">{{ __('Your subscription plan is now active') }}</p>
     </div>
 
@@ -19,8 +19,8 @@
     <div class="card mb-6">
         <h2 class="text-h3 font-heading mb-4">{{ __('Active Package') }}</h2>
 
-        <div class="p-6 bg-bg-soft rounded-btn mb-6">
-            <div class="flex justify-between items-start mb-4">
+        <div class="p-4 sm:p-6 bg-bg-soft rounded-btn mb-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start gap-3 mb-4">
                 <div>
                     <h3 class="text-h4 font-heading mb-1">{{ $selectedPlan->getName() }}</h3>
                     <p class="text-body-s text-text-muted">{{ $selectedPlan->getDescription() }}</p>
@@ -94,11 +94,11 @@
     </div>
 
     <!-- Actions -->
-    <div class="flex justify-center gap-4">
-        <a href="{{ route('cabinet.dashboard') }}" class="btn btn-primary">
+    <div class="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
+        <a href="{{ route('cabinet.dashboard') }}" class="btn btn-primary min-h-[44px] text-center">
             {{ __('Go to Dashboard') }}
         </a>
-        <a href="{{ route('cabinet.subscription.choose') }}" class="btn btn-secondary">
+        <a href="{{ route('cabinet.subscription.choose') }}" class="btn btn-secondary min-h-[44px] text-center">
             {{ __('View Other Plans') }}
         </a>
     </div>

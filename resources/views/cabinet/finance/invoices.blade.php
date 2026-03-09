@@ -4,12 +4,12 @@
 
 @section('content')
 <div class="mb-8">
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-            <h1 class="text-h1 font-heading">{{ __('Invoices') }}</h1>
+            <h1 class="text-xl sm:text-h1 font-heading">{{ __('Invoices') }}</h1>
             <p class="text-body-m text-text-muted mt-2">{{ __('All your invoices') }}</p>
         </div>
-        <a href="{{ route('cabinet.finance.index') }}" class="btn btn-secondary">
+        <a href="{{ route('cabinet.finance.index') }}" class="btn btn-secondary min-h-[44px]">
             ← {{ __('Back') }}
         </a>
     </div>
@@ -17,9 +17,9 @@
 
 <!-- Filters -->
 <div class="card mb-6">
-    <form method="GET" class="flex items-center gap-4">
+    <form method="GET" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
         <label for="status" class="text-body-m font-semibold">{{ __('Status') }}:</label>
-        <select name="status" id="status" class="input w-64" onchange="this.form.submit()">
+        <select name="status" id="status" class="input w-full sm:w-64" onchange="this.form.submit()">
             <option value="all" {{ request('status') == 'all' ? 'selected' : '' }}>{{ __('All') }}</option>
             <option value="draft" {{ request('status') == 'draft' ? 'selected' : '' }}>{{ __('Draft') }}</option>
             <option value="sent" {{ request('status') == 'sent' ? 'selected' : '' }}>{{ __('Sent') }}</option>

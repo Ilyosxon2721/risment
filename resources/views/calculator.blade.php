@@ -318,9 +318,9 @@
                                     @endif
                                 @endif
                             </td>
-                            <td class="px-4 py-4 text-right">
+                            <td class="px-4 py-4 text-right" data-label="">
                                 @if($option['type'] === 'plan')
-                                    <a href="{{ route('cabinet.subscription.choose', ['locale' => app()->getLocale()]) }}" class="btn btn-secondary btn-sm">
+                                    <a href="{{ route('cabinet.subscription.choose', ['locale' => app()->getLocale()]) }}" class="btn btn-secondary btn-sm min-h-[44px]">
                                         {{ __('Выбрать') }}
                                     </a>
                                 @endif

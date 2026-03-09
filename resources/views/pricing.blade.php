@@ -32,9 +32,9 @@
 @endphp
 
 <!-- Hero -->
-<section class="gradient-brand text-white py-20">
+<section class="gradient-brand text-white py-12 sm:py-20">
     <div class="container-risment">
-        <h1 class="text-h1 font-heading mb-4">{{ __('Pricing & Rates') }}</h1>
+        <h1 class="text-2xl sm:text-h1 font-heading mb-4">{{ __('Pricing & Rates') }}</h1>
         <p class="text-body-l max-w-2xl">{{ __('Transparent pricing for all services. No hidden fees.') }}</p>
     </div>
 </section>
@@ -47,7 +47,7 @@
             {{ __('Choose a package with fixed monthly fee. Everything included: FBS processing, storage, delivery 3 times a week.') }}
         </p>
         
-        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-12">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-12">
             @foreach($plans as $plan)
             <div class="card bg-white {{ $plan->code === 'pro' ? 'border-2 border-brand' : '' }} relative flex flex-col" style="min-height: 400px;">
                 @if($plan->code === 'pro')
@@ -310,7 +310,7 @@
             <p class="text-body-m text-text-muted mb-8">{{ __('Delivery to marketplace warehouses') }}</p>
             
             <div class="card max-w-2xl">
-                <div class="flex justify-between items-center">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                     <div>
                         <div class="font-semibold text-body-l">{{ __('Standard box 60×40×40 cm') }}</div>
                         <div class="text-body-s text-text-muted">{{ __('Includes packaging, labeling, delivery') }}</div>
@@ -383,11 +383,11 @@
             </div>
         </div>
         
-        <div class="text-center">
-            <a href="{{ route('services.marketplace', ['locale' => app()->getLocale()]) }}" class="btn btn-primary mr-4">
+        <div class="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
+            <a href="{{ route('services.marketplace', ['locale' => app()->getLocale()]) }}" class="btn btn-primary min-h-[44px] text-center">
                 {{ __('Learn More') }}
             </a>
-            <a href="{{ route('calculators.marketplace', ['locale' => app()->getLocale()]) }}" class="btn btn-secondary">
+            <a href="{{ route('calculators.marketplace', ['locale' => app()->getLocale()]) }}" class="btn btn-secondary min-h-[44px] text-center">
                 {{ __('Calculate Cost') }}
             </a>
         </div>
@@ -445,9 +445,9 @@
     <div class="container-risment text-center">
         <h2 class="text-h2 font-heading mb-4">{{ __('Ready to start?') }}</h2>
         <p class="text-body-l text-text-muted mb-8">{{ __('Calculate your costs right now') }}</p>
-        <div class="flex gap-4 justify-center">
-            <a href="{{ route('calculator', ['locale' => app()->getLocale()]) }}" class="btn btn-primary">{{ __('Calculate Cost') }}</a>
-            <a href="{{ route('contacts', ['locale' => app()->getLocale()]) }}" class="btn btn-secondary">{{ __('Contact Us') }}</a>
+        <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+            <a href="{{ route('calculator', ['locale' => app()->getLocale()]) }}" class="btn btn-primary min-h-[44px] text-center">{{ __('Calculate Cost') }}</a>
+            <a href="{{ route('contacts', ['locale' => app()->getLocale()]) }}" class="btn btn-secondary min-h-[44px] text-center">{{ __('Contact Us') }}</a>
         </div>
     </div>
 </section>

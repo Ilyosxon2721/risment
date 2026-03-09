@@ -11,12 +11,12 @@
 <!-- Subscription Plan Widget -->
 @if($plan)
 <div class="card mb-8 {{ $plan->code === 'pro' ? 'border-2 border-brand' : '' }}">
-    <div class="flex justify-between items-start mb-6">
+    <div class="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6">
         <div>
-            <h2 class="text-h3 font-heading">{{ __('Your package') }}: {{ $plan->getName() }}</h2>
+            <h2 class="text-lg sm:text-h3 font-heading">{{ __('Your package') }}: {{ $plan->getName() }}</h2>
             <p class="text-body-s text-text-muted mt-1">{{ $plan->getDescription() }}</p>
         </div>
-        <div class="text-right">
+        <div class="sm:text-right">
             <div class="text-h3 text-brand">{{ number_format($plan->price_month, 0, '', ' ') }} {{ __('UZS') }}</div>
             <div class="text-body-s text-text-muted">{{ __('/month') }}</div>
             @php $activeSub = $currentCompany->billingSubscription; @endphp
@@ -196,7 +196,7 @@
 @endif
 
 <!-- Stats Grid -->
-<div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-8">
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6 mb-8">
     <div class="card">
         <div class="text-body-s text-text-muted mb-2">{{ __('Total SKUs') }}</div>
         <div class="text-h2 font-heading text-brand">{{ number_format($stats['total_skus']) }}</div>

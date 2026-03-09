@@ -37,9 +37,16 @@
             :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
             class="fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-brand-border flex-shrink-0 h-screen overflow-y-auto transform transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:w-64"
         >
-            <div class="p-6 border-b border-brand-border">
-                <h1 class="text-h3 font-heading gradient-brand bg-clip-text text-transparent">RISMENT</h1>
-                <p class="text-body-s text-text-muted mt-1">{{ __('Manager Panel') }}</p>
+            <div class="p-6 border-b border-brand-border flex items-center justify-between">
+                <div>
+                    <h1 class="text-h3 font-heading gradient-brand bg-clip-text text-transparent">RISMENT</h1>
+                    <p class="text-body-s text-text-muted mt-1">{{ __('Manager Panel') }}</p>
+                </div>
+                <button @click="sidebarOpen = false" class="md:hidden p-2 rounded-btn hover:bg-bg-soft min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Close menu">
+                    <svg class="w-5 h-5 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
             </div>
 
             <!-- Company Selector -->
@@ -138,18 +145,21 @@
         </aside>
 
         <!-- Mobile Top Bar -->
-        <div class="md:hidden fixed top-0 left-0 right-0 z-30 bg-white shadow-sm flex items-center h-14">
-            <button @click="sidebarOpen = true" class="p-4 text-text-muted hover:text-text-default" aria-label="Open sidebar">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="md:hidden fixed top-0 left-0 right-0 z-30 bg-white shadow-sm flex items-center h-14 px-4">
+            <button @click="sidebarOpen = true" class="p-2 -ml-2 rounded-btn hover:bg-bg-soft min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Open sidebar">
+                <svg class="w-6 h-6 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                 </svg>
             </button>
-            <span class="flex-1 text-center font-heading font-semibold text-lg pr-10">{{ __('Manager') }}</span>
+            <span class="flex-1 text-center font-heading font-semibold text-lg gradient-brand bg-clip-text text-transparent">{{ __('Manager') }}</span>
+            <div class="w-10"></div>
         </div>
 
         <!-- Main Content -->
-        <main class="flex-1 overflow-auto">
-            <div class="p-4 pt-18 md:p-8 md:pt-8">
+        <main class="flex-1 overflow-auto md:ml-0">
+            <!-- Spacer for mobile top bar -->
+            <div class="h-14 md:hidden"></div>
+            <div class="p-4 md:p-8">
                 @if(session('success'))
                     <div class="mb-6 p-4 bg-success/10 border border-success rounded-card text-success">
                         {{ session('success') }}

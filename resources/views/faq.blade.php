@@ -4,9 +4,9 @@
 
 @section('content')
 <!-- Hero -->
-<section class="gradient-brand text-white py-16">
+<section class="gradient-brand text-white py-12 sm:py-16">
     <div class="container-risment">
-        <h1 class="text-h1 font-heading mb-4">{{ __('FAQ') }}</h1>
+        <h1 class="text-2xl sm:text-h1 font-heading mb-4">{{ __('FAQ') }}</h1>
         <p class="text-body-l">{{ __('Frequently Asked Questions') }}</p>
     </div>
 </section>
@@ -210,7 +210,7 @@
         <div class="space-y-4">
             @foreach($faqs as $index => $faq)
             <div class="card">
-                <button type="button" class="faq-question w-full text-left flex justify-between items-center" onclick="toggleFaq({{ $index }})">
+                <button type="button" class="faq-question w-full text-left flex justify-between items-center min-h-[44px]" onclick="toggleFaq({{ $index }})">
                     <span class="font-semibold text-body-l pr-4">{{ $faq['q'] }}</span>
                     <svg class="faq-icon w-6 h-6 text-brand transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>

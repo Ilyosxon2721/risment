@@ -3,13 +3,13 @@
 @section('title', __('marketplaces.title'))
 
 @section('content')
-<div class="mb-8 flex justify-between items-center">
+<div class="mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
     <div>
-        <h1 class="text-h1 font-heading">{{ __('marketplaces.title') }}</h1>
+        <h1 class="text-xl sm:text-h1 font-heading">{{ __('marketplaces.title') }}</h1>
         <p class="text-body-m text-text-muted mt-2">{{ __('marketplaces.subtitle') }}</p>
     </div>
-    <div class="relative" x-data="{ open: false }">
-        <button @click="open = !open" class="btn btn-primary">{{ __('marketplaces.add') }}</button>
+    <div class="relative w-full sm:w-auto" x-data="{ open: false }">
+        <button @click="open = !open" class="btn btn-primary min-h-[44px] w-full sm:w-auto">{{ __('marketplaces.add') }}</button>
         <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-48 bg-white border rounded-card shadow-lg z-10">
             @foreach($marketplaces as $mp)
                 <a href="{{ route('cabinet.marketplaces.create', ['marketplace' => $mp]) }}" class="block px-4 py-3 hover:bg-bg-soft text-body-m">
@@ -27,7 +27,7 @@
         @if(isset($grouped[$mp]) && $grouped[$mp]->count())
             <div class="space-y-4">
                 @foreach($grouped[$mp] as $cred)
-                    <div class="card flex justify-between items-center">
+                    <div class="card flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                         <div>
                             <div class="flex items-center gap-3">
                                 <div class="w-2.5 h-2.5 rounded-full {{ $cred->is_active ? 'bg-success' : 'bg-text-muted' }}"></div>
@@ -40,7 +40,7 @@
                                 {{ __('marketplaces.added') }}: {{ $cred->created_at->format('d.m.Y') }}
                             </div>
                         </div>
-                        <div class="flex gap-2">
+                        <div class="flex gap-2 w-full sm:w-auto">
                             <a href="{{ route('cabinet.marketplaces.edit', $cred) }}" class="btn btn-outline btn-sm">{{ __('marketplaces.edit') }}</a>
                             <form method="POST" action="{{ route('cabinet.marketplaces.destroy', $cred) }}" onsubmit="return confirm('{{ __('marketplaces.confirm_delete') }}')">
                                 @csrf

@@ -12,7 +12,7 @@
             </svg>
             {{ __('Back to products') }}
         </a>
-        <h1 class="text-h2 font-heading">{{ __('Edit Product') }}</h1>
+        <h1 class="text-xl sm:text-h2 font-heading">{{ __('Edit Product') }}</h1>
     </div>
 
     <form method="POST" action="{{ route('cabinet.products.update', $product) }}" enctype="multipart/form-data">
@@ -97,12 +97,12 @@
 
         {{-- Variants --}}
         <div class="card mb-6">
-            <div class="flex justify-between items-center mb-4">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
                 <h2 class="text-h3 font-heading">{{ __('Product Variants') }}</h2>
-                <button 
+                <button
                     type="button"
                     @click="addVariant()"
-                    class="btn btn-secondary btn-sm">
+                    class="btn btn-secondary btn-sm min-h-[44px]">
                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                     </svg>
@@ -281,7 +281,7 @@
                                 <div class="space-y-2">
                                     <template x-for="(link, mIndex) in variant.marketplace_links" :key="mIndex">
                                         <div class="p-2 bg-bg-soft rounded border">
-                                            <div class="grid grid-cols-2 gap-2 text-sm">
+                                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
                                                 <select 
                                                     :name="'variants[' + vIndex + '][marketplace_links][' + mIndex + '][marketplace]'"
                                                     x-model="link.marketplace"
@@ -330,11 +330,11 @@
         </div>
 
         {{-- Actions --}}
-        <div class="flex justify-end gap-3">
-            <a href="{{ route('cabinet.products.index') }}" class="btn btn-ghost">
+        <div class="flex flex-col-reverse sm:flex-row justify-end gap-3 form-actions">
+            <a href="{{ route('cabinet.products.index') }}" class="btn btn-ghost min-h-[44px] text-center">
                 {{ __('Cancel') }}
             </a>
-            <button type="submit" class="btn btn-primary">
+            <button type="submit" class="btn btn-primary min-h-[44px]">
                 {{ __('Update Product') }}
             </button>
         </div>

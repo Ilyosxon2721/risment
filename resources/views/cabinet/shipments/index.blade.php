@@ -4,12 +4,12 @@
 
 @section('content')
 <div class="mb-8">
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-            <h1 class="text-h1 font-heading">{{ __('Shipments') }}</h1>
+            <h1 class="text-xl sm:text-h1 font-heading">{{ __('Shipments') }}</h1>
             <p class="text-body-m text-text-muted mt-2">{{ __('Manage FBO shipments to marketplaces') }}</p>
         </div>
-        <a href="{{ route('cabinet.shipments.create') }}" class="btn btn-primary">
+        <a href="{{ route('cabinet.shipments.create') }}" class="btn btn-primary min-h-[44px] w-full sm:w-auto text-center">
             + {{ __('Create Shipment') }}
         </a>
     </div>

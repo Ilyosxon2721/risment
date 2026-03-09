@@ -85,7 +85,7 @@
             </div>
 
             <!-- Submit Button -->
-            <button type="submit" class="btn btn-primary w-full text-body-l font-semibold py-3 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
+            <button type="submit" class="btn btn-primary w-full text-body-l font-semibold py-3 min-h-[44px] transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
                 {{ __('Log in') }}
             </button>
 

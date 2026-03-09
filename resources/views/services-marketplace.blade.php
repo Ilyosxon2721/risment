@@ -7,7 +7,7 @@
 <section class="section bg-gradient-to-br from-brand/10 to-bg-soft">
     <div class="container-risment">
         <div class="max-w-3xl mx-auto text-center">
-            <h1 class="text-h1 font-heading mb-4">Услуги по маркетплейсам</h1>
+            <h1 class="text-2xl sm:text-h1 font-heading mb-4">Услуги по маркетплейсам</h1>
             <p class="text-body-l text-text-muted">
                 Полный цикл работы с маркетплейсами: от запуска до масштабирования продаж
             </p>
@@ -113,7 +113,7 @@
         </div>
         
         <div class="p-6 bg-white rounded-btn border-2 border-success/20">
-            <div class="flex items-start gap-4">
+            <div class="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
                 <div class="w-12 h-12 bg-success/10 rounded-btn flex items-center justify-center flex-shrink-0">
                     <svg class="w-6 h-6 text-success" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
@@ -140,7 +140,7 @@
     <div class="container-risment">
         <div class="max-w-4xl mx-auto">
         <div class="card bg-gradient-to-br from-warning/10 to-bg-soft border-2 border-warning/20">
-            <div class="flex items-start gap-6">
+            <div class="flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
                 <div class="w-16 h-16 bg-warning/10 rounded-btn flex items-center justify-center flex-shrink-0">
                     <svg class="w-8 h-8 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
