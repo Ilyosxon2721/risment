@@ -138,9 +138,10 @@
                                         <div class="flex items-start gap-4 p-3 bg-white rounded-lg border border-brand-border">
                                             {{-- Primary Image --}}
                                             @if($variant->images->where('is_primary', true)->first())
-                                                <img src="{{ asset('storage/' . $variant->images->where('is_primary', true)->first()->image_path) }}" 
+                                                <img src="{{ asset('storage/' . $variant->images->where('is_primary', true)->first()->image_path) }}"
                                                      alt="{{ $variant->variant_name }}"
-                                                     class="w-16 h-16 object-cover rounded">
+                                                     class="w-16 h-16 object-cover rounded"
+                                                     loading="lazy" decoding="async">
                                             @else
                                                 <div class="w-16 h-16 bg-gray-200 rounded flex items-center justify-center">
                                                     <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

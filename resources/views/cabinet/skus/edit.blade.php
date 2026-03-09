@@ -89,8 +89,8 @@
             @if($sku->photo_path)
             <div class="mt-6">
                 <label class="block text-body-m font-semibold mb-2">{{ __('Current Photo') }}</label>
-                <img src="{{ asset('storage/' . $sku->photo_path) }}" alt="{{ $sku->title }}" 
-                     class="w-32 h-32 rounded-btn object-cover">
+                <img src="{{ asset('storage/' . $sku->photo_path) }}" alt="{{ $sku->title }}"
+                     class="w-32 h-32 rounded-btn object-cover" loading="lazy" decoding="async">
             </div>
             @endif
 

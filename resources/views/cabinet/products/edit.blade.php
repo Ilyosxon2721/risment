@@ -214,7 +214,7 @@
                                 <div class="flex gap-2 flex-wrap">
                                     <template x-for="(img, imgIndex) in variant.existing_images" :key="imgIndex">
                                         <div class="relative">
-                                            <img :src="'/storage/' + img.image_path" class="w-20 h-20 object-cover rounded border">
+                                            <img :src="'/storage/' + img.image_path" class="w-20 h-20 object-cover rounded border" loading="lazy" decoding="async">
                                             <span x-show="img.is_primary" class="absolute top-0 right-0 bg-brand text-white text-xs px-1 rounded">{{ __('Primary') }}</span>
                                         </div>
                                     </template>

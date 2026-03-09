@@ -66,7 +66,8 @@
                             @if($sku->photo_path)
                             <img src="{{ asset('storage/' . $sku->photo_path) }}"
                                  alt="{{ $sku->title }}"
-                                 class="w-12 h-12 rounded-btn object-cover">
+                                 class="w-12 h-12 rounded-btn object-cover"
+                                 loading="lazy" decoding="async">
                             @else
                             <div class="w-12 h-12 rounded-btn bg-bg-soft flex items-center justify-center">
                                 <svg class="w-6 h-6 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
