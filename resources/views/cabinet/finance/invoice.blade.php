@@ -4,18 +4,18 @@
 
 @section('content')
 <div class="mb-8">
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-            <h1 class="text-h1 font-heading">{{ __('Invoice') }} {{ $invoice->invoice_number }}</h1>
+            <h1 class="text-xl sm:text-h1 font-heading">{{ __('Invoice') }} {{ $invoice->invoice_number }}</h1>
             <p class="text-body-m text-text-muted mt-2">{{ __('Invoice details') }}</p>
         </div>
-        <div class="flex gap-3">
+        <div class="flex flex-wrap gap-2 sm:gap-3 w-full sm:w-auto">
             @if($invoice->status !== 'paid')
-            <a href="{{ route('cabinet.finance.invoices.pay', $invoice) }}" class="btn btn-primary">
+            <a href="{{ route('cabinet.finance.invoices.pay', $invoice) }}" class="btn btn-primary min-h-[44px] flex-1 sm:flex-none text-center">
                 {{ __('Pay Invoice') }}
             </a>
             @endif
-            <a href="{{ route('cabinet.finance.invoices') }}" class="btn btn-secondary">
+            <a href="{{ route('cabinet.finance.invoices') }}" class="btn btn-secondary min-h-[44px] flex-1 sm:flex-none text-center">
                 ← {{ __('Back') }}
             </a>
         </div>
@@ -75,31 +75,33 @@
 <div class="card mb-6">
     <h3 class="text-h3 font-heading mb-4">{{ __('Items') }}</h3>
     
-    <table class="table">
-        <thead>
-            <tr>
-                <th>{{ __('Description') }}</th>
-                <th class="text-right">{{ __('Quantity') }}</th>
-                <th class="text-right">{{ __('Unit Price') }}</th>
-                <th class="text-right">{{ __('Total') }}</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($invoice->items as $item)
-            <tr>
-                <td>
-                    <div class="font-semibold">{{ $item->description }}</div>
-                    @if($item->service_type)
-                    <div class="text-body-s text-text-muted">{{ ucfirst(str_replace('_', ' ', $item->service_type)) }}</div>
-                    @endif
-                </td>
-                <td class="text-right">{{ $item->quantity }}</td>
-                <td class="text-right">{{ number_format($item->unit_price, 0, '', ' ') }} {{ __('UZS') }}</td>
-                <td class="text-right font-semibold">{{ number_format($item->total_price, 0, '', ' ') }} {{ __('UZS') }}</td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+    <div class="table-responsive relative">
+        <table class="table responsive-table">
+            <thead>
+                <tr>
+                    <th>{{ __('Description') }}</th>
+                    <th class="text-right">{{ __('Quantity') }}</th>
+                    <th class="text-right">{{ __('Unit Price') }}</th>
+                    <th class="text-right">{{ __('Total') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($invoice->items as $item)
+                <tr>
+                    <td data-label="{{ __('Description') }}">
+                        <div class="font-semibold">{{ $item->description }}</div>
+                        @if($item->service_type)
+                        <div class="text-body-s text-text-muted">{{ ucfirst(str_replace('_', ' ', $item->service_type)) }}</div>
+                        @endif
+                    </td>
+                    <td class="text-right" data-label="{{ __('Quantity') }}">{{ $item->quantity }}</td>
+                    <td class="text-right" data-label="{{ __('Unit Price') }}">{{ number_format($item->unit_price, 0, '', ' ') }} {{ __('UZS') }}</td>
+                    <td class="text-right font-semibold" data-label="{{ __('Total') }}">{{ number_format($item->total_price, 0, '', ' ') }} {{ __('UZS') }}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
     
     <!-- Totals -->
     <div class="mt-6 flex justify-end">
@@ -127,26 +129,28 @@
 <div class="card">
     <h3 class="text-h3 font-heading mb-4">{{ __('Payment History') }}</h3>
     
-    <table class="table">
-        <thead>
-            <tr>
-                <th>{{ __('Date') }}</th>
-                <th>{{ __('Amount') }}</th>
-                <th>{{ __('Method') }}</th>
-                <th>{{ __('Reference') }}</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($invoice->payments as $payment)
-            <tr>
-                <td>{{ $payment->payment_date->format('d.m.Y') }}</td>
-                <td class="font-semibold text-success">{{ number_format($payment->amount, 0, '', ' ') }} {{ __('UZS') }}</td>
-                <td>{{ $payment->getMethodLabel() }}</td>
-                <td>{{ $payment->reference ?? '—' }}</td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+    <div class="table-responsive relative">
+        <table class="table responsive-table">
+            <thead>
+                <tr>
+                    <th>{{ __('Date') }}</th>
+                    <th>{{ __('Amount') }}</th>
+                    <th>{{ __('Method') }}</th>
+                    <th>{{ __('Reference') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($invoice->payments as $payment)
+                <tr>
+                    <td data-label="{{ __('Date') }}">{{ $payment->payment_date->format('d.m.Y') }}</td>
+                    <td class="font-semibold text-success" data-label="{{ __('Amount') }}">{{ number_format($payment->amount, 0, '', ' ') }} {{ __('UZS') }}</td>
+                    <td data-label="{{ __('Method') }}">{{ $payment->getMethodLabel() }}</td>
+                    <td data-label="{{ __('Reference') }}">{{ $payment->reference ?? '—' }}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
 </div>
 @endif
 @endsection

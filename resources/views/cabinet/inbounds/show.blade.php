@@ -52,24 +52,24 @@
     @endif
 
 <div class="mb-8">
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-            <h1 class="text-h1 font-heading">{{ __('Inbound') }} #{{ $inbound->reference }}</h1>
+            <h1 class="text-xl sm:text-h1 font-heading">{{ __('Inbound') }} #{{ $inbound->reference }}</h1>
             <p class="text-body-m text-text-muted mt-2">{{ __('Created') }} {{ $inbound->created_at->format('d.m.Y H:i') }}</p>
         </div>
-        <div class="flex gap-3">
+        <div class="flex flex-wrap gap-2 sm:gap-3 w-full sm:w-auto">
             @if($inbound->status === 'draft')
-            <form action="{{ route('cabinet.inbounds.submit', $inbound) }}" method="POST" onsubmit="return confirm('Отправить поставку на склад?')">
+            <form action="{{ route('cabinet.inbounds.submit', $inbound) }}" method="POST" onsubmit="return confirm('Отправить поставку на склад?')" class="flex-1 sm:flex-none">
                 @csrf
-                <button type="submit" class="btn btn-primary">
-                    📤 Отправить на склад
+                <button type="submit" class="btn btn-primary w-full min-h-[44px]">
+                    Отправить на склад
                 </button>
             </form>
-            <a href="{{ route('cabinet.inbounds.edit', ['inbound' => $inbound]) }}" class="btn btn-secondary">
+            <a href="{{ route('cabinet.inbounds.edit', ['inbound' => $inbound]) }}" class="btn btn-secondary flex-1 sm:flex-none text-center min-h-[44px]">
                 {{ __('Edit') }}
             </a>
             @endif
-            <a href="{{ route('cabinet.inbounds.index') }}" class="btn btn-ghost">
+            <a href="{{ route('cabinet.inbounds.index') }}" class="btn btn-ghost min-h-[44px] flex-1 sm:flex-none text-center">
                 ← {{ __('Back') }}
             </a>
         </div>
@@ -128,8 +128,8 @@
         <div class="card">
             <h2 class="text-h3 font-heading mb-6">{{ __('Items') }}</h2>
             
-            <div class="overflow-x-auto">
-                <table class="w-full">
+            <div class="table-responsive relative">
+                <table class="w-full responsive-table">
                     <thead class="bg-bg-soft">
                         <tr>
                             <th class="px-4 py-3 text-left text-body-s font-semibold">{{ __('SKU') }}</th>
@@ -142,13 +142,13 @@
                     <tbody>
                         @foreach($inbound->items as $item)
                         <tr class="border-t border-brand-border">
-                            <td class="px-4 py-3 font-mono text-body-s">{{ $item->variant->sku_code }}</td>
-                            <td class="px-4 py-3">{{ $item->variant->product->title }} - {{ $item->variant->variant_name }}</td>
-                            <td class="px-4 py-3 text-right font-semibold">{{ number_format($item->qty_planned) }}</td>
-                            <td class="px-4 py-3 text-right font-semibold {{ $item->qty_received ? 'text-success' : 'text-text-muted' }}">
+                            <td class="px-4 py-3 font-mono text-body-s" data-label="{{ __('SKU') }}">{{ $item->variant->sku_code }}</td>
+                            <td class="px-4 py-3" data-label="{{ __('Name') }}">{{ $item->variant->product->title }} - {{ $item->variant->variant_name }}</td>
+                            <td class="px-4 py-3 text-right font-semibold" data-label="{{ __('Planned') }}">{{ number_format($item->qty_planned) }}</td>
+                            <td class="px-4 py-3 text-right font-semibold {{ $item->qty_received ? 'text-success' : 'text-text-muted' }}" data-label="{{ __('Received') }}">
                                 {{ $item->qty_received ? number_format($item->qty_received) : '-' }}
                             </td>
-                            <td class="px-4 py-3 text-body-s text-text-muted">{{ $item->notes ?? '-' }}</td>
+                            <td class="px-4 py-3 text-body-s text-text-muted" data-label="{{ __('Notes') }}">{{ $item->notes ?? '-' }}</td>
                         </tr>
                         @endforeach
                     </tbody>

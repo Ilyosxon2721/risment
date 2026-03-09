@@ -4,12 +4,12 @@
 
 @section('content')
 <div class="mb-8">
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-            <h1 class="text-h1 font-heading">{{ __('Create Shipment') }}</h1>
+            <h1 class="text-xl sm:text-h1 font-heading">{{ __('Create Shipment') }}</h1>
             <p class="text-body-m text-text-muted mt-2">{{ __('Send products to marketplace') }}</p>
         </div>
-        <a href="{{ route('cabinet.shipments.index') }}" class="btn btn-secondary">
+        <a href="{{ route('cabinet.shipments.index') }}" class="btn btn-secondary min-h-[44px]">
             ← {{ __('Back') }}
         </a>
     </div>
@@ -113,14 +113,14 @@
                 
                 <div class="space-y-4">
                     <div class="p-4 bg-bg-soft rounded-btn border border-brand-border" x-for="(item, index) in items" :key="index">
-                        <div class="flex gap-4">
+                        <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
                             <!-- SKU Selection -->
-                            <div class="flex-1">
+                            <div class="flex-1 min-w-0">
                                 <label class="block text-body-s font-semibold text-brand-dark mb-2">
                                     {{ __('SKU') }} *
                                 </label>
-                                <select 
-                                    :name="`items[${index}][sku_id]`" 
+                                <select
+                                    :name="`items[${index}][sku_id]`"
                                     x-model="item.sku_id"
                                     @change="updateAvailable(index)"
                                     class="input w-full"
@@ -129,20 +129,20 @@
                                     <option value="">{{ __('Select SKU') }}</option>
                                     @foreach($inventory as $inv)
                                         <option value="{{ $inv->sku_id }}" data-available="{{ $inv->qty_total - $inv->qty_reserved }}">
-                                            {{ $inv->sku->sku }} - {{ $inv->sku->name }} 
+                                            {{ $inv->sku->sku }} - {{ $inv->sku->name }}
                                             ({{ __('Available') }}: {{ $inv->qty_total - $inv->qty_reserved }})
                                         </option>
                                     @endforeach
                                 </select>
                             </div>
-                            
+
                             <!-- Quantity -->
-                            <div class="w-32">
+                            <div class="w-full sm:w-32">
                                 <label class="block text-body-s font-semibold text-brand-dark mb-2">
                                     {{ __('Quantity') }} *
                                 </label>
-                                <input 
-                                    type="number" 
+                                <input
+                                    type="number"
                                     :name="`items[${index}][qty]`"
                                     x-model="item.qty"
                                     :max="item.available"
@@ -151,13 +151,13 @@
                                     required
                                 >
                             </div>
-                            
+
                             <!-- Remove Button -->
                             <div class="flex items-end">
-                                <button 
-                                    type="button" 
+                                <button
+                                    type="button"
                                     @click="removeItem(index)"
-                                    class="btn btn-ghost text-error h-[42px]"
+                                    class="btn btn-ghost text-error min-h-[44px] min-w-[44px]"
                                     x-show="items.length > 1"
                                 >
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -169,9 +169,9 @@
             
             @if($isPackage)
             <div class="text-center mb-6">
-                <h2 class="text-h1 font-heading text-brand mb-2">{{ __('Пакет') }} {{ $recommended['plan']->getName() }}</h2>
-                <div class="text-5xl font-bold text-green-600 mb-2">
-                    {{ number_format($recommended['total'], 0, '', ' ') }} <span class="text-2xl">{{ __('сум/мес') }}</span>
+                <h2 class="text-xl sm:text-h1 font-heading text-brand mb-2">{{ __('Пакет') }} {{ $recommended['plan']->getName() }}</h2>
+                <div class="text-3xl sm:text-5xl font-bold text-green-600 mb-2">
+                    {{ number_format($recommended['total'], 0, '', ' ') }} <span class="text-lg sm:text-2xl">{{ __('сум/мес') }}</span>
                 </div>
                 
                 @if($recommended['savings_vs_per_unit'] > 0)
@@ -232,9 +232,9 @@
             @else
             {{-- If per-unit is recommended --}}
             <div class="text-center mb-6">
-                <h2 class="text-h1 font-heading text-brand mb-2">{{ __('Оплата по факту') }}</h2>
-                <div class="text-5xl font-bold text-green-600 mb-2">
-                    {{ number_format($recommended['total'], 0, '', ' ') }} <span class="text-2xl">{{ __('сум/мес') }}</span>
+                <h2 class="text-xl sm:text-h1 font-heading text-brand mb-2">{{ __('Оплата по факту') }}</h2>
+                <div class="text-3xl sm:text-5xl font-bold text-green-600 mb-2">
+                    {{ number_format($recommended['total'], 0, '', ' ') }} <span class="text-lg sm:text-2xl">{{ __('сум/мес') }}</span>
                 </div>
                 <p class="text-body-l text-text-muted">{{ __('Без абонплаты, оплата только за использованные услуги') }}</p>
             </div>
@@ -271,8 +271,8 @@
                 </svg>
             </summary>
             
-            <div class="mt-6 overflow-x-auto">
-                <table class="w-full">
+            <div class="mt-6 table-responsive relative">
+                <table class="w-full responsive-table">
                     <thead class="bg-bg-soft">
                         <tr>
                             <th class="px-4 py-3 text-left">{{ __('Вариант') }}</th>
@@ -284,7 +284,7 @@
                     <tbody>
                         @foreach($result['comparison']['all_options'] as $option)
                         <tr class="border-t border-brand-border {{ $option['type'] === $recommended['type'] && ($option['type'] === 'per_unit' || $option['plan']->code === $recommended['plan']->code) ? 'bg-green-50' : '' }}">
-                            <td class="px-4 py-4">
+                            <td class="px-4 py-4" data-label="{{ __('Вариант') }}">
                                 <div class="font-semibold">
                                     @if($option['type'] === 'plan')
                                         {{ $option['plan']->getName() }}
@@ -302,10 +302,10 @@
                                     <div class="text-body-s text-text-muted">{{ __('Абонплата') }}: {{ number_format($option['breakdown']['monthly_fee'], 0, '', ' ') }}</div>
                                 @endif
                             </td>
-                            <td class="px-4 py-4 text-right font-semibold text-brand">
+                            <td class="px-4 py-4 text-right font-semibold text-brand" data-label="{{ __('Стоимость') }}">
                                 {{ number_format($option['total'], 0, '', ' ') }} <span class="text-body-s">{{ __('сум') }}</span>
                             </td>
-                            <td class="px-4 py-4">
+                            <td class="px-4 py-4" data-label="{{ __('Особенности') }}">
                                 @if($option['type'] === 'plan')
                                     @if($option['breakdown']['overage']['total'] > 0)
                                         <span class="text-warning text-body-s">+{{ number_format($option['breakdown']['overage']['total'], 0, '', ' ') }} {{ __('за превышение') }}</span>
