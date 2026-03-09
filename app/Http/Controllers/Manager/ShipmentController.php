@@ -13,7 +13,7 @@ class ShipmentController extends Controller
         $company = $request->attributes->get('managerCompany');
 
         $query = ShipmentFbo::where('company_id', $company->id)
-            ->with('items.sku');
+            ->with('items');
 
         // Status filter
         if ($request->filled('status')) {

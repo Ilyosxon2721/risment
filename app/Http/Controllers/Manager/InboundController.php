@@ -15,7 +15,7 @@ class InboundController extends Controller
         $company = $request->attributes->get('managerCompany');
 
         $query = Inbound::where('company_id', $company->id)
-            ->with('items');
+            ->withCount('items');
 
         // Status filter
         if ($request->filled('status')) {

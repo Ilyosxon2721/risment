@@ -70,7 +70,7 @@
                     <td class="px-6 py-4 text-body-s font-mono" data-label="#">#{{ $inbound->id }}</td>
                     <td class="px-6 py-4 text-body-s" data-label="{{ __('Date') }}">{{ $inbound->created_at->format('d.m.Y H:i') }}</td>
                     <td class="px-6 py-4 text-body-s" data-label="{{ __('Planned') }}">{{ $inbound->expected_at ? $inbound->expected_at->format('d.m.Y') : '-' }}</td>
-                    <td class="px-6 py-4 text-body-s" data-label="{{ __('Items') }}">{{ $inbound->items->count() }}</td>
+                    <td class="px-6 py-4 text-body-s" data-label="{{ __('Items') }}">{{ $inbound->items_count }}</td>
                     <td class="px-6 py-4" data-label="{{ __('Status') }}">
                         <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-{{ $statusColors[$inbound->status] ?? 'gray' }}-100 text-{{ $statusColors[$inbound->status] ?? 'gray' }}-800">
                             {{ $statusLabels[$inbound->status] ?? $inbound->status }}

@@ -19,7 +19,7 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         $company = $request->attributes->get('currentCompany');
-        $company->load(['subscriptionPlan', 'billingSubscription', 'discounts']);
+        $company->load(['subscriptionPlan', 'billingSubscription']);
 
         // Get subscription plan
         $plan = $company->subscriptionPlan;

@@ -58,7 +58,7 @@
                             {{ __(ucfirst($shipment->status)) }}
                         </span>
                     </td>
-                    <td class="px-4 py-3 text-right" data-label="{{ __('Items') }}">{{ $shipment->items->count() }}</td>
+                    <td class="px-4 py-3 text-right" data-label="{{ __('Items') }}">{{ $shipment->items_count }}</td>
                     <td class="px-4 py-3" data-label="{{ __('Planned Date') }}">
                         {{ $shipment->planned_at ? \Carbon\Carbon::parse($shipment->planned_at)->format('d.m.Y') : '-' }}
                     </td>
