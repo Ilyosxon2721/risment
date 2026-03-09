@@ -472,8 +472,293 @@
                 </div>
             </div>
         </details>
-        
+
+        {{-- Email Results Form --}}
+        <div class="card mt-6">
+            <div class="flex items-start gap-3">
+                <div class="text-2xl">📧</div>
+                <div class="flex-1">
+                    <h3 class="text-h4 font-heading mb-2">{{ __('Send results to email') }}</h3>
+                    <p class="text-body-s text-text-muted mb-4">{{ __('Receive a detailed breakdown of the calculation to your email') }}</p>
+
+                    @if(session('email_sent'))
+                    <div class="p-3 bg-green-50 border border-green-300 rounded-btn text-green-700 text-body-m mb-4">
+                        {{ session('email_sent') }}
+                    </div>
+                    @endif
+
+                    @if(session('email_error'))
+                    <div class="p-3 bg-red-50 border border-red-300 rounded-btn text-red-700 text-body-m mb-4">
+                        {{ session('email_error') }}
+                    </div>
+                    @endif
+
+                    @error('email')
+                    <div class="p-3 bg-red-50 border border-red-300 rounded-btn text-red-700 text-body-m mb-4">
+                        {{ $message }}
+                    </div>
+                    @enderror
+
+                    <form method="POST" action="{{ route('calculator.send-email', ['locale' => app()->getLocale()]) }}" class="flex flex-col sm:flex-row gap-3">
+                        @csrf
+                        <input type="hidden" name="micro_count" value="{{ $result['usage']['micro_count'] ?? 0 }}">
+                        <input type="hidden" name="mgt_count" value="{{ $result['usage']['mgt_count'] ?? 0 }}">
+                        <input type="hidden" name="sgt_count" value="{{ $result['usage']['sgt_count'] ?? 0 }}">
+                        <input type="hidden" name="kgt_count" value="{{ $result['usage']['kgt_count'] ?? 0 }}">
+                        <input type="hidden" name="storage_box_days" value="{{ $result['usage']['storage_box_days'] ?? 0 }}">
+                        <input type="hidden" name="storage_bag_days" value="{{ $result['usage']['storage_bag_days'] ?? 0 }}">
+                        <input type="hidden" name="inbound_boxes" value="{{ $result['usage']['inbound_boxes'] ?? 0 }}">
+                        <input type="hidden" name="avg_items_per_order" value="{{ $result['usage']['avg_items_per_order'] ?? 1.0 }}">
+
+                        <input type="email" name="email" class="input flex-1" placeholder="{{ __('Enter your email') }}" value="{{ old('email') }}" required>
+                        <button type="submit" class="btn btn-primary whitespace-nowrap">{{ __('Send to email') }}</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        {{-- Step 5: Visual Charts --}}
+        <div class="card mt-6" id="charts-section">
+            <h3 class="text-h3 font-heading mb-6 text-center">{{ __('Visual Analysis') }}</h3>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {{-- Pie Chart: Cost Distribution --}}
+                <div>
+                    <h4 class="text-h4 font-heading mb-4 text-center">{{ __('Cost Distribution') }}</h4>
+                    <div class="relative" style="max-height: 350px;">
+                        <canvas id="costPieChart"></canvas>
+                    </div>
+                </div>
+
+                {{-- Bar Chart: Plan Comparison --}}
+                <div>
+                    <h4 class="text-h4 font-heading mb-4 text-center">{{ __('Plan Comparison') }}</h4>
+                    <div class="relative" style="max-height: 350px;">
+                        <canvas id="planBarChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-body-s text-text-muted mt-6 text-center">
+                {{ __('Charts show estimated monthly costs based on your input parameters') }}
+            </p>
+        </div>
+
         @endif
     </div>
 </section>
+
+@if(isset($result))
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const brandColor = '#CB4FE4';
+    const brandDark = '#8E2BC6';
+    const successColor = '#0ABB87';
+    const warningColor = '#FFA800';
+    const errorColor = '#F1416C';
+    const infoColor = '#009EF7';
+    const mutedText = '#5E6278';
+
+    // --- Pie Chart: Cost Distribution ---
+    @php
+        $perUnitOption = collect($result['comparison']['all_options'])->where('type', 'per_unit')->first();
+        $pieData = [];
+        $pieLabels = [];
+        $pieColors = [];
+
+        // FBS categories
+        if (($perUnitOption['breakdown']['micro']['total'] ?? 0) > 0) {
+            $pieLabels[] = 'MICRO FBS';
+            $pieData[] = $perUnitOption['breakdown']['micro']['total'];
+            $pieColors[] = '#CB4FE4';
+        }
+        if (($perUnitOption['breakdown']['mgt']['total'] ?? 0) > 0) {
+            $pieLabels[] = __('MGT FBS');
+            $pieData[] = $perUnitOption['breakdown']['mgt']['total'];
+            $pieColors[] = '#8E2BC6';
+        }
+        if (($perUnitOption['breakdown']['sgt']['total'] ?? 0) > 0) {
+            $pieLabels[] = __('SGT FBS');
+            $pieData[] = $perUnitOption['breakdown']['sgt']['total'];
+            $pieColors[] = '#009EF7';
+        }
+        if (($perUnitOption['breakdown']['kgt']['total'] ?? 0) > 0) {
+            $pieLabels[] = __('LGT FBS');
+            $pieData[] = $perUnitOption['breakdown']['kgt']['total'];
+            $pieColors[] = '#FFA800';
+        }
+        if (($perUnitOption['breakdown']['storage']['cost'] ?? 0) > 0) {
+            $pieLabels[] = __('Storage');
+            $pieData[] = $perUnitOption['breakdown']['storage']['cost'];
+            $pieColors[] = '#0ABB87';
+        }
+        if (($perUnitOption['breakdown']['inbound']['cost'] ?? 0) > 0) {
+            $pieLabels[] = __('Receiving');
+            $pieData[] = $perUnitOption['breakdown']['inbound']['cost'];
+            $pieColors[] = '#F1416C';
+        }
+
+        // Bar chart data
+        $barLabels = [];
+        $barTotals = [];
+        $barBaseCosts = [];
+        $barOverageCosts = [];
+        $barBgColors = [];
+        $recommendedType = $result['comparison']['recommended']['type'] ?? '';
+        $recommendedCode = '';
+        if ($recommendedType === 'plan' && isset($result['comparison']['recommended']['plan'])) {
+            $recommendedCode = $result['comparison']['recommended']['plan']->code;
+        }
+
+        foreach ($result['comparison']['all_options'] as $option) {
+            if ($option['type'] === 'plan') {
+                $barLabels[] = $option['plan']->getName();
+                $barTotals[] = $option['total'];
+                $barBaseCosts[] = $option['breakdown']['monthly_fee'];
+                $barOverageCosts[] = $option['breakdown']['overage']['total'] ?? 0;
+                $isRecommended = $recommendedType === 'plan' && $option['plan']->code === $recommendedCode;
+                $barBgColors[] = $isRecommended ? '#0ABB87' : '#CB4FE4';
+            } else {
+                $barLabels[] = __('Per-unit rate');
+                $barTotals[] = $option['total'];
+                $barBaseCosts[] = $option['total'];
+                $barOverageCosts[] = 0;
+                $isRecommended = $recommendedType === 'per_unit';
+                $barBgColors[] = $isRecommended ? '#0ABB87' : '#5E6278';
+            }
+        }
+    @endphp
+
+    // Pie Chart
+    const pieCtx = document.getElementById('costPieChart').getContext('2d');
+    new Chart(pieCtx, {
+        type: 'doughnut',
+        data: {
+            labels: @json($pieLabels),
+            datasets: [{
+                data: @json($pieData),
+                backgroundColor: @json($pieColors),
+                borderWidth: 2,
+                borderColor: '#FFFFFF',
+                hoverOffset: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 16,
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        font: { family: 'Inter, sans-serif', size: 13 },
+                        color: mutedText
+                    }
+                },
+                tooltip: {
+                    backgroundColor: '#0B0B10',
+                    titleFont: { family: 'Manrope, sans-serif', weight: '600' },
+                    bodyFont: { family: 'Inter, sans-serif' },
+                    padding: 12,
+                    cornerRadius: 12,
+                    callbacks: {
+                        label: function(context) {
+                            const value = context.parsed;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const pct = ((value / total) * 100).toFixed(1);
+                            return context.label + ': ' + new Intl.NumberFormat('ru-RU').format(value) + ' {{ __("сум") }} (' + pct + '%)';
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Bar Chart
+    const barCtx = document.getElementById('planBarChart').getContext('2d');
+    new Chart(barCtx, {
+        type: 'bar',
+        data: {
+            labels: @json($barLabels),
+            datasets: [
+                {
+                    label: '{{ __("Base cost") }}',
+                    data: @json($barBaseCosts),
+                    backgroundColor: @json($barBgColors).map(c => c + 'CC'),
+                    borderColor: @json($barBgColors),
+                    borderWidth: 2,
+                    borderRadius: 8,
+                    borderSkipped: false
+                },
+                {
+                    label: '{{ __("Overage charges") }}',
+                    data: @json($barOverageCosts),
+                    backgroundColor: warningColor + '99',
+                    borderColor: warningColor,
+                    borderWidth: 2,
+                    borderRadius: 8,
+                    borderSkipped: false
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            scales: {
+                x: {
+                    stacked: true,
+                    grid: { display: false },
+                    ticks: {
+                        font: { family: 'Inter, sans-serif', size: 11 },
+                        color: mutedText,
+                        maxRotation: 45
+                    }
+                },
+                y: {
+                    stacked: true,
+                    beginAtZero: true,
+                    grid: { color: '#E9ECF2' },
+                    ticks: {
+                        font: { family: 'Inter, sans-serif', size: 12 },
+                        color: mutedText,
+                        callback: function(value) {
+                            return new Intl.NumberFormat('ru-RU', { notation: 'compact' }).format(value);
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 16,
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        font: { family: 'Inter, sans-serif', size: 13 },
+                        color: mutedText
+                    }
+                },
+                tooltip: {
+                    backgroundColor: '#0B0B10',
+                    titleFont: { family: 'Manrope, sans-serif', weight: '600' },
+                    bodyFont: { family: 'Inter, sans-serif' },
+                    padding: 12,
+                    cornerRadius: 12,
+                    callbacks: {
+                        label: function(context) {
+                            return context.dataset.label + ': ' + new Intl.NumberFormat('ru-RU').format(context.parsed.y) + ' {{ __("сум") }}';
+                        }
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
+@endpush
+@endif
 @endsection

@@ -613,5 +613,23 @@
     "Payment failed": "To'lov amalga oshmadi",
     "Live Chat": "Jonli chat",
     "Close": "Yopish",
-    "Hello! I have a question about RISMENT.": "Salom! RISMENT haqida savolim bor."
+    "Hello! I have a question about RISMENT.": "Salom! RISMENT haqida savolim bor.",
+
+    "Visual Analysis": "Vizual tahlil",
+    "Cost Distribution": "Xarajatlar taqsimoti",
+    "Plan Comparison": "Tariflarni solishtirish",
+    "Per-unit rate": "Bir martalik tarif",
+    "Base cost": "Asosiy narx",
+    "Overage charges": "Limitdan oshgani uchun to'lov",
+    "MGT FBS": "MGT FBS",
+    "SGT FBS": "SGT FBS",
+    "LGT FBS": "KGT FBS",
+    "Charts show estimated monthly costs based on your input parameters": "Grafiklar kiritilgan parametrlar asosida oylik taxminiy xarajatlarni ko'rsatadi",
+
+    "Send results to email": "Natijalarni emailga yuborish",
+    "Receive a detailed breakdown of the calculation to your email": "Hisob-kitobning batafsil tafsilotini elektron pochtangizga oling",
+    "Enter your email": "Emailingizni kiriting",
+    "Send to email": "Emailga yuborish",
+    "Calculator results have been sent to your email.": "Kalkulyator natijalari elektron pochtangizga yuborildi.",
+    "Too many attempts. Please try again in :seconds seconds.": "Juda ko'p urinishlar. Iltimos, :seconds soniyadan keyin qayta urinib ko'ring."
 }

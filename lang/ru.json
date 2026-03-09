@@ -613,5 +613,23 @@
     "Payment failed": "Оплата не удалась",
     "Live Chat": "Чат поддержки",
     "Close": "Закрыть",
-    "Hello! I have a question about RISMENT.": "Здравствуйте! У меня вопрос о RISMENT."
+    "Hello! I have a question about RISMENT.": "Здравствуйте! У меня вопрос о RISMENT.",
+
+    "Visual Analysis": "Визуальный анализ",
+    "Cost Distribution": "Распределение затрат",
+    "Plan Comparison": "Сравнение тарифов",
+    "Per-unit rate": "Разовый тариф",
+    "Base cost": "Базовая стоимость",
+    "Overage charges": "Доплата за превышение",
+    "MGT FBS": "МГТ FBS",
+    "SGT FBS": "СГТ FBS",
+    "LGT FBS": "КГТ FBS",
+    "Charts show estimated monthly costs based on your input parameters": "Графики показывают расчётную ежемесячную стоимость на основе введённых параметров",
+
+    "Send results to email": "Отправить результаты на email",
+    "Receive a detailed breakdown of the calculation to your email": "Получите подробную детализацию расчёта на вашу электронную почту",
+    "Enter your email": "Введите ваш email",
+    "Send to email": "Отправить на email",
+    "Calculator results have been sent to your email.": "Результаты расчёта отправлены на вашу электронную почту.",
+    "Too many attempts. Please try again in :seconds seconds.": "Слишком много попыток. Пожалуйста, попробуйте снова через :seconds секунд."
 }
