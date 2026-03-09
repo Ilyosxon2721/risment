@@ -28,11 +28,11 @@
     <meta name="twitter:image" content="@yield('og_image', asset('images/og-image.jpg'))">
 
     {{-- PWA --}}
-    <link rel="manifest" href="/manifest.webmanifest">
-    <meta name="theme-color" content="#CB4FE4">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#7c3aed">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Risment">
+    <meta name="apple-mobile-web-app-title" content="RISMENT">
     <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
 
     {{-- Google Analytics --}}
@@ -66,6 +66,35 @@
     @endif
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    {{-- Image optimization styles --}}
+    <style>
+        /* Prevent layout shift for images with known aspect ratios */
+        .img-optimized {
+            aspect-ratio: auto;
+            height: auto;
+            max-width: 100%;
+        }
+        /* Content images inside prose/user-generated content */
+        .prose img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.5rem;
+        }
+    </style>
+    {{-- Add lazy loading to dynamically rendered / user-generated content images --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.prose img').forEach(function(img) {
+                if (!img.hasAttribute('loading')) {
+                    img.setAttribute('loading', 'lazy');
+                }
+                if (!img.hasAttribute('decoding')) {
+                    img.setAttribute('decoding', 'async');
+                }
+            });
+        });
+    </script>
 </head>
 <body class="font-body antialiased bg-bg">
     <!-- Header -->
@@ -74,7 +103,7 @@
             <a href="{{ route('home', ['locale' => app()->getLocale()]) }}" class="flex items-center flex-shrink-0">
                 @php $headerSettings = \App\Models\CompanySettings::current(); @endphp
                 @if($headerSettings && $headerSettings->company_logo)
-                    <img src="{{ $headerSettings->getLogoUrl() }}" alt="{{ $headerSettings->company_name ?? 'RISMENT' }}" class="h-10 max-w-full">
+                    <img src="{{ $headerSettings->getLogoUrl() }}" alt="{{ $headerSettings->company_name ?? 'RISMENT' }}" class="h-10 max-w-full" decoding="async">
                 @else
                     <span class="text-h3 font-heading text-brand font-bold">RISMENT</span>
                 @endif

@@ -103,7 +103,7 @@
                 <a href="{{ route('home', ['locale' => app()->getLocale()]) }}" class="inline-block">
                     @php $settings = \App\Models\CompanySettings::current(); @endphp
                     @if($settings && $settings->company_logo)
-                        <img src="{{ $settings->getLogoUrl() }}" alt="{{ $settings->company_name ?? 'RISMENT' }}" class="logo-img mx-auto mb-4">
+                        <img src="{{ $settings->getLogoUrl() }}" alt="{{ $settings->company_name ?? 'RISMENT' }}" class="logo-img mx-auto mb-4" decoding="async">
                     @else
                         <h1 class="logo-text mb-4">RISMENT</h1>
                     @endif

@@ -27,6 +27,11 @@ use App\Http\Middleware\SetLocale;
 use App\Http\Middleware\EnsureUserHasCompany;
 use Illuminate\Support\Facades\Route;
 
+// PWA offline fallback page
+Route::get('/offline', function () {
+    return view('offline');
+})->name('offline');
+
 // Redirect root to Russian
 Route::get('/', function () {
     return redirect('/ru');
