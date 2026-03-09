@@ -154,6 +154,13 @@
                     <span>{{ __('Billing') }}</span>
                 </a>
 
+                <a href="{{ route('cabinet.calculations.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-btn {{ request()->routeIs('cabinet.calculations.*') ? 'bg-brand text-white' : 'hover:bg-bg-soft' }} mt-1">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                    </svg>
+                    <span>{{ __('Saved Calculations') }}</span>
+                </a>
+
                 <a href="{{ route('cabinet.marketplaces.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-btn {{ request()->routeIs('cabinet.marketplaces.*') ? 'bg-brand text-white' : 'hover:bg-bg-soft' }} mt-1">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"></path>
@@ -255,6 +262,7 @@
     </script>
     @stack('scripts')
     @include('components.bottom-nav')
+    <x-live-chat-widget />
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {

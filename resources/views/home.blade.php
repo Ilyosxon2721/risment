@@ -4,26 +4,163 @@
 
 @section('content')
 <!-- Hero Section -->
-<section class="gradient-brand text-white py-20">
+<section class="gradient-brand text-white py-12 sm:py-20">
     <div class="container-risment">
         <div class="max-w-3xl">
-            <h1 class="text-h1 font-heading mb-6">
+            <h1 class="text-2xl sm:text-h1 font-heading mb-4 sm:mb-6">
                 {{ __('Fulfillment for Uzbekistan Marketplaces') }}
             </h1>
-            <p class="text-body-l mb-8 opacity-90">
+            <p class="text-base sm:text-body-l mb-6 sm:mb-8 opacity-90">
                 {{ __('Professional storage, packaging and delivery for Uzum, Wildberries, Ozon, Yandex Market') }}
             </p>
-            <div class="flex gap-4">
-                <a href="{{ route('calculator', ['locale' => app()->getLocale()]) }}" class="btn btn-primary bg-white text-brand hover:bg-gray-100">
+            <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                <a href="{{ route('calculator', ['locale' => app()->getLocale()]) }}" class="btn btn-primary bg-white text-brand hover:bg-gray-100 min-h-[44px] text-center">
                     {{ __('Calculate') }}
                 </a>
-                <a href="{{ route('contacts', ['locale' => app()->getLocale()]) }}" class="btn btn-secondary border-white text-white hover:bg-white/10">
+                <a href="{{ route('contacts', ['locale' => app()->getLocale()]) }}" class="btn btn-secondary border-white text-white hover:bg-white/10 min-h-[44px] text-center">
                     {{ __('Leave Request') }}
                 </a>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Mini Calculator -->
+<section class="py-10 sm:py-14" style="background: linear-gradient(135deg, #5b21b6 0%, #7c3aed 50%, #6d28d9 100%);">
+    <div class="container-risment max-w-3xl" x-data="miniCalculator()">
+        <div class="text-center mb-6">
+            <h2 class="text-xl sm:text-h3 font-heading text-white mb-2">{{ __('Quick Cost Estimate') }}</h2>
+            <p class="text-sm sm:text-body-s text-white/70">{{ __('Enter your monthly shipment volumes to get an instant estimate') }}</p>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-xl p-5 sm:p-8">
+            {{-- Inputs row --}}
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
+                <div>
+                    <label class="block text-body-s font-semibold text-text-muted mb-1.5">
+                        {{ __('Small') }} <span class="text-xs text-text-muted font-normal">({{ __('up to 60 cm') }})</span>
+                    </label>
+                    <input type="number" x-model.number="small" min="0" placeholder="0"
+                           class="input text-center text-lg" @input="calculate()">
+                </div>
+                <div>
+                    <label class="block text-body-s font-semibold text-text-muted mb-1.5">
+                        {{ __('Medium') }} <span class="text-xs text-text-muted font-normal">(61-120 {{ __('cm') }})</span>
+                    </label>
+                    <input type="number" x-model.number="medium" min="0" placeholder="0"
+                           class="input text-center text-lg" @input="calculate()">
+                </div>
+                <div>
+                    <label class="block text-body-s font-semibold text-text-muted mb-1.5">
+                        {{ __('Large') }} <span class="text-xs text-text-muted font-normal">(>120 {{ __('cm') }})</span>
+                    </label>
+                    <input type="number" x-model.number="large" min="0" placeholder="0"
+                           class="input text-center text-lg" @input="calculate()">
+                </div>
+            </div>
+
+            <p class="text-xs text-text-muted mb-5 text-center">{{ __('Dimensions = sum of length + width + height in cm') }}</p>
+
+            {{-- Calculate button --}}
+            <div class="flex justify-center mb-5">
+                <button @click="calculate()" class="btn btn-primary px-10 min-h-[44px]">
+                    {{ __('Calculate') }}
+                </button>
+            </div>
+
+            {{-- Result area --}}
+            <div x-show="showResult" x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 transform -translate-y-2"
+                 x-transition:enter-end="opacity-100 transform translate-y-0"
+                 class="border-t border-brand-border pt-5">
+
+                <div class="text-center">
+                    <p class="text-body-s text-text-muted mb-1">{{ __('Recommended plan') }}:</p>
+                    <p class="text-h3 font-heading text-brand mb-1" x-text="planName"></p>
+                    <p class="text-2xl sm:text-3xl font-bold text-brand">
+                        <span x-text="'~' + formatNumber(estimatedCost)"></span>
+                        <span class="text-base font-normal text-text-muted">{{ __('UZS/mo') }}</span>
+                    </p>
+
+                    <div x-show="savings > 0" class="mt-2">
+                        <span class="inline-block px-3 py-1 bg-green-100 text-green-700 rounded-full text-body-s font-semibold"
+                              x-text="'{{ __('Savings') }}: ~' + formatNumber(savings) + ' {{ __('UZS/mo') }}'"></span>
+                    </div>
+
+                    <div class="mt-5">
+                        <a href="{{ route('calculator', ['locale' => app()->getLocale()]) }}"
+                           class="inline-flex items-center gap-1.5 text-brand font-semibold hover:underline text-body-m">
+                            {{ __('See detailed breakdown') }}
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+function miniCalculator() {
+    const rates = { mgt: 8000, sgt: 15000, kgt: 35000 };
+    const surcharge = 0.10;
+    const plans = [
+        { name: 'Lite', max: 150, fee: 800000 },
+        { name: 'Start', max: 500, fee: 2400000 },
+        { name: 'Pro', max: 1500, fee: 6500000 },
+        { name: 'Business', max: 5000, fee: 18000000 }
+    ];
+
+    return {
+        small: 0, medium: 0, large: 0,
+        showResult: false, planName: '', estimatedCost: 0, savings: 0,
+
+        calculate() {
+            const s = Math.max(0, this.small || 0);
+            const m = Math.max(0, this.medium || 0);
+            const l = Math.max(0, this.large || 0);
+            const total = s + m + l;
+
+            if (total === 0) { this.showResult = false; return; }
+
+            const perUnitBase = (s * rates.mgt) + (m * rates.sgt) + (l * rates.kgt);
+            const perUnitCost = Math.ceil(perUnitBase * (1 + surcharge) / 1000) * 1000;
+
+            let bestPlan = null;
+            let bestCost = perUnitCost;
+
+            for (const plan of plans) {
+                let planCost = plan.fee;
+                if (total > plan.max) {
+                    const over = total - plan.max;
+                    const rs = total > 0 ? s / total : 0;
+                    const rm = total > 0 ? m / total : 0;
+                    const rl = total > 0 ? l / total : 0;
+                    planCost += Math.round(over * rs) * rates.mgt
+                              + Math.round(over * rm) * rates.sgt
+                              + Math.round(over * rl) * rates.kgt;
+                }
+                if (planCost < bestCost) { bestCost = planCost; bestPlan = plan; }
+            }
+
+            if (bestPlan) {
+                this.planName = bestPlan.name;
+                this.estimatedCost = bestCost;
+                this.savings = perUnitCost - bestCost;
+            } else {
+                this.planName = '{{ __("Per-unit rate") }}';
+                this.estimatedCost = perUnitCost;
+                this.savings = 0;
+            }
+            this.showResult = true;
+        },
+
+        formatNumber(n) { return new Intl.NumberFormat('ru-RU').format(n); }
+    };
+}
+</script>
 
 <!-- Why RISMENT -->
 <section class="py-16">
@@ -136,22 +273,22 @@
 <section class="py-16 bg-gradient-to-br from-brand/5 to-bg-soft">
     <div class="container-risment">
     <h2 class="text-h2 font-heading text-center mb-12">{{ __('Company in Numbers') }}</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             <div class="card text-center bg-white">
-                <div class="text-h1 text-brand mb-2">10K+</div>
-                <div class="text-body-m text-text-muted">{{ __('Orders processed') }}</div>
+                <div class="text-2xl sm:text-h1 text-brand mb-2">10K+</div>
+                <div class="text-body-s sm:text-body-m text-text-muted">{{ __('Orders processed') }}</div>
             </div>
             <div class="card text-center bg-white">
-                <div class="text-h1 text-success mb-2">99%</div>
-                <div class="text-body-m text-text-muted">{{ __('SLA compliance') }}</div>
+                <div class="text-2xl sm:text-h1 text-success mb-2">99%</div>
+                <div class="text-body-s sm:text-body-m text-text-muted">{{ __('SLA compliance') }}</div>
             </div>
             <div class="card text-center bg-white">
-                <div class="text-h1 text-brand mb-2">24/7</div>
-                <div class="text-body-m text-text-muted">{{ __('Support available') }}</div>
+                <div class="text-2xl sm:text-h1 text-brand mb-2">24/7</div>
+                <div class="text-body-s sm:text-body-m text-text-muted">{{ __('Support available') }}</div>
             </div>
             <div class="card text-center bg-white">
-                <div class="text-h1 text-brand mb-2">5K+</div>
-                <div class="text-body-m text-text-muted">{{ __('m² warehouse space') }}</div>
+                <div class="text-2xl sm:text-h1 text-brand mb-2">5K+</div>
+                <div class="text-body-s sm:text-body-m text-text-muted">{{ __('m² warehouse space') }}</div>
             </div>
         </div>
     </div>
@@ -161,11 +298,11 @@
 <section class="py-16 bg-bg-soft">
     <div class="container-risment">
     <h2 class="text-h2 font-heading text-center mb-12">{{ __('We work with') }}</h2>
-        <div class="flex flex-wrap justify-center items-center gap-12">
-            <img src="{{ asset('images/logos/uzum.png') }}" alt="Uzum" class="h-16 object-contain">
-            <img src="{{ asset('images/logos/wildberries.svg') }}" alt="Wildberries" class="h-16 object-contain">
-            <img src="{{ asset('images/logos/ozon.svg') }}" alt="Ozon" class="h-16 object-contain">
-            <img src="{{ asset('images/logos/yandex.svg') }}" alt="Yandex Market" class="h-16 object-contain">
+        <div class="flex flex-wrap justify-center items-center gap-8 sm:gap-12">
+            <img src="{{ asset('images/logos/uzum.png') }}" alt="Uzum" class="h-10 sm:h-16 object-contain max-w-full img-optimized" loading="lazy" decoding="async" width="200" height="64">
+            <img src="{{ asset('images/logos/wildberries.svg') }}" alt="Wildberries" class="h-10 sm:h-16 object-contain max-w-full img-optimized" loading="lazy" decoding="async" width="200" height="64">
+            <img src="{{ asset('images/logos/ozon.svg') }}" alt="Ozon" class="h-10 sm:h-16 object-contain max-w-full img-optimized" loading="lazy" decoding="async" width="200" height="64">
+            <img src="{{ asset('images/logos/yandex.svg') }}" alt="Yandex Market" class="h-10 sm:h-16 object-contain max-w-full img-optimized" loading="lazy" decoding="async" width="200" height="64">
         </div>
     </div>
 </section>
@@ -269,54 +406,50 @@
 
 <!-- FAQ -->
 <section class="py-16">
-    <div class="container-risment max-w-3xl">
+    <div class="container-risment max-w-3xl" x-data="{ openFaq: null }">
         <h2 class="text-h2 font-heading text-center mb-12">{{ __('FAQ') }}</h2>
         <div class="space-y-4">
-            <details class="card group">
-                <summary class="cursor-pointer font-semibold text-body-l flex justify-between items-center">
-                    {{ __('What is fulfillment?') }}
-                    <svg class="w-5 h-5 text-brand transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            @php
+                $homeFaqs = [
+                    ['q' => __('What is fulfillment?'), 'a' => __('Fulfillment is a comprehensive service including storage, packaging and delivery of goods for online stores and marketplace sellers.')],
+                    ['q' => __('What marketplaces do you work with?'), 'a' => __('We work with Uzum, Wildberries, Ozon and Yandex Market.')],
+                    ['q' => __('What is FBS?'), 'a' => __('FBS (Fulfillment by Seller) means the seller stores goods in our warehouse, and we handle assembly and delivery to the marketplace.')],
+                    ['q' => __('How quickly do you process orders?'), 'a' => __('Orders are assembled on the same day. Delivery to the marketplace warehouse takes 1-2 business days.')],
+                    ['q' => __('How do I start working with you?'), 'a' => __('Leave a request on our website or call us. We will discuss terms, sign the contract and you can start delivering goods to our warehouse.')],
+                ];
+            @endphp
+            @foreach($homeFaqs as $i => $faq)
+            <div class="card">
+                <button type="button"
+                        class="w-full text-left cursor-pointer font-semibold text-body-l flex justify-between items-center min-h-[44px]"
+                        @click="openFaq = openFaq === {{ $i }} ? null : {{ $i }}">
+                    <span class="pr-4">{{ $faq['q'] }}</span>
+                    <svg class="w-5 h-5 text-brand flex-shrink-0 transition-transform duration-300"
+                         :class="openFaq === {{ $i }} ? 'rotate-180' : ''"
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
-                </summary>
-                <p class="text-body-s text-text-muted mt-3 pt-3 border-t border-brand-border">{{ __('Fulfillment is a comprehensive service including storage, packaging and delivery of goods for online stores and marketplace sellers.') }}</p>
-            </details>
-            <details class="card group">
-                <summary class="cursor-pointer font-semibold text-body-l flex justify-between items-center">
-                    {{ __('What marketplaces do you work with?') }}
-                    <svg class="w-5 h-5 text-brand transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                </summary>
-                <p class="text-body-s text-text-muted mt-3 pt-3 border-t border-brand-border">{{ __('We work with Uzum, Wildberries, Ozon and Yandex Market.') }}</p>
-            </details>
-            <details class="card group">
-                <summary class="cursor-pointer font-semibold text-body-l flex justify-between items-center">
-                    {{ __('What is FBS?') }}
-                    <svg class="w-5 h-5 text-brand transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                </summary>
-                <p class="text-body-s text-text-muted mt-3 pt-3 border-t border-brand-border">{{ __('FBS (Fulfillment by Seller) means the seller stores goods in our warehouse, and we handle assembly and delivery to the marketplace.') }}</p>
-            </details>
-            <details class="card group">
-                <summary class="cursor-pointer font-semibold text-body-l flex justify-between items-center">
-                    {{ __('How quickly do you process orders?') }}
-                    <svg class="w-5 h-5 text-brand transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                </summary>
-                <p class="text-body-s text-text-muted mt-3 pt-3 border-t border-brand-border">{{ __('Orders are assembled on the same day. Delivery to the marketplace warehouse takes 1-2 business days.') }}</p>
-            </details>
-            <details class="card group">
-                <summary class="cursor-pointer font-semibold text-body-l flex justify-between items-center">
-                    {{ __('How do I start working with you?') }}
-                    <svg class="w-5 h-5 text-brand transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                </summary>
-                <p class="text-body-s text-text-muted mt-3 pt-3 border-t border-brand-border">{{ __('Leave a request on our website or call us. We will discuss terms, sign the contract and you can start delivering goods to our warehouse.') }}</p>
-            </details>
+                </button>
+                <div x-show="openFaq === {{ $i }}"
+                     x-transition:enter="transition ease-out duration-300"
+                     x-transition:enter-start="opacity-0 max-h-0"
+                     x-transition:enter-end="opacity-100 max-h-[300px]"
+                     x-transition:leave="transition ease-in duration-200"
+                     x-transition:leave-start="opacity-100 max-h-[300px]"
+                     x-transition:leave-end="opacity-0 max-h-0"
+                     class="overflow-hidden">
+                    <p class="text-body-s text-text-muted mt-3 pt-3 border-t border-brand-border">{{ $faq['a'] }}</p>
+                </div>
+            </div>
+            @endforeach
+        </div>
+        <div class="text-center mt-8">
+            <a href="{{ route('faq', ['locale' => app()->getLocale()]) }}" class="inline-flex items-center gap-1.5 text-brand font-semibold hover:underline text-body-m">
+                {{ __('View all FAQ') }}
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+            </a>
         </div>
     </div>
 </section>
@@ -324,14 +457,14 @@
 <!-- CTA -->
 <section class="py-16 bg-bg-soft">
     <div class="container-risment">
-        <div class="card gradient-brand text-white text-center p-12">
-            <h2 class="text-h2 font-heading mb-4">{{ __('Ready to start?') }}</h2>
-            <p class="text-body-l mb-6 opacity-90">{{ __('Calculate the cost or contact us') }}</p>
-            <div class="flex gap-4 justify-center">
-                <a href="{{ route('calculator', ['locale' => app()->getLocale()]) }}" class="btn btn-primary bg-white text-brand hover:bg-gray-100">
+        <div class="card gradient-brand text-white text-center p-6 sm:p-12">
+            <h2 class="text-xl sm:text-h2 font-heading mb-4">{{ __('Ready to start?') }}</h2>
+            <p class="text-base sm:text-body-l mb-6 opacity-90">{{ __('Calculate the cost or contact us') }}</p>
+            <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+                <a href="{{ route('calculator', ['locale' => app()->getLocale()]) }}" class="btn btn-primary bg-white text-brand hover:bg-gray-100 min-h-[44px] text-center">
                     {{ __('Calculate') }}
                 </a>
-                <a href="{{ route('contacts', ['locale' => app()->getLocale()]) }}" class="btn btn-secondary border-white text-white hover:bg-white/10">
+                <a href="{{ route('contacts', ['locale' => app()->getLocale()]) }}" class="btn btn-secondary border-white text-white hover:bg-white/10 min-h-[44px] text-center">
                     {{ __('Contacts') }}
                 </a>
             </div>

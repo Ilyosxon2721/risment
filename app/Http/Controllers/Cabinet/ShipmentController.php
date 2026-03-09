@@ -15,6 +15,7 @@ class ShipmentController extends Controller
         $company = $request->attributes->get('currentCompany');
         
         $shipments = ShipmentFbo::where('company_id', $company->id)
+            ->withCount('items')
             ->orderBy('created_at', 'desc')
             ->paginate(15);
         

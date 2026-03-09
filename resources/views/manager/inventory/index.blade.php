@@ -3,12 +3,12 @@
 @section('title', __('Inventory'))
 
 @section('content')
-<div class="flex justify-between items-center mb-8">
-    <h2 class="text-h2 font-heading">{{ __('Client inventory') }}</h2>
+<div class="mb-8">
+    <h2 class="text-xl sm:text-h2 font-heading">{{ __('Client inventory') }}</h2>
 </div>
 
 <!-- Stats -->
-<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
     <div class="bg-white rounded-card border border-brand-border p-4">
         <div class="text-body-s text-text-muted">{{ __('Total SKUs') }}</div>
         <div class="text-h3 font-heading mt-1">{{ number_format($stats['total_skus']) }}</div>
@@ -28,24 +28,24 @@
 </div>
 
 <!-- Filters -->
-<div class="flex gap-4 mb-6 flex-wrap">
-    <form method="GET" class="flex gap-4 flex-wrap items-end">
-        <div>
-            <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('Search by SKU, name, barcode...') }}" class="input w-64">
+<div class="mb-6">
+    <form method="GET" class="flex flex-col sm:flex-row gap-3 sm:gap-4 flex-wrap items-stretch sm:items-end">
+        <div class="w-full sm:w-auto">
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('Search by SKU, name, barcode...') }}" class="input w-full sm:w-64">
         </div>
-        <div>
-            <select name="stock_status" onchange="this.form.submit()" class="input">
+        <div class="w-full sm:w-auto">
+            <select name="stock_status" onchange="this.form.submit()" class="input w-full sm:w-auto">
                 <option value="">{{ __('All products') }}</option>
                 <option value="in_stock" {{ request('stock_status') === 'in_stock' ? 'selected' : '' }}>{{ __('In stock') }}</option>
                 <option value="low_stock" {{ request('stock_status') === 'low_stock' ? 'selected' : '' }}>{{ __('Low (≤10)') }}</option>
                 <option value="out_of_stock" {{ request('stock_status') === 'out_of_stock' ? 'selected' : '' }}>{{ __('Out of stock') }}</option>
             </select>
         </div>
-        <button type="submit" class="btn-brand px-4 py-3 rounded-btn text-white font-semibold">
+        <button type="submit" class="btn btn-primary min-h-[44px]">
             {{ __('Search') }}
         </button>
         @if(request()->hasAny(['search', 'stock_status']))
-            <a href="{{ route('manager.inventory.index') }}" class="px-4 py-3 rounded-btn border border-brand-border hover:bg-bg-soft">
+            <a href="{{ route('manager.inventory.index') }}" class="btn btn-secondary min-h-[44px] text-center">
                 {{ __('Reset') }}
             </a>
         @endif
@@ -132,12 +132,12 @@
                 <label class="block text-body-s font-semibold mb-2">{{ __('Reason') }} *</label>
                 <input type="text" name="reason" class="input w-full" required placeholder="{{ __('Inventory check, regrading, defect...') }}">
             </div>
-            <div class="flex gap-4">
-                <button type="submit" class="btn-brand px-6 py-3 rounded-btn text-white font-semibold">
-                    {{ __('Save') }}
-                </button>
-                <button type="button" onclick="closeAdjustModal()" class="px-6 py-3 rounded-btn border border-brand-border hover:bg-bg-soft font-semibold">
+            <div class="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4">
+                <button type="button" onclick="closeAdjustModal()" class="btn btn-secondary min-h-[44px]">
                     {{ __('Cancel') }}
+                </button>
+                <button type="submit" class="btn btn-primary min-h-[44px]">
+                    {{ __('Save') }}
                 </button>
             </div>
         </form>

@@ -3,23 +3,23 @@
 @section('title', __('Tasks'))
 
 @section('content')
-<div class="flex justify-between items-center mb-8">
-    <h2 class="text-h2 font-heading">{{ __('Tasks') }}</h2>
-    <a href="{{ route('manager.tasks.create') }}" class="btn-brand px-6 py-3 rounded-btn text-white font-semibold">
+<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+    <h2 class="text-xl sm:text-h2 font-heading">{{ __('Tasks') }}</h2>
+    <a href="{{ route('manager.tasks.create') }}" class="btn btn-primary min-h-[44px] w-full sm:w-auto text-center">
         {{ __('+ Add task') }}
     </a>
 </div>
 
 <!-- Filters -->
-<div class="flex gap-4 mb-6">
-    <form method="GET" class="flex gap-4 flex-wrap">
-        <select name="task_type" onchange="this.form.submit()" class="input">
+<div class="mb-6">
+    <form method="GET" class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+        <select name="task_type" onchange="this.form.submit()" class="input w-full sm:w-auto">
             <option value="">{{ __('All types') }}</option>
             @foreach(\App\Models\ManagerTask::getTaskTypes() as $value => $label)
                 <option value="{{ $value }}" {{ request('task_type') === $value ? 'selected' : '' }}>{{ $label }}</option>
             @endforeach
         </select>
-        <select name="status" onchange="this.form.submit()" class="input">
+        <select name="status" onchange="this.form.submit()" class="input w-full sm:w-auto">
             <option value="">{{ __('All statuses') }}</option>
             <option value="pending_confirmation" {{ request('status') === 'pending_confirmation' ? 'selected' : '' }}>{{ __('Pending') }}</option>
             <option value="confirmed" {{ request('status') === 'confirmed' ? 'selected' : '' }}>{{ __('Confirmed') }}</option>

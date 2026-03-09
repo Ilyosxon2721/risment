@@ -7,6 +7,7 @@ use App\Models\Inventory;
 use App\Models\Inbound;
 use App\Models\PricingRate;
 use App\Models\ShipmentFbo;
+use App\Models\ShipmentItem;
 use App\Models\Ticket;
 use App\Models\MonthlyUsage;
 use App\Services\PricingService;
@@ -19,7 +20,8 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         $company = $request->attributes->get('currentCompany');
-        
+        $company->load(['subscriptionPlan', 'billingSubscription']);
+
         // Get subscription plan
         $plan = $company->subscriptionPlan;
         
@@ -89,14 +91,45 @@ class DashboardController extends Controller
                 ->count();
         }
         
+        // Chart data: Items shipped per month (last 6 months)
+        $chartItemsShipped = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $date = Carbon::now()->subMonths($i);
+            $chartItemsShipped[] = ShipmentItem::whereHas('shipment', function ($q) use ($company, $date) {
+                $q->where('company_id', $company->id)
+                  ->whereYear('created_at', $date->year)
+                  ->whereMonth('created_at', $date->month);
+            })->sum('qty');
+        }
+
         $chartData = [
             'labels' => $chartLabels,
             'shipments' => $chartShipments,
             'inbounds' => $chartInbounds,
+            'items_shipped' => $chartItemsShipped,
         ];
-        
+
+        // Top-10 products by shipment volume (all time)
+        $topProducts = ShipmentItem::select('shipment_items.sku_id', DB::raw('SUM(shipment_items.qty) as total_qty'), DB::raw('COUNT(DISTINCT shipment_items.shipment_id) as shipment_count'))
+            ->join('shipments_fbo', 'shipments_fbo.id', '=', 'shipment_items.shipment_id')
+            ->where('shipments_fbo.company_id', $company->id)
+            ->whereNotNull('shipment_items.sku_id')
+            ->groupBy('shipment_items.sku_id')
+            ->orderByDesc('total_qty')
+            ->limit(10)
+            ->with('sku')
+            ->get();
+
+        // Total items shipped (all time)
+        $stats['total_items_shipped'] = ShipmentItem::whereHas('shipment', function ($q) use ($company) {
+            $q->where('company_id', $company->id);
+        })->sum('qty');
+
+        // Total shipments completed
+        $stats['total_shipments'] = ShipmentFbo::where('company_id', $company->id)->count();
+
         $currentCompany = $company;
-        return view('cabinet.dashboard', compact('stats', 'recentInbounds', 'recentShipments', 'plan', 'usage', 'overageEstimate', 'chartData', 'currentCompany'));
+        return view('cabinet.dashboard', compact('stats', 'recentInbounds', 'recentShipments', 'plan', 'usage', 'overageEstimate', 'chartData', 'topProducts', 'currentCompany'));
     }
 
     public function estimate(Request $request, PricingService $pricingService)

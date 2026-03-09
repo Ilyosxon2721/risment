@@ -13,7 +13,7 @@
 </div>
 
 <div class="mb-8">
-    <h1 class="text-h1 font-heading">
+    <h1 class="text-xl sm:text-h1 font-heading">
         {{ $credential ? __('marketplaces.edit_title') : __('marketplaces.create_title') }}
         — {{ __('marketplaces.mp_' . $marketplace) }}
     </h1>
@@ -92,9 +92,9 @@
         </label>
     </div>
 
-    <div class="mt-8 flex gap-4">
-        <button type="submit" class="btn btn-primary">{{ $credential ? __('marketplaces.save') : __('marketplaces.create') }}</button>
-        <a href="{{ route('cabinet.marketplaces.index') }}" class="btn btn-outline">{{ __('marketplaces.cancel') }}</a>
+    <div class="mt-8 flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 form-actions">
+        <a href="{{ route('cabinet.marketplaces.index') }}" class="btn btn-outline min-h-[44px] text-center">{{ __('marketplaces.cancel') }}</a>
+        <button type="submit" class="btn btn-primary min-h-[44px]">{{ $credential ? __('marketplaces.save') : __('marketplaces.create') }}</button>
     </div>
 </form>
 @endsection

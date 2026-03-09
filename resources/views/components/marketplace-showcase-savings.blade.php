@@ -18,11 +18,11 @@ $showcaseData = [
      class="card bg-gradient-to-br from-success/10 to-bg-soft border-2 border-success/30">
     
     <div class="text-center mb-6">
-        <h3 class="text-h2 font-heading mb-2">Выгода при подключении всех 4 площадок</h3>
+        <h3 class="text-xl sm:text-h2 font-heading mb-2">Выгода при подключении всех 4 площадок</h3>
         <p class="text-body-m text-text-muted">Максимальная экономия 18% при работе со всеми маркетплейсами</p>
     </div>
     
-    <div class="grid grid-cols-3 gap-4 mb-8">
+    <div class="grid grid-cols-3 gap-2 sm:gap-4 mb-6 sm:mb-8">
         <div class="text-center p-4 bg-white rounded-btn">
             <div class="text-h3 text-success mb-1">−7%</div>
             <div class="text-body-s text-text-muted">2 площадки</div>
@@ -37,7 +37,7 @@ $showcaseData = [
         </div>
     </div>
     
-    <div class="bg-white rounded-btn p-6">
+    <div class="bg-white rounded-btn p-4 sm:p-6">
         <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
             <label class="font-semibold whitespace-nowrap">Выберите пакет:</label>
             <select x-model="selectedPlan" class="select flex-1 sm:flex-initial">
@@ -77,7 +77,7 @@ $showcaseData = [
     </div>
     
     <div class="mt-6 text-center">
-        <a href="{{ route('calculators.marketplace', app()->getLocale()) }}" class="btn btn-primary">
+        <a href="{{ route('calculators.marketplace', app()->getLocale()) }}" class="btn btn-primary min-h-[44px] w-full sm:w-auto">
             Рассчитать для своих параметров
         </a>
     </div>

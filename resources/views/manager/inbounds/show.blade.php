@@ -44,7 +44,8 @@
             @if(in_array($inbound->status, ['draft', 'submitted']))
             <form method="POST" action="{{ route('manager.inbounds.receive', $inbound) }}">
                 @csrf
-                <table class="w-full">
+                <div class="table-responsive relative">
+                <table class="w-full responsive-table">
                     <thead class="bg-bg-soft">
                         <tr>
                             <th class="px-4 py-2 text-left text-body-s font-semibold text-text-muted">SKU</th>
@@ -56,10 +57,10 @@
                     <tbody class="divide-y divide-brand-border">
                         @foreach($inbound->items as $item)
                         <tr>
-                            <td class="px-4 py-3 font-mono text-body-s">{{ $item->sku->sku ?? '-' }}</td>
-                            <td class="px-4 py-3">{{ $item->sku->name ?? __('No name') }}</td>
-                            <td class="px-4 py-3 text-right">{{ $item->qty }}</td>
-                            <td class="px-4 py-3 text-right">
+                            <td class="px-4 py-3 font-mono text-body-s" data-label="SKU">{{ $item->sku->sku ?? '-' }}</td>
+                            <td class="px-4 py-3" data-label="{{ __('Name') }}">{{ $item->sku->name ?? __('No name') }}</td>
+                            <td class="px-4 py-3 text-right" data-label="{{ __('Expected') }}">{{ $item->qty }}</td>
+                            <td class="px-4 py-3 text-right" data-label="{{ __('Received') }}">
                                 <input type="hidden" name="items[{{ $loop->index }}][id]" value="{{ $item->id }}">
                                 <input type="number" name="items[{{ $loop->index }}][received_qty]" value="{{ $item->qty }}" min="0" class="input w-24 text-right">
                             </td>
@@ -67,6 +68,7 @@
                         @endforeach
                     </tbody>
                 </table>
+                </div>
                 <div class="mt-6">
                     <button type="submit" class="btn-brand px-6 py-3 rounded-btn text-white font-semibold">
                         {{ __('Confirm receiving') }}
@@ -74,7 +76,8 @@
                 </div>
             </form>
             @else
-            <table class="w-full">
+            <div class="table-responsive relative">
+            <table class="w-full responsive-table">
                 <thead class="bg-bg-soft">
                     <tr>
                         <th class="px-4 py-2 text-left text-body-s font-semibold text-text-muted">SKU</th>
@@ -90,10 +93,10 @@
                         $diffClass = $diff < 0 ? 'text-error' : ($diff > 0 ? 'text-success' : '');
                     @endphp
                     <tr>
-                        <td class="px-4 py-3 font-mono text-body-s">{{ $item->sku->sku ?? '-' }}</td>
-                        <td class="px-4 py-3">{{ $item->sku->name ?? __('No name') }}</td>
-                        <td class="px-4 py-3 text-right">{{ $item->qty }}</td>
-                        <td class="px-4 py-3 text-right font-semibold {{ $diffClass }}">
+                        <td class="px-4 py-3 font-mono text-body-s" data-label="SKU">{{ $item->sku->sku ?? '-' }}</td>
+                        <td class="px-4 py-3" data-label="{{ __('Name') }}">{{ $item->sku->name ?? __('No name') }}</td>
+                        <td class="px-4 py-3 text-right" data-label="{{ __('Expected') }}">{{ $item->qty }}</td>
+                        <td class="px-4 py-3 text-right font-semibold {{ $diffClass }}" data-label="{{ __('Received') }}">
                             {{ $item->received_qty ?? '-' }}
                             @if($diff != 0)
                                 <span class="text-body-xs">({{ $diff > 0 ? '+' : '' }}{{ $diff }})</span>
@@ -103,6 +106,7 @@
                     @endforeach
                 </tbody>
             </table>
+            </div>
             @endif
         </div>
     </div>

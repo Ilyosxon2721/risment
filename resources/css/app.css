@@ -22,9 +22,10 @@
 
 @layer components {
 
-    /* Buttons */
+    /* Buttons - min 44px tap target for touch accessibility */
     .btn {
         @apply px-6 py-3 rounded-btn font-semibold transition duration-200 inline-block text-center;
+        min-height: 44px;
     }
 
     .btn-primary,
@@ -45,9 +46,9 @@
         @apply bg-error text-white hover:bg-error/90;
     }
 
-    /* Cards */
+    /* Cards - responsive padding */
     .card {
-        @apply bg-white p-6 rounded-card shadow-card;
+        @apply bg-white p-4 sm:p-6 rounded-card shadow-card;
     }
 
     /* Containers */
@@ -326,5 +327,114 @@
     /* Disable pull-to-refresh browser default (we handle it ourselves) */
     body {
         overscroll-behavior-y: contain;
+    }
+}
+
+/* ================================================
+   Mobile Responsive Enhancements
+   ================================================ */
+
+/* Alpine.js cloak */
+[x-cloak] { display: none !important; }
+
+/* Touch-friendly tap targets */
+@media (max-width: 639px) {
+    /* Ensure all interactive elements are touch-friendly */
+    .btn-sm {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 8px 16px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Make nav links touch-friendly */
+    nav a {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+
+    /* Responsive images */
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    /* Prevent text overflow in tables */
+    .responsive-table td {
+        word-break: break-word;
+    }
+
+    /* Responsive table tfoot on mobile */
+    .responsive-table tfoot {
+        display: block;
+    }
+
+    .responsive-table tfoot tr {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 16px;
+        border-top: 2px solid var(--color-border, #E9ECF2);
+    }
+
+    .responsive-table tfoot td {
+        display: block;
+        padding: 0;
+        border: none;
+    }
+
+    .responsive-table tfoot td[colspan] {
+        display: none;
+    }
+
+    /* Fix grid-cols-2 info grids on very small screens */
+    .grid-cols-2 {
+        gap: 12px;
+    }
+
+    /* Details/Summary accordions - touch-friendly */
+    details summary {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    /* Prevent horizontal scroll on body */
+    body {
+        overflow-x: hidden;
+    }
+
+    /* Fix chart containers on mobile */
+    .h-48, .h-64 {
+        min-height: 180px;
+    }
+
+    /* Better form input sizing on mobile - prevent iOS zoom */
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="number"],
+    input[type="password"],
+    input[type="date"],
+    input[type="search"],
+    select,
+    textarea {
+        font-size: 16px;
+    }
+
+    /* Responsive doughnut chart legend */
+    .chartjs-legend,
+    canvas + div {
+        font-size: 12px;
+    }
+}
+
+/* Ensure footer stacks properly */
+@media (max-width: 767px) {
+    footer .grid {
+        gap: 24px;
     }
 }

@@ -3,14 +3,14 @@
 @section('title', __('Products'))
 
 @section('content')
-<div class="p-6">
+<div class="p-0 sm:p-6">
     {{-- Header --}}
-    <div class="flex justify-between items-center mb-6">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <div>
-            <h1 class="text-h2 font-heading">{{ __('Products') }}</h1>
+            <h1 class="text-xl sm:text-h2 font-heading">{{ __('Products') }}</h1>
             <p class="text-body-s text-text-muted mt-1">{{ __('Manage your products with variants') }}</p>
         </div>
-        <a href="{{ route('cabinet.products.create') }}" class="btn btn-primary">
+        <a href="{{ route('cabinet.products.create') }}" class="btn btn-primary w-full sm:w-auto text-center min-h-[44px] flex items-center justify-center">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
@@ -20,23 +20,25 @@
 
     {{-- Search & Filters --}}
     <div class="card mb-6">
-        <form method="GET" class="flex gap-4">
+        <form method="GET" class="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <div class="flex-1">
-                <input 
-                    type="text" 
-                    name="search" 
-                    value="{{ request('search') }}" 
+                <input
+                    type="text"
+                    name="search"
+                    value="{{ request('search') }}"
                     placeholder="{{ __('Search by title or article...') }}"
-                    class="input">
+                    class="input w-full">
             </div>
-            <button type="submit" class="btn btn-secondary">
-                {{ __('Search') }}
-            </button>
-            @if(request('search'))
-                <a href="{{ route('cabinet.products.index') }}" class="btn btn-ghost">
-                    {{ __('Clear') }}
-                </a>
-            @endif
+            <div class="flex gap-2">
+                <button type="submit" class="btn btn-secondary min-h-[44px] flex-1 sm:flex-none">
+                    {{ __('Search') }}
+                </button>
+                @if(request('search'))
+                    <a href="{{ route('cabinet.products.index') }}" class="btn btn-ghost min-h-[44px] flex-1 sm:flex-none text-center">
+                        {{ __('Clear') }}
+                    </a>
+                @endif
+            </div>
         </form>
     </div>
 
@@ -44,7 +46,7 @@
     <div class="card" x-data="{ expandedProducts: [] }">
         @if($products->count() > 0)
             <div class="table-responsive relative">
-                <table class="w-full">
+                <table class="w-full responsive-table">
                     <thead class="bg-bg-soft border-b-2 border-brand-border">
                         <tr>
                             <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">{{ __('Product') }}</th>
@@ -59,7 +61,7 @@
                     <tbody class="divide-y divide-brand-border">
                         @foreach($products as $product)
                         <tr class="hover:bg-bg-soft transition">
-                            <td class="px-4 py-4">
+                            <td class="px-4 py-4" data-label="{{ __('Product') }}">
                                 <button 
                                     @click="expandedProducts.includes({{ $product->id }}) ? expandedProducts = expandedProducts.filter(id => id !== {{ $product->id }}) : expandedProducts.push({{ $product->id }})"
                                     class="flex items-center gap-2 font-semibold text-brand hover:text-brand-hover">
@@ -69,18 +71,18 @@
                                     {{ $product->title }}
                                 </button>
                             </td>
-                            <td class="px-4 py-4 text-body-s text-text-muted">{{ $product->article }}</td>
-                            <td class="px-4 py-4 text-center">
+                            <td class="px-4 py-4 text-body-s text-text-muted" data-label="{{ __('Article') }}">{{ $product->article }}</td>
+                            <td class="px-4 py-4 text-center" data-label="{{ __('Variants') }}">
                                 <span class="badge badge-info">{{ $product->variants_count }}</span>
                             </td>
-                            <td class="px-4 py-4">
+                            <td class="px-4 py-4" data-label="{{ __('Status') }}">
                                 @if($product->is_active)
                                     <span class="badge badge-success">{{ __('Active') }}</span>
                                 @else
                                     <span class="badge badge-error">{{ __('Inactive') }}</span>
                                 @endif
                             </td>
-                            <td class="px-4 py-4">
+                            <td class="px-4 py-4" data-label="SellerMind">
                                 @if($product->sellermind_sync_status === 'synced')
                                     <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                         <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
@@ -110,8 +112,8 @@
                                     </span>
                                 @endif
                             </td>
-                            <td class="px-4 py-4 text-body-s text-text-muted">{{ $product->created_at->format('d.m.Y') }}</td>
-                            <td class="px-4 py-4 text-right">
+                            <td class="px-4 py-4 text-body-s text-text-muted" data-label="{{ __('Created') }}">{{ $product->created_at->format('d.m.Y') }}</td>
+                            <td class="px-4 py-4 text-right" data-label="{{ __('Actions') }}">
                                 <div class="flex justify-end gap-2">
                                     <a href="{{ route('cabinet.products.edit', $product) }}" class="btn btn-sm btn-secondary">
                                         {{ __('Edit') }}
@@ -136,9 +138,10 @@
                                         <div class="flex items-start gap-4 p-3 bg-white rounded-lg border border-brand-border">
                                             {{-- Primary Image --}}
                                             @if($variant->images->where('is_primary', true)->first())
-                                                <img src="{{ asset('storage/' . $variant->images->where('is_primary', true)->first()->image_path) }}" 
+                                                <img src="{{ asset('storage/' . $variant->images->where('is_primary', true)->first()->image_path) }}"
                                                      alt="{{ $variant->variant_name }}"
-                                                     class="w-16 h-16 object-cover rounded">
+                                                     class="w-16 h-16 object-cover rounded"
+                                                     loading="lazy" decoding="async">
                                             @else
                                                 <div class="w-16 h-16 bg-gray-200 rounded flex items-center justify-center">
                                                     <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

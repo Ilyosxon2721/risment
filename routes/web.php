@@ -23,9 +23,15 @@ use App\Http\Controllers\Cabinet\IntegrationsController;
 use App\Http\Controllers\Cabinet\SellermindLinkController;
 use App\Http\Controllers\Cabinet\MarketplaceCredentialController;
 use App\Http\Controllers\Cabinet\BillingReportController;
+use App\Http\Controllers\Cabinet\CalculatorResultController;
 use App\Http\Middleware\SetLocale;
 use App\Http\Middleware\EnsureUserHasCompany;
 use Illuminate\Support\Facades\Route;
+
+// PWA offline fallback page
+Route::get('/offline', function () {
+    return view('offline');
+})->name('offline');
 
 // Redirect root to Russian
 Route::get('/', function () {
@@ -97,21 +103,26 @@ Route::prefix('cabinet')->name('cabinet.')->middleware(['auth', \App\Http\Middle
     // Finance
     Route::get('/finance', [FinanceController::class, 'index'])->name('finance.index');
     Route::get('/finance/invoices', [FinanceController::class, 'invoices'])->name('finance.invoices.index');
-    Route::get('/finance/invoices/{invoice}', [FinanceController::class, 'show'])->name('finance.invoices.show');
     Route::get('/finance/payments', [FinanceController::class, 'payments'])->name('finance.payments');
-    
+
+    // Payment result pages (must be before {invoice} wildcard)
+    Route::get('/finance/invoices/payment-success', [InvoicePaymentController::class, 'paymentSuccess'])->name('finance.invoices.payment-success');
+    Route::get('/finance/invoices/payment-failed', [InvoicePaymentController::class, 'paymentFailed'])->name('finance.invoices.payment-failed');
+
+    Route::get('/finance/invoices/{invoice}', [FinanceController::class, 'show'])->name('finance.invoices.show');
+
     // Invoice payment routes
     Route::get('/finance/invoices/{invoice}/pay', [InvoicePaymentController::class, 'pay'])->name('finance.invoices.pay');
-    Route::post('/finance/invoices/{invoice}/pay/click', [InvoicePaymentController::class, 'initiateClick'])->name('finance.invoices.pay.click');
-    Route::post('/finance/invoices/{invoice}/pay/payme', [InvoicePaymentController::class, 'initiatePayme'])->name('finance.invoices.pay.payme');
+    Route::post('/finance/invoices/{invoice}/pay/click', [InvoicePaymentController::class, 'initiateClick'])->middleware('throttle:10,1')->name('finance.invoices.pay.click');
+    Route::post('/finance/invoices/{invoice}/pay/payme', [InvoicePaymentController::class, 'initiatePayme'])->middleware('throttle:10,1')->name('finance.invoices.pay.payme');
 
     // Integrations hub
     Route::get('/integrations', [IntegrationsController::class, 'index'])->name('integrations.index');
 
     // SellerMind Integration (under /integrations/sellermind)
     Route::get('/integrations/sellermind', [SellermindLinkController::class, 'index'])->name('integrations.sellermind');
-    Route::post('/integrations/sellermind/generate', [SellermindLinkController::class, 'generateToken'])->name('integrations.sellermind.generate');
-    Route::post('/integrations/sellermind/regenerate', [SellermindLinkController::class, 'regenerateToken'])->name('integrations.sellermind.regenerate');
+    Route::post('/integrations/sellermind/generate', [SellermindLinkController::class, 'generateToken'])->middleware('throttle:5,1')->name('integrations.sellermind.generate');
+    Route::post('/integrations/sellermind/regenerate', [SellermindLinkController::class, 'regenerateToken'])->middleware('throttle:5,1')->name('integrations.sellermind.regenerate');
     Route::put('/integrations/sellermind/settings', [SellermindLinkController::class, 'updateSettings'])->name('integrations.sellermind.settings');
     Route::delete('/integrations/sellermind', [SellermindLinkController::class, 'disconnect'])->name('integrations.sellermind.disconnect');
 
@@ -127,10 +138,14 @@ Route::prefix('cabinet')->name('cabinet.')->middleware(['auth', \App\Http\Middle
     Route::get('/billing/transactions', [BillingReportController::class, 'transactions'])->name('billing.transactions');
     Route::get('/billing/charges', [BillingReportController::class, 'charges'])->name('billing.charges');
 
+    // Saved Calculations
+    Route::get('/calculations', [CalculatorResultController::class, 'index'])->name('calculations.index');
+    Route::delete('/calculations/{calculation}', [CalculatorResultController::class, 'destroy'])->name('calculations.destroy');
+
     // Profile
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->middleware('throttle:5,1')->name('profile.password');
     Route::put('/profile/locale', [ProfileController::class, 'updateLocale'])->name('profile.locale');
     Route::post('/profile/switch-company/{company}', [ProfileController::class, 'switchCompany'])->name('profile.switch-company');
 });
@@ -219,7 +234,9 @@ Route::prefix('{locale}')->middleware(SetLocale::class)->group(function () {
     Route::get('/pricing', [PricingController::class, 'index'])->name('pricing');
     Route::get('/calculator', [CalculatorController::class, 'index'])->name('calculator');
     Route::post('/calculator', [CalculatorController::class, 'calculate'])->name('calculator.calculate');
+    Route::post('/calculator/send-email', [CalculatorController::class, 'sendResults'])->name('calculator.send-email')->middleware('throttle:5,1');
     Route::post('/calculator/clear-history', [CalculatorController::class, 'clearHistory'])->name('calculator.clear-history');
+    Route::post('/calculator/save', [CalculatorController::class, 'saveResult'])->name('calculator.save')->middleware('auth');
     
     // Content Pages
     Route::get('/sla', [PageController::class, 'sla'])->name('sla');
@@ -235,6 +252,6 @@ Route::prefix('{locale}')->middleware(SetLocale::class)->group(function () {
 // Payment Gateway Callbacks (without CSRF protection)
 use App\Http\Controllers\Payment\PaymentController;
 
-Route::post('/payment/click', [PaymentController::class, 'clickCallback'])->name('payment.click.callback');
+Route::post('/payment/click', [PaymentController::class, 'clickCallback'])->middleware('throttle:30,1')->name('payment.click.callback');
 Route::get('/payment/click/return', [PaymentController::class, 'clickReturn'])->name('payment.click.return');
-Route::post('/payment/payme', [PaymentController::class, 'paymeCallback'])->name('payment.payme.callback');
+Route::post('/payment/payme', [PaymentController::class, 'paymeCallback'])->middleware('throttle:30,1')->name('payment.payme.callback');

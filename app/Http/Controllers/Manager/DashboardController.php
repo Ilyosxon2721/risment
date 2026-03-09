@@ -90,6 +90,7 @@ class DashboardController extends Controller
         // Recent tasks
         $recentTasks = ManagerTask::forCompany($companyId)
             ->with('creator')
+            ->withSum('billingItems', 'amount')
             ->orderByDesc('created_at')
             ->limit(10)
             ->get();

@@ -5,23 +5,23 @@
 @section('content')
 <div class="mb-8">
     <a href="{{ route('cabinet.billing.report') }}" class="text-brand hover:underline text-body-s">&larr; {{ __('Back to Billing') }}</a>
-    <h1 class="text-h1 font-heading mt-4">{{ __('Начисления за доп. услуги') }}</h1>
+    <h1 class="text-xl sm:text-h1 font-heading mt-4">{{ __('Начисления за доп. услуги') }}</h1>
 </div>
 
 {{-- Filters --}}
 <div class="card mb-6">
-    <form method="GET" class="flex flex-wrap gap-4 items-end">
-        <div>
+    <form method="GET" class="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 items-stretch sm:items-end">
+        <div class="w-full sm:w-auto">
             <label class="block text-body-s text-text-muted mb-1">{{ __('Период') }}</label>
-            <select name="period" class="form-select" onchange="this.form.submit()">
+            <select name="period" class="input w-full sm:w-auto" onchange="this.form.submit()">
                 @foreach($periods as $value => $label)
                     <option value="{{ $value }}" {{ $period === $value ? 'selected' : '' }}>{{ $label }}</option>
                 @endforeach
             </select>
         </div>
-        <div>
+        <div class="w-full sm:w-auto">
             <label class="block text-body-s text-text-muted mb-1">{{ __('Категория') }}</label>
-            <select name="scope" class="form-select" onchange="this.form.submit()">
+            <select name="scope" class="input w-full sm:w-auto" onchange="this.form.submit()">
                 <option value="all">{{ __('Все категории') }}</option>
                 @foreach($scopeOptions as $value => $label)
                     <option value="{{ $value }}" {{ $scopeFilter === $value ? 'selected' : '' }}>{{ $label }}</option>
@@ -32,7 +32,7 @@
 </div>
 
 {{-- Summary by Scope --}}
-<div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
     @foreach($summary['by_scope'] as $scope => $data)
         <div class="card text-center {{ $data['total'] > 0 ? '' : 'opacity-50' }}">
             <div class="text-body-s text-text-muted mb-1">{{ $data['label'] }}</div>
@@ -46,9 +46,9 @@
 
 {{-- Grand Total --}}
 <div class="card mb-6 bg-brand/5 border-brand">
-    <div class="flex justify-between items-center">
-        <span class="text-h3">{{ __('Итого за период') }}:</span>
-        <span class="text-h2 font-bold text-brand">{{ number_format($summary['grand_total'], 0, '', ' ') }} {{ __('сум') }}</span>
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+        <span class="text-lg sm:text-h3">{{ __('Итого за период') }}:</span>
+        <span class="text-xl sm:text-h2 font-bold text-brand">{{ number_format($summary['grand_total'], 0, '', ' ') }} {{ __('сум') }}</span>
     </div>
 </div>
 

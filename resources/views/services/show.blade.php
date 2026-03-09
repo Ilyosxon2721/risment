@@ -13,31 +13,31 @@
             <span class="text-white/60">/</span>
             <span>{{ $service->{'title_' . app()->getLocale()} }}</span>
         </div>
-        <h1 class="text-h1 font-heading">{{ $service->{'title_' . app()->getLocale()} }}</h1>
+        <h1 class="text-2xl sm:text-h1 font-heading">{{ $service->{'title_' . app()->getLocale()} }}</h1>
     </div>
 </section>
 
 <!-- Service Content -->
-<section class="py-16">
+<section class="py-12 sm:py-16">
     <div class="container-risment">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 sm:gap-12">
             <!-- Main Content -->
             <div class="lg:col-span-2">
                 <div class="prose max-w-none">
-                    {!! $service->{'content_' . app()->getLocale()} !!}
+                    {!! strip_tags($service->{'content_' . app()->getLocale()}, '<p><br><h1><h2><h3><h4><h5><h6><ul><ol><li><a><strong><em><b><i><span><div><table><thead><tbody><tr><th><td><img><blockquote><hr><pre><code>') !!}
                 </div>
                 
                 <!-- CTA -->
-                <div class="mt-12 p-8 bg-bg-soft rounded-card">
+                <div class="mt-8 sm:mt-12 p-6 sm:p-8 bg-bg-soft rounded-card">
                     <h3 class="text-h3 font-heading mb-4">{{ __('Ready to get started?') }}</h3>
                     <p class="text-body-m text-text-muted mb-6">
                         {{ __('Calculate your fulfillment costs or contact us for a consultation') }}
                     </p>
-                    <div class="flex gap-4">
-                        <a href="{{ route('calculator', ['locale' => app()->getLocale()]) }}" class="btn btn-primary">
+                    <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                        <a href="{{ route('calculator', ['locale' => app()->getLocale()]) }}" class="btn btn-primary min-h-[44px] text-center">
                             {{ __('Calculate Cost') }}
                         </a>
-                        <a href="{{ route('contacts', ['locale' => app()->getLocale()]) }}" class="btn btn-secondary">
+                        <a href="{{ route('contacts', ['locale' => app()->getLocale()]) }}" class="btn btn-secondary min-h-[44px] text-center">
                             {{ __('Contact Us') }}
                         </a>
                     </div>
@@ -96,9 +96,9 @@
 </section>
 
 <!-- All Services -->
-<section class="py-16 bg-bg-soft">
+<section class="py-12 sm:py-16 bg-bg-soft">
     <div class="container-risment">
-        <h2 class="text-h2 font-heading text-center mb-8">{{ __('All Marketplaces') }}</h2>
+        <h2 class="text-xl sm:text-h2 font-heading text-center mb-8">{{ __('All Marketplaces') }}</h2>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             @php
                 $marketplaces = [

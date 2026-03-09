@@ -3,12 +3,14 @@
 @section('title', __('Task') . ' #' . $task->id)
 
 @section('content')
-<div class="mb-8 flex items-center gap-4">
-    <a href="{{ route('manager.tasks.index') }}" class="text-brand hover:underline">&larr; {{ __('Back') }}</a>
-    <h2 class="text-h2 font-heading">{{ __('Task') }} #{{ $task->id }}</h2>
-    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-{{ $task->status_color }}-100 text-{{ $task->status_color }}-800">
-        {{ $task->status_label }}
-    </span>
+<div class="mb-8">
+    <a href="{{ route('manager.tasks.index') }}" class="text-brand hover:underline text-body-s mb-4 inline-block">&larr; {{ __('Back') }}</a>
+    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+        <h2 class="text-xl sm:text-h2 font-heading">{{ __('Task') }} #{{ $task->id }}</h2>
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-{{ $task->status_color }}-100 text-{{ $task->status_color }}-800">
+            {{ $task->status_label }}
+        </span>
+    </div>
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">

@@ -4,12 +4,12 @@
 
 @section('content')
 <div class="mb-8">
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-            <h1 class="text-h1 font-heading">{{ __('Products') }}</h1>
+            <h1 class="text-xl sm:text-h1 font-heading">{{ __('Products') }}</h1>
             <p class="text-body-m text-text-muted mt-2">{{ __('Manage your product catalog') }}</p>
         </div>
-        <a href="{{ route('cabinet.products.create') }}" class="btn btn-primary">
+        <a href="{{ route('cabinet.products.create') }}" class="btn btn-primary w-full sm:w-auto text-center min-h-[44px]">
             + {{ __('Add Product') }}
         </a>
     </div>
@@ -17,14 +17,14 @@
 
 <!-- Filters -->
 <div class="card mb-6">
-    <form action="{{ route('cabinet.skus.index') }}" method="GET" class="flex flex-wrap gap-4 items-end">
-        <div class="flex-1 min-w-[200px]">
+    <form action="{{ route('cabinet.skus.index') }}" method="GET" class="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 items-stretch sm:items-end">
+        <div class="flex-1 min-w-0">
             <label class="block text-body-s font-semibold mb-2">{{ __('Search') }}</label>
-            <input type="text" name="search" value="{{ request('search') }}" 
+            <input type="text" name="search" value="{{ request('search') }}"
                    placeholder="{{ __('SKU, barcode, or title...') }}"
                    class="input w-full">
         </div>
-        <div class="w-40">
+        <div class="w-full sm:w-40">
             <label class="block text-body-s font-semibold mb-2">{{ __('Status') }}</label>
             <select name="status" class="input w-full">
                 <option value="">{{ __('All') }}</option>
@@ -32,14 +32,12 @@
                 <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>{{ __('Inactive') }}</option>
             </select>
         </div>
-        <div>
-            <button type="submit" class="btn btn-secondary">{{ __('Filter') }}</button>
+        <div class="flex gap-2">
+            <button type="submit" class="btn btn-secondary min-h-[44px] flex-1 sm:flex-none">{{ __('Filter') }}</button>
+            @if(request()->hasAny(['search', 'status']))
+            <a href="{{ route('cabinet.skus.index') }}" class="btn btn-ghost min-h-[44px] flex-1 sm:flex-none text-center">{{ __('Clear') }}</a>
+            @endif
         </div>
-        @if(request()->hasAny(['search', 'status']))
-        <div>
-            <a href="{{ route('cabinet.skus.index') }}" class="btn btn-ghost">{{ __('Clear') }}</a>
-        </div>
-        @endif
     </form>
 </div>
 
@@ -68,7 +66,8 @@
                             @if($sku->photo_path)
                             <img src="{{ asset('storage/' . $sku->photo_path) }}"
                                  alt="{{ $sku->title }}"
-                                 class="w-12 h-12 rounded-btn object-cover">
+                                 class="w-12 h-12 rounded-btn object-cover"
+                                 loading="lazy" decoding="async">
                             @else
                             <div class="w-12 h-12 rounded-btn bg-bg-soft flex items-center justify-center">
                                 <svg class="w-6 h-6 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">

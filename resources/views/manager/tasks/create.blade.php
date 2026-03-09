@@ -4,13 +4,13 @@
 
 @section('content')
 <div class="mb-8">
-    <h2 class="text-h2 font-heading">{{ __('Add task') }}</h2>
+    <h2 class="text-xl sm:text-h2 font-heading">{{ __('Add task') }}</h2>
     <p class="text-text-muted mt-1">{{ __('Record a completed warehouse operation') }}</p>
 </div>
 
 @include('components.offline-form-warning')
 
-<div class="bg-white rounded-card border border-brand-border p-6 max-w-2xl">
+<div class="bg-white rounded-card border border-brand-border p-4 sm:p-6 max-w-2xl">
     <form method="POST" action="{{ route('manager.tasks.store') }}">
         @csrf
 
@@ -68,7 +68,7 @@
 
             <div id="manual_shipment_fields" class="{{ $shipments->count() > 0 ? 'hidden' : '' }} space-y-4 pt-4 border-t border-brand-border/50">
                 <p class="text-body-s text-text-muted">{{ __('Manual input (if order not in system):') }}</p>
-                <div class="grid grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
                         <label class="block text-body-s font-semibold mb-2">{{ __('Unit count') }} *</label>
                         <input type="number" name="items_count" class="input w-full" min="1" value="{{ old('items_count') }}" placeholder="5">
@@ -129,7 +129,7 @@
         <div id="fields_shipping" class="hidden space-y-4 mb-6 p-4 bg-bg-soft rounded-card">
             <h4 class="font-semibold">🚚 {{ __('Delivery data') }}</h4>
             <p class="text-body-s text-text-muted mb-3">{{ __('Specify quantity for each size category:') }}</p>
-            <div class="grid grid-cols-4 gap-4">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <div>
                     <label class="block text-body-s font-semibold mb-2">MICRO (≤30 {{ __('cm') }})</label>
                     <input type="number" name="delivery_micro" class="input w-full" min="0" value="{{ old('delivery_micro', 0) }}">
@@ -192,13 +192,13 @@
             @error('comment') <p class="text-error text-body-s mt-1">{{ $message }}</p> @enderror
         </div>
 
-        <div class="flex gap-4">
-            <button type="submit" class="btn-brand px-6 py-3 rounded-btn text-white font-semibold">
-                {{ __('Save task') }}
-            </button>
-            <a href="{{ route('manager.tasks.index') }}" class="px-6 py-3 rounded-btn border border-brand-border hover:bg-bg-soft font-semibold">
+        <div class="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4">
+            <a href="{{ route('manager.tasks.index') }}" class="btn btn-secondary min-h-[44px] text-center">
                 {{ __('Cancel') }}
             </a>
+            <button type="submit" class="btn btn-primary min-h-[44px]">
+                {{ __('Save task') }}
+            </button>
         </div>
     </form>
 </div>

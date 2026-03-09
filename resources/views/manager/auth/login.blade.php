@@ -15,7 +15,7 @@
                 <p class="text-body-m text-text-muted mt-2">{{ __('Manager Panel') }}</p>
             </div>
 
-            <div class="bg-white rounded-card border border-brand-border p-8">
+            <div class="bg-white rounded-card border border-brand-border p-6 sm:p-8">
                 <h2 class="text-h3 font-heading text-brand-dark mb-6 text-center">{{ __('System Login') }}</h2>
 
                 @if(session('status'))
@@ -53,7 +53,7 @@
                         <label for="remember" class="ml-2 text-body-s text-brand-dark">{{ __('Remember me') }}</label>
                     </div>
 
-                    <button type="submit" class="btn btn-primary w-full text-body-l font-semibold py-3">
+                    <button type="submit" class="btn btn-primary w-full text-body-l font-semibold py-3 min-h-[44px]">
                         {{ __('Sign in') }}
                     </button>
                 </form>

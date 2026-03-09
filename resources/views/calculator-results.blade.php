@@ -1,6 +1,6 @@
         @if(isset($result))
         <div class="card bg-bg-soft">
-            <h2 class="text-h2 font-heading mb-6 text-center">Расчёт стоимости</h2>
+            <h2 class="text-xl sm:text-h2 font-heading mb-6 text-center">Расчёт стоимости</h2>
             
             <!-- All Plans Comparison -->
             <div class="mb-8">
@@ -67,27 +67,27 @@
             <div>
                 <h3 class="text-h3 font-heading mb-4">Детализация разового тарифа</h3>
                 
-                <div class="bg-white rounded-btn p-6 space-y-3">
-                    <div class="flex justify-between items-center">
+                <div class="bg-white rounded-btn p-4 sm:p-6 space-y-3">
+                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1">
                         <span>Pick&Pack ({{ $result['usage']['shipments'] }} заказов):</span>
                         <span class="font-semibold">{{ number_format($result['per_item_total']['pick_pack'], 0, '', ' ') }} сум</span>
                     </div>
-                    
-                    <div class="flex justify-between items-center">
+
+                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1">
                         <span>Доставка FBS {{ strtoupper($result['usage']['delivery_size']) }} ({{ $result['usage']['shipments'] }} × {{ number_format($result['per_item_total']['delivery_rate'], 0, '', ' ') }}):</span>
                         <span class="font-semibold">{{ number_format($result['per_item_total']['delivery'], 0, '', ' ') }} сум</span>
                     </div>
-                    
-                    <div class="flex justify-between items-center">
+
+                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1">
                         <span>Хранение ({{ $result['usage']['storage_boxes'] }} коробов + {{ $result['usage']['storage_bags'] }} мешков):</span>
                         <span class="font-semibold">{{ number_format($result['per_item_total']['storage'], 0, '', ' ') }} сум</span>
                     </div>
-                    
-                    <div class="flex justify-between items-center">
+
+                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1">
                         <span>Приёмка ({{ $result['usage']['inbound_boxes'] }} коробов):</span>
                         <span class="font-semibold">{{ number_format($result['per_item_total']['inbound'], 0, '', ' ') }} сум</span>
                     </div>
-                    
+
                     <div class="border-t border-brand-border pt-3 flex justify-between items-center">
                         <span class="text-h4 font-heading">Итого:</span>
                         <span class="text-h3 text-brand">{{ number_format($result['per_item_total']['total'], 0, '', ' ') }}</span>

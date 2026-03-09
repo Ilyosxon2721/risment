@@ -4,14 +4,14 @@
 
 @section('content')
 <div class="mb-8">
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-            <h1 class="text-h1 font-heading">{{ __('Shipment') }} #{{ $shipment->id }}</h1>
+            <h1 class="text-xl sm:text-h1 font-heading">{{ __('Shipment') }} #{{ $shipment->id }}</h1>
             <p class="text-body-m text-text-muted mt-2">
                 {{ __(ucfirst($shipment->marketplace)) }} → {{ $shipment->warehouse_name }}
             </p>
         </div>
-        <a href="{{ route('cabinet.shipments.index') }}" class="btn btn-ghost">
+        <a href="{{ route('cabinet.shipments.index') }}" class="btn btn-ghost min-h-[44px]">
             ← {{ __('Back') }}
         </a>
     </div>
@@ -79,8 +79,8 @@
         <div class="card">
             <h2 class="text-h3 font-heading mb-6">{{ __('Items') }}</h2>
             
-            <div class="overflow-x-auto">
-                <table class="w-full">
+            <div class="table-responsive relative">
+                <table class="w-full responsive-table">
                     <thead class="bg-bg-soft">
                         <tr>
                             <th class="px-4 py-3 text-left text-body-s font-semibold">{{ __('SKU') }}</th>
@@ -91,9 +91,9 @@
                     <tbody>
                         @foreach($shipment->items as $item)
                         <tr class="border-t border-brand-border">
-                            <td class="px-4 py-3 font-mono text-body-s">{{ $item->sku->sku }}</td>
-                            <td class="px-4 py-3">{{ $item->sku->name }}</td>
-                            <td class="px-4 py-3 text-right font-semibold">{{ number_format($item->qty) }}</td>
+                            <td class="px-4 py-3 font-mono text-body-s" data-label="{{ __('SKU') }}">{{ $item->sku->sku }}</td>
+                            <td class="px-4 py-3" data-label="{{ __('Name') }}">{{ $item->sku->name }}</td>
+                            <td class="px-4 py-3 text-right font-semibold" data-label="{{ __('Quantity') }}">{{ number_format($item->qty) }}</td>
                         </tr>
                         @endforeach
                     </tbody>

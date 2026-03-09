@@ -4,12 +4,12 @@
 
 @section('content')
 <div class="mb-8">
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-            <h1 class="text-h1 font-heading">{{ __('Add Product') }}</h1>
+            <h1 class="text-xl sm:text-h1 font-heading">{{ __('Add Product') }}</h1>
             <p class="text-body-m text-text-muted mt-2">{{ __('Create a new product in your catalog') }}</p>
         </div>
-        <a href="{{ route('cabinet.skus.index') }}" class="btn btn-secondary">
+        <a href="{{ route('cabinet.skus.index') }}" class="btn btn-secondary min-h-[44px]">
             ← {{ __('Back') }}
         </a>
     </div>

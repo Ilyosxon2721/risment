@@ -5,7 +5,7 @@
 @section('content')
 <section class="py-16">
     <div class="container-risment max-w-4xl">
-        <h1 class="text-h1 font-heading text-center mb-12">
+        <h1 class="text-2xl sm:text-h1 font-heading text-center mb-8 sm:mb-12">
 {{ __('SLA and Regulations') }}
         </h1>
         
@@ -15,7 +15,7 @@
 {{ __('Processing Times') }}
                 </h2>
                 <ul class="space-y-3">
-                    <li class="flex justify-between items-center p-3 bg-bg-soft rounded-btn">
+                    <li class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-1 p-3 bg-bg-soft rounded-btn">
                         <span>
 {{ __('Goods Receiving') }}
                         </span>
@@ -23,7 +23,7 @@
 {{ __('1-2 business days') }}
                         </span>
                     </li>
-                    <li class="flex justify-between items-center p-3 bg-bg-soft rounded-btn">
+                    <li class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-1 p-3 bg-bg-soft rounded-btn">
                         <span>
 {{ __('FBS/DBS Order Assembly') }}
                         </span>
@@ -31,7 +31,7 @@
 {{ __('Same day') }}
                         </span>
                     </li>
-                    <li class="flex justify-between items-center p-3 bg-bg-soft rounded-btn">
+                    <li class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-1 p-3 bg-bg-soft rounded-btn">
                         <span>
 {{ __('FBO Shipment Preparation') }}
                         </span>
@@ -82,7 +82,7 @@
                 </ul>
             </div>
             
-            <div class="card gradient-brand text-white p-8">
+            <div class="card gradient-brand text-white p-6 sm:p-8">
                 <h3 class="text-h3 font-heading mb-4">
 {{ __('EDBS Features') }}
                 </h3>

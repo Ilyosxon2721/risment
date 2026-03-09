@@ -195,37 +195,37 @@
         <h3 class="text-h4 font-heading">{{ __('Recent tasks') }}</h3>
         <a href="{{ route('manager.tasks.index') }}" class="text-brand hover:underline text-body-s">{{ __('All tasks') }} →</a>
     </div>
-    <div class="overflow-x-auto">
-        <table class="w-full">
+    <div class="table-responsive relative">
+        <table class="w-full responsive-table">
             <thead class="bg-bg-soft">
                 <tr>
-                    <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">{{ __('Date') }}</th>
-                    <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">{{ __('Type') }}</th>
-                    <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">{{ __('Source') }}</th>
-                    <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">{{ __('Status') }}</th>
-                    <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">{{ __('Charged') }}</th>
-                    <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted"></th>
+                    <th class="px-4 py-3 text-left text-body-s font-semibold text-text-muted">{{ __('Date') }}</th>
+                    <th class="px-4 py-3 text-left text-body-s font-semibold text-text-muted">{{ __('Type') }}</th>
+                    <th class="px-4 py-3 text-left text-body-s font-semibold text-text-muted">{{ __('Source') }}</th>
+                    <th class="px-4 py-3 text-left text-body-s font-semibold text-text-muted">{{ __('Status') }}</th>
+                    <th class="px-4 py-3 text-left text-body-s font-semibold text-text-muted">{{ __('Charged') }}</th>
+                    <th class="px-4 py-3 text-left text-body-s font-semibold text-text-muted"></th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-brand-border">
                 @forelse($recentTasks as $task)
                 <tr class="hover:bg-bg-soft">
-                    <td class="px-6 py-4 text-body-s">{{ $task->task_date->format('d.m.Y') }}</td>
-                    <td class="px-6 py-4 text-body-s">{{ $task->task_type_label }}</td>
-                    <td class="px-6 py-4 text-body-s">{{ $task->source_label }}</td>
-                    <td class="px-6 py-4">
+                    <td class="px-4 py-4 text-body-s" data-label="{{ __('Date') }}">{{ $task->task_date->format('d.m.Y') }}</td>
+                    <td class="px-4 py-4 text-body-s" data-label="{{ __('Type') }}">{{ $task->task_type_label }}</td>
+                    <td class="px-4 py-4 text-body-s" data-label="{{ __('Source') }}">{{ $task->source_label }}</td>
+                    <td class="px-4 py-4" data-label="{{ __('Status') }}">
                         <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-{{ $task->status_color }}-100 text-{{ $task->status_color }}-800">
                             {{ $task->status_label }}
                         </span>
                     </td>
-                    <td class="px-6 py-4 text-body-s font-semibold">{{ number_format($task->total_billed, 0, '', ' ') }} UZS</td>
-                    <td class="px-6 py-4">
-                        <a href="{{ route('manager.tasks.show', $task) }}" class="text-brand hover:underline text-body-s">{{ __('Details') }}</a>
+                    <td class="px-4 py-4 text-body-s font-semibold" data-label="{{ __('Charged') }}">{{ number_format($task->total_billed, 0, '', ' ') }} UZS</td>
+                    <td class="px-4 py-4" data-label="">
+                        <a href="{{ route('manager.tasks.show', $task) }}" class="text-brand hover:underline text-body-s min-h-[44px] inline-flex items-center">{{ __('Details') }}</a>
                     </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="px-6 py-8 text-center text-text-muted">{{ __('No tasks yet') }}</td>
+                    <td colspan="6" class="px-4 py-8 text-center text-text-muted">{{ __('No tasks yet') }}</td>
                 </tr>
                 @endforelse
             </tbody>

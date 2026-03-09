@@ -15,17 +15,17 @@ $alpineData = [
 ">
     <!-- Toggle -->
     <div class="flex justify-center mb-6">
-        <div class="inline-flex bg-bg-soft rounded-btn p-1">
-            <button 
+        <div class="inline-flex bg-bg-soft rounded-btn p-1 w-full sm:w-auto">
+            <button
                 @click="marketplaceGroup = 'uzum'"
                 :class="marketplaceGroup === 'uzum' ? 'bg-brand text-white' : 'text-text-muted hover:text-text'"
-                class="px-8 py-3 rounded-btn transition font-semibold text-body-m">
+                class="flex-1 sm:flex-none px-4 sm:px-8 py-3 rounded-btn transition font-semibold text-body-m min-h-[44px]">
                 Uzum Market
             </button>
-            <button 
+            <button
                 @click="marketplaceGroup = 'complex'"
                 :class="marketplaceGroup === 'complex' ? 'bg-brand text-white' : 'text-text-muted hover:text-text'"
-                class="px-8 py-3 rounded-btn transition font-semibold text-body-m">
+                class="flex-1 sm:flex-none px-4 sm:px-8 py-3 rounded-btn transition font-semibold text-body-m min-h-[44px]">
                 WB / Ozon / Yandex
             </button>
         </div>
@@ -115,7 +115,7 @@ $alpineData = [
                     </template>
                 </div>
                 
-                <a :href="'{{ route('calculators.marketplace', app()->getLocale()) }}'" class="btn btn-secondary w-full">
+                <a :href="'{{ route('calculators.marketplace', app()->getLocale()) }}'" class="btn btn-secondary w-full min-h-[44px]">
                     Рассчитать
                 </a>
             </div>

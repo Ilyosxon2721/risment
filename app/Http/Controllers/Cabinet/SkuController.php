@@ -33,7 +33,7 @@ class SkuController extends Controller
             $query->where('is_active', $request->status === 'active');
         }
         
-        $skus = $query->orderBy('created_at', 'desc')->paginate(15);
+        $skus = $query->with('inventory')->orderBy('created_at', 'desc')->paginate(15);
         
         return view('cabinet.skus.index', compact('skus'));
     }

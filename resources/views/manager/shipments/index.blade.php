@@ -3,12 +3,12 @@
 @section('title', __('Shipments'))
 
 @section('content')
-<div class="flex justify-between items-center mb-8">
-    <h2 class="text-h2 font-heading">{{ __('Client shipments') }}</h2>
+<div class="mb-8">
+    <h2 class="text-xl sm:text-h2 font-heading">{{ __('Client shipments') }}</h2>
 </div>
 
 <!-- Stats -->
-<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
     <div class="bg-white rounded-card border border-brand-border p-4">
         <div class="text-body-s text-text-muted">{{ __('Total') }}</div>
         <div class="text-h3 font-heading mt-1">{{ number_format($stats['total']) }}</div>
@@ -28,9 +28,9 @@
 </div>
 
 <!-- Filters -->
-<div class="flex gap-4 mb-6 flex-wrap">
-    <form method="GET" class="flex gap-4 flex-wrap">
-        <select name="status" onchange="this.form.submit()" class="input">
+<div class="mb-6">
+    <form method="GET" class="flex flex-col sm:flex-row gap-3 sm:gap-4 flex-wrap">
+        <select name="status" onchange="this.form.submit()" class="input w-full sm:w-auto">
             <option value="">{{ __('All statuses') }}</option>
             <option value="draft" {{ request('status') === 'draft' ? 'selected' : '' }}>{{ __('Draft') }}</option>
             <option value="submitted" {{ request('status') === 'submitted' ? 'selected' : '' }}>{{ __('Submitted') }}</option>
@@ -40,7 +40,7 @@
             <option value="delivered" {{ request('status') === 'delivered' ? 'selected' : '' }}>{{ __('Delivered') }}</option>
             <option value="cancelled" {{ request('status') === 'cancelled' ? 'selected' : '' }}>{{ __('Cancelled') }}</option>
         </select>
-        <select name="marketplace" onchange="this.form.submit()" class="input">
+        <select name="marketplace" onchange="this.form.submit()" class="input w-full sm:w-auto">
             <option value="">{{ __('All marketplaces') }}</option>
             <option value="uzum" {{ request('marketplace') === 'uzum' ? 'selected' : '' }}>Uzum</option>
             <option value="wb" {{ request('marketplace') === 'wb' ? 'selected' : '' }}>Wildberries</option>

@@ -14,14 +14,14 @@
 </div>
 
 <div class="mb-8">
-    <h1 class="text-h1 font-heading">{{ __('integrations.sellermind_page_title') }}</h1>
+    <h1 class="text-xl sm:text-h1 font-heading">{{ __('integrations.sellermind_page_title') }}</h1>
     <p class="text-body-m text-text-muted mt-2">{{ __('integrations.sellermind_page_subtitle') }}</p>
 </div>
 
 @if($link && $link->isActive())
     <!-- Active Connection -->
     <div class="card mb-8 border-2 border-success">
-        <div class="flex justify-between items-start">
+        <div class="flex flex-col sm:flex-row justify-between items-start gap-4">
             <div>
                 <div class="flex items-center gap-3 mb-4">
                     <div class="w-3 h-3 rounded-full bg-success animate-pulse"></div>
@@ -128,15 +128,15 @@
             </ol>
         </div>
 
-        <div class="mt-6 flex items-center gap-4">
+        <div class="mt-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
             <form method="POST" action="{{ route('cabinet.integrations.sellermind.disconnect') }}">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="btn btn-outline text-text-muted">{{ __('integrations.cancel') }}</button>
+                <button type="submit" class="btn btn-outline text-text-muted min-h-[44px] w-full sm:w-auto">{{ __('integrations.cancel') }}</button>
             </form>
             <form method="POST" action="{{ route('cabinet.integrations.sellermind.regenerate') }}">
                 @csrf
-                <button type="submit" class="btn btn-outline">{{ __('integrations.regenerate_token') }}</button>
+                <button type="submit" class="btn btn-outline min-h-[44px] w-full sm:w-auto">{{ __('integrations.regenerate_token') }}</button>
             </form>
         </div>
     </div>

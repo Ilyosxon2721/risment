@@ -5,8 +5,8 @@ const IMAGES_CACHE = `risment-images-${CACHE_VERSION}`;
 const API_CACHE = `risment-api-${CACHE_VERSION}`;
 
 const PRECACHE_URLS = [
-  '/offline.html',
-  '/manifest.webmanifest',
+  '/offline',
+  '/manifest.json',
 ];
 
 // Install: precache essential resources
@@ -82,7 +82,7 @@ self.addEventListener('fetch', (event) => {
   }
 
   // Strategy: Manifest -> Cache First
-  if (url.pathname === '/manifest.webmanifest') {
+  if (url.pathname === '/manifest.json' || url.pathname === '/manifest.webmanifest') {
     event.respondWith(cacheFirst(request, STATIC_CACHE));
     return;
   }
@@ -148,7 +148,7 @@ async function networkFirstWithOfflineFallback(request, cacheName) {
     if (cached) return cached;
 
     // Return offline page
-    const offlinePage = await caches.match('/offline.html');
+    const offlinePage = await caches.match('/offline');
     return offlinePage || new Response('Offline', {
       status: 503,
       headers: { 'Content-Type': 'text/html' },

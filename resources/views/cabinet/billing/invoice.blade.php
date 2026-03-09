@@ -9,14 +9,14 @@
 </div>
 
 <div class="card mb-8">
-    <div class="flex justify-between items-start mb-6">
+    <div class="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6">
         <div>
             <div class="text-body-s text-text-muted">{{ __('Period') }}</div>
             <div class="text-h4 font-heading">
                 {{ $billingInvoice->period_start->format('d.m.Y') }} &mdash; {{ $billingInvoice->period_end->format('d.m.Y') }}
             </div>
         </div>
-        <div class="text-right">
+        <div class="sm:text-right">
             <span class="badge {{ $billingInvoice->getStatusBadgeClass() }}">{{ $billingInvoice->getStatusLabel() }}</span>
             <div class="text-body-s text-text-muted mt-2">{{ __('Issued') }}: {{ $billingInvoice->issue_date->format('d.m.Y') }}</div>
             <div class="text-body-s text-text-muted">{{ __('Due') }}: {{ $billingInvoice->due_date->format('d.m.Y') }}</div>
@@ -24,7 +24,8 @@
     </div>
 
     <!-- Invoice Lines -->
-    <table class="w-full">
+    <div class="table-responsive relative">
+    <table class="w-full responsive-table">
         <thead>
             <tr class="border-b border-brand-border text-left text-body-s text-text-muted">
                 <th class="pb-3">{{ __('Service') }}</th>
@@ -37,13 +38,13 @@
         <tbody>
             @foreach($billingInvoice->lines as $line)
             <tr class="border-b border-brand-border/50">
-                <td class="py-3">
+                <td class="py-3" data-label="{{ __('Service') }}">
                     <span class="badge badge-secondary">{{ $line->getServiceTypeLabel() }}</span>
                 </td>
-                <td class="py-3">{{ $line->description }}</td>
-                <td class="py-3 text-right">{{ number_format($line->quantity) }}</td>
-                <td class="py-3 text-right">{{ number_format($line->unit_price, 0, '', ' ') }}</td>
-                <td class="py-3 text-right font-semibold">{{ number_format($line->total_price, 0, '', ' ') }}</td>
+                <td class="py-3" data-label="{{ __('Description') }}">{{ $line->description }}</td>
+                <td class="py-3 text-right" data-label="{{ __('Qty') }}">{{ number_format($line->quantity) }}</td>
+                <td class="py-3 text-right" data-label="{{ __('Unit Price') }}">{{ number_format($line->unit_price, 0, '', ' ') }}</td>
+                <td class="py-3 text-right font-semibold" data-label="{{ __('Total') }}">{{ number_format($line->total_price, 0, '', ' ') }}</td>
             </tr>
             @endforeach
         </tbody>
@@ -56,5 +57,6 @@
             </tr>
         </tfoot>
     </table>
+    </div>
 </div>
 @endsection

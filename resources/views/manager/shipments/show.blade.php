@@ -42,7 +42,8 @@
         <!-- Items -->
         <div class="bg-white rounded-card border border-brand-border p-6">
             <h3 class="text-h4 font-heading mb-4">{{ __('Products') }}</h3>
-            <table class="w-full">
+            <div class="table-responsive relative">
+            <table class="w-full responsive-table">
                 <thead class="bg-bg-soft">
                     <tr>
                         <th class="px-4 py-2 text-left text-body-s font-semibold text-text-muted">SKU</th>
@@ -53,9 +54,9 @@
                 <tbody class="divide-y divide-brand-border">
                     @foreach($shipment->items as $item)
                     <tr>
-                        <td class="px-4 py-3 font-mono text-body-s">{{ $item->sku->sku ?? '-' }}</td>
-                        <td class="px-4 py-3">{{ $item->sku->name ?? __('No name') }}</td>
-                        <td class="px-4 py-3 text-right font-semibold">{{ $item->qty }}</td>
+                        <td class="px-4 py-3 font-mono text-body-s" data-label="SKU">{{ $item->sku->sku ?? '-' }}</td>
+                        <td class="px-4 py-3" data-label="{{ __('Name') }}">{{ $item->sku->name ?? __('No name') }}</td>
+                        <td class="px-4 py-3 text-right font-semibold" data-label="{{ __('Quantity') }}">{{ $item->qty }}</td>
                     </tr>
                     @endforeach
                 </tbody>
@@ -66,6 +67,7 @@
                     </tr>
                 </tfoot>
             </table>
+            </div>
         </div>
     </div>
 

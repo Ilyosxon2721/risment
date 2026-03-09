@@ -4,12 +4,12 @@
 
 @section('content')
 <div class="mb-8">
-    <h1 class="text-h1 font-heading">{{ __('Billing Report') }}</h1>
+    <h1 class="text-xl sm:text-h1 font-heading">{{ __('Billing Report') }}</h1>
     <p class="text-body-m text-text-muted mt-2">{{ __('Overview of charges, invoices, and account balance') }}</p>
 </div>
 
 <!-- Top Cards -->
-<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mb-8">
     <!-- Balance -->
     <div class="card">
         <div class="text-body-s text-text-muted mb-2">{{ __('Balance') }}</div>
@@ -108,7 +108,7 @@
 
 <!-- Charts -->
 <div class="card mb-8">
-    <div class="flex justify-between items-center mb-6">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-6">
         <h2 class="text-h3 font-heading">{{ __('Cost Trends') }}</h2>
         <span class="text-body-s text-text-muted">{{ __('Last 6 months') }}</span>
     </div>
@@ -216,24 +216,24 @@
 <div class="card">
     <h2 class="text-h3 font-heading mb-4">{{ __('SellerMind Integration') }}</h2>
     @if($sellermindLink && $sellermindLink->isActive())
-        <div class="flex items-center gap-3">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
             <div class="w-3 h-3 rounded-full bg-success"></div>
             <span class="font-semibold text-success">{{ __('Connected') }}</span>
             <span class="text-text-muted">|</span>
             <span class="text-body-s text-text-muted">{{ __('Company ID') }}: {{ $sellermindLink->sellermind_company_id }}</span>
-            <a href="{{ route('cabinet.sellermind.index') }}" class="ml-auto text-brand hover:underline text-body-s">{{ __('Manage') }} &rarr;</a>
+            <a href="{{ route('cabinet.sellermind.index') }}" class="sm:ml-auto text-brand hover:underline text-body-s">{{ __('Manage') }} &rarr;</a>
         </div>
     @elseif($sellermindLink && $sellermindLink->status === 'pending')
-        <div class="flex items-center gap-3">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
             <div class="w-3 h-3 rounded-full bg-warning animate-pulse"></div>
             <span class="font-semibold text-warning">{{ __('Pending') }}</span>
-            <a href="{{ route('cabinet.sellermind.index') }}" class="ml-auto text-brand hover:underline text-body-s">{{ __('Complete Setup') }} &rarr;</a>
+            <a href="{{ route('cabinet.sellermind.index') }}" class="sm:ml-auto text-brand hover:underline text-body-s">{{ __('Complete Setup') }} &rarr;</a>
         </div>
     @else
-        <div class="flex items-center gap-3">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
             <div class="w-3 h-3 rounded-full bg-gray-400"></div>
             <span class="text-text-muted">{{ __('Not connected') }}</span>
-            <a href="{{ route('cabinet.sellermind.index') }}" class="ml-auto text-brand hover:underline text-body-s">{{ __('Connect') }} &rarr;</a>
+            <a href="{{ route('cabinet.sellermind.index') }}" class="sm:ml-auto text-brand hover:underline text-body-s">{{ __('Connect') }} &rarr;</a>
         </div>
     @endif
 </div>

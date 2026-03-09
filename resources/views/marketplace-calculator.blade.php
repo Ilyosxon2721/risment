@@ -6,7 +6,7 @@
 <!-- Hero -->
 <section class="section bg-gradient-to-br from-brand/10 to-bg-soft">
     <div class="container-risment max-w-4xl">
-        <h1 class="text-h1 font-heading mb-4 text-center">Калькулятор управления маркетплейсом</h1>
+        <h1 class="text-2xl sm:text-h1 font-heading mb-4 text-center">Калькулятор управления маркетплейсом</h1>
         <p class="text-body-l text-text-muted text-center">
             Рассчитайте стоимость ежемесячного управления вашим аккаунтом
         </p>
@@ -34,16 +34,16 @@
                 
                 <!-- Marketplace Selection -->
                 <div class="mb-6">
-                    <div class="flex justify-between items-center mb-4">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
                         <label class="block text-body-m font-semibold">
                             Маркетплейсы (выберите 1-4)
                             <span class="text-error">*</span>
                         </label>
-                        <button 
-                            type="button" 
+                        <button
+                            type="button"
                             @click="marketplaces = ['uzum', 'wildberries', 'ozon', 'yandex']"
-                            class="btn btn-sm bg-success/10 text-success hover:bg-success/20 border-success/30">
-                            ⚡ Все 4 площадки
+                            class="btn btn-sm bg-success/10 text-success hover:bg-success/20 border-success/30 min-h-[44px]">
+                            Все 4 площадки
                         </button>
                     </div>
                     

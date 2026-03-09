@@ -5,7 +5,7 @@
 @section('content')
 <div class="mb-8">
     <a href="{{ route('cabinet.billing.report') }}" class="text-brand hover:underline text-body-s">&larr; {{ __('Back to Billing') }}</a>
-    <h1 class="text-h1 font-heading mt-4">{{ __('Transaction History') }}</h1>
+    <h1 class="text-xl sm:text-h1 font-heading mt-4">{{ __('Transaction History') }}</h1>
 </div>
 
 <div class="card">

@@ -73,4 +73,9 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->hasMany(Company::class, 'manager_user_id');
     }
+
+    public function calculatorResults()
+    {
+        return $this->hasMany(CalculatorResult::class);
+    }
 }

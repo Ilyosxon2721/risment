@@ -38,16 +38,14 @@ class PaymentController extends Controller
     public function clickReturn(Request $request)
     {
         $merchantTransId = $request->get('merchant_trans_id');
-        
+
         if ($merchantTransId) {
             return redirect()
-                ->route('cabinet.finance.invoices.show', $merchantTransId)
-                ->with('success', __('Payment completed successfully!'));
+                ->route('cabinet.finance.invoices.payment-success');
         }
-        
+
         return redirect()
-            ->route('cabinet.finance.invoices.index')
-            ->with('error', __('Payment failed'));
+            ->route('cabinet.finance.invoices.payment-failed');
     }
 
     /**

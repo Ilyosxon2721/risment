@@ -168,6 +168,11 @@ class ManagerTask extends Model
 
     public function getTotalBilledAttribute(): int
     {
+        // Use pre-loaded withSum value when available to avoid N+1 queries
+        if (array_key_exists('billing_items_sum_amount', $this->attributes)) {
+            return (int) ($this->attributes['billing_items_sum_amount'] ?? 0);
+        }
+
         return $this->billingItems()->sum('amount');
     }
 }

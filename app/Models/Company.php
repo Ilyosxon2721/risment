@@ -8,8 +8,15 @@ class Company extends Model
 {
     protected $fillable = [
         'name', 'inn', 'contact_name', 'phone', 'email', 'address', 'status', 'manager_user_id',
-        'subscription_plan_id', 'balance',
+        'subscription_plan_id', 'balance', 'telegram_chat_id', 'telegram_settings',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'telegram_settings' => 'array',
+        ];
+    }
     
     public function users()
     {

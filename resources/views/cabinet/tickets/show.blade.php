@@ -4,12 +4,12 @@
 
 @section('content')
 <div class="mb-8">
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-            <h1 class="text-h1 font-heading">{{ __('Ticket') }} #{{ $ticket->id }}</h1>
+            <h1 class="text-xl sm:text-h1 font-heading">{{ __('Ticket') }} #{{ $ticket->id }}</h1>
             <p class="text-body-m text-text-muted mt-2">{{ $ticket->subject }}</p>
         </div>
-        <a href="{{ route('cabinet.tickets.index') }}" class="btn btn-ghost">
+        <a href="{{ route('cabinet.tickets.index') }}" class="btn btn-ghost min-h-[44px]">
             ← {{ __('Back') }}
         </a>
     </div>
@@ -120,7 +120,7 @@
                             id="reply_attachments" 
                             name="attachments[]" 
                             multiple
-                            accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx,.txt,.zip"
+                            accept=".jpg,.jpeg,.png,.gif,.pdf"
                             class="block w-full text-body-s text-text-muted
                                    file:mr-4 file:py-2 file:px-3
                                    file:rounded-btn file:border-0
@@ -128,7 +128,7 @@
                                    hover:file:bg-brand-dark
                                    cursor-pointer"
                         >
-                        <p class="text-body-s text-text-muted mt-1">{{ __('Max 5 files, 10MB each') }}</p>
+                        <p class="text-body-s text-text-muted mt-1">{{ __('Max 3 files, 5MB each. Allowed: images, PDF') }}</p>
                     </div>
                     
                     <div class="flex justify-end">

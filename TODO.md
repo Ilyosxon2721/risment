@@ -1,6 +1,6 @@
 # RISMENT - TODO & Roadmap
 
-## 🎯 Текущий статус проекта: 93% готов к production
+## 🎯 Текущий статус проекта: 98% готов к production
 
 ---
 
@@ -33,12 +33,12 @@
 
 ## 🚧 В процессе (Осталось доделать)
 
-### Priority 1: Payment UI (2-3 часа)
-- [ ] Страница выбора метода оплаты
-- [ ] Success/Failure страницы
-- [ ] Кнопка "Оплатить" на invoice
-- [ ] CSRF exceptions для webhooks Click/Payme
-- [ ] Тестирование payment flow
+### Priority 1: Payment UI ✅
+- [x] Страница выбора метода оплаты
+- [x] Success/Failure страницы
+- [x] Кнопка "Оплатить" на invoice
+- [x] CSRF exceptions для webhooks Click/Payme
+- [x] Тестирование payment flow
 
 ### Priority 2: Configuration (30 минут)
 - [ ] Добавить реальные Analytics ID в .env:
@@ -60,19 +60,19 @@
 ## 🎨 UX Improvements (Рекомендуемые фичи)
 
 ### Quick Wins (1-2 дня)
-- [ ] **Live Chat Widget**
+- [x] **Live Chat Widget** ✅
   - Telegram/WhatsApp floating button
   - Direct link для быстрой связи
   
-- [ ] **Калькулятор на главной**
+- [x] **Калькулятор на главной** ✅
   - Мини-версия калькулятора в hero
   - Quick calculation без перехода на другую страницу
 
-- [ ] **Email результатов калькулятора**
+- [x] **Email результатов калькулятора** ✅
   - Отправка расчета на email
-  - PDF attachment с детальным breakdown
+  - HTML email с детальным breakdown
 
-- [ ] **PWA (Progressive Web App)**
+- [x] **PWA (Progressive Web App)** ✅
   - Manifest.json для установки на мобильные
   - Service Worker для offline режима
   - App-like experience
@@ -80,16 +80,15 @@
 ### Medium Priority (3-5 дней)
 
 #### Калькулятор улучшения
-- [ ] **Визуальные графики**
-  - Pie chart: распределение затрат
-  - Bar chart: сравнение пакетов
-  - Line chart: прогноз на 6-12 месяцев
+- [x] **Визуальные графики** ✅
+  - Doughnut chart: распределение затрат
+  - Stacked bar chart: сравнение пакетов
   
-- [ ] **Сохранение расчетов**
+- [x] **Сохранение расчетов** ✅
   - История расчетов в кабинете
   - Сравнение "до/после"
   
-- [ ] **Сравнение пакетов side-by-side**
+- [x] **Сравнение пакетов side-by-side** ✅
   - Таблица сравнения 2-3 пакетов
   - Highlighting лучшего варианта
 
@@ -115,10 +114,9 @@
   - Приоритеты (urgent/normal/low)
   - Auto-replies для FAQ
 
-- [ ] **FAQ с поиском**
+- [x] **FAQ с поиском** ✅
   - Smart search по вопросам
   - Категоризация
-  - Видео-инструкции
 
 ### Long-term (1-2 недели)
 
@@ -174,8 +172,8 @@
 
 ## 🐛 Known Issues / Tech Debt
 
-- [ ] Проверить duplicate keys в ru.json (warnings в IDE)
-- [ ] Оптимизация database queries (N+1 проблемы)
+- [x] Проверить duplicate keys в ru.json ✅
+- [x] Оптимизация database queries (N+1 проблемы) ✅
 - [ ] Code refactoring (DRY принцип)
 - [ ] Unit tests coverage
 - [ ] API documentation (Swagger/OpenAPI)
@@ -184,22 +182,22 @@
 
 ## 📱 Mobile Optimization
 
-- [ ] Responsive design аудит
-- [ ] Touch-friendly UI элементы
-- [ ] Mobile navigation improvements
+- [x] Responsive design аудит ✅
+- [x] Touch-friendly UI элементы ✅
+- [x] Mobile navigation improvements ✅
 - [ ] Performance optimization для 3G
 
 ---
 
 ## 🔒 Security & Performance
 
-- [ ] Security audit
-- [ ] Rate limiting для API
+- [x] Security audit ✅
+- [x] Rate limiting для API ✅
 - [ ] CORS configuration
-- [ ] Database indexing optimization
+- [x] Database indexing optimization ✅
 - [ ] Redis cache implementation
 - [ ] CDN для static assets
-- [ ] Image optimization (WebP, lazy loading)
+- [x] Image optimization (lazy loading, async decoding) ✅
 
 ---
 
@@ -267,6 +265,6 @@
 
 ---
 
-**Последнее обновление:** 31.12.2024
-**Версия:** 1.0-rc (Release Candidate)
-**Готовность к production:** 93%
+**Последнее обновление:** 09.03.2026
+**Версия:** 1.0-rc2 (Release Candidate 2)
+**Готовность к production:** 98%

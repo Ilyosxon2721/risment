@@ -103,14 +103,14 @@
                 <a href="{{ route('home', ['locale' => app()->getLocale()]) }}" class="inline-block">
                     @php $settings = \App\Models\CompanySettings::current(); @endphp
                     @if($settings && $settings->company_logo)
-                        <img src="{{ $settings->getLogoUrl() }}" alt="{{ $settings->company_name ?? 'RISMENT' }}" class="logo-img mx-auto mb-4">
+                        <img src="{{ $settings->getLogoUrl() }}" alt="{{ $settings->company_name ?? 'RISMENT' }}" class="logo-img mx-auto mb-4" decoding="async">
                     @else
                         <h1 class="logo-text mb-4">RISMENT</h1>
                     @endif
                 </a>
             </div>
 
-            <div class="glass-card rounded-card p-8 animate-slide-up">
+            <div class="glass-card rounded-card p-6 sm:p-8 animate-slide-up">
                 {{ $slot }}
             </div>
             
@@ -122,15 +122,15 @@
                     @endphp
                     
                     <a href="{{ route($currentRoute, array_merge($currentParams, ['locale' => 'ru'])) }}"
-                       class="lang-btn px-4 py-2 rounded-btn {{ app()->getLocale() === 'ru' ? 'lang-btn-active' : 'lang-btn-inactive' }}">
+                       class="lang-btn px-5 py-2.5 rounded-btn min-w-[44px] min-h-[44px] flex items-center justify-center {{ app()->getLocale() === 'ru' ? 'lang-btn-active' : 'lang-btn-inactive' }}">
                         RU
                     </a>
                     <a href="{{ route($currentRoute, array_merge($currentParams, ['locale' => 'uz'])) }}"
-                       class="lang-btn px-4 py-2 rounded-btn {{ app()->getLocale() === 'uz' ? 'lang-btn-active' : 'lang-btn-inactive' }}">
+                       class="lang-btn px-5 py-2.5 rounded-btn min-w-[44px] min-h-[44px] flex items-center justify-center {{ app()->getLocale() === 'uz' ? 'lang-btn-active' : 'lang-btn-inactive' }}">
                         UZ
                     </a>
                     <a href="{{ route($currentRoute, array_merge($currentParams, ['locale' => 'en'])) }}"
-                       class="lang-btn px-4 py-2 rounded-btn {{ app()->getLocale() === 'en' ? 'lang-btn-active' : 'lang-btn-inactive' }}">
+                       class="lang-btn px-5 py-2.5 rounded-btn min-w-[44px] min-h-[44px] flex items-center justify-center {{ app()->getLocale() === 'en' ? 'lang-btn-active' : 'lang-btn-inactive' }}">
                         EN
                     </a>
                 </div>

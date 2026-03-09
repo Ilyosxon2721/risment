@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="mb-8">
-    <h2 class="text-h2 font-heading">{{ __('Billing') }} — {{ $company->name }}</h2>
+    <h2 class="text-xl sm:text-h2 font-heading">{{ __('Billing') }} — {{ $company->name }}</h2>
     <p class="text-text-muted mt-1">{{ __('Period') }}: {{ now()->translatedFormat('F Y') }}</p>
 </div>
 
@@ -32,12 +32,12 @@
 </div>
 
 <!-- Grand Total -->
-<div class="bg-white rounded-card border border-brand-border p-6 mb-8 flex justify-between items-center">
+<div class="bg-white rounded-card border border-brand-border p-4 sm:p-6 mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
     <div>
         <div class="text-text-muted">{{ __('Total for period') }}</div>
         <div class="text-body-s text-text-muted">{{ $summary['item_count'] }} {{ __('charges') }}</div>
     </div>
-    <div class="text-h2 font-heading">{{ number_format($summary['grand_total'], 0, '', ' ') }} UZS</div>
+    <div class="text-xl sm:text-h2 font-heading">{{ number_format($summary['grand_total'], 0, '', ' ') }} UZS</div>
 </div>
 
 <!-- Recent Items -->

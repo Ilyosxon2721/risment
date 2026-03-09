@@ -12,7 +12,10 @@ class UpdateProductRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return auth()->check();
+        $product = $this->route('product');
+        $company = auth()->user()?->companies()?->first();
+
+        return auth()->check() && $company && $product->company_id === $company->id;
     }
 
     /**
