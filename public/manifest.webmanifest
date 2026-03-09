@@ -2,7 +2,7 @@
   "name": "Risment — Фулфилмент платформа",
   "short_name": "Risment",
   "description": "Управление складским фулфилментом",
-  "start_url": "/cabinet/dashboard",
+  "start_url": "/cabinet",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",

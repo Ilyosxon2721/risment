@@ -173,7 +173,7 @@ async function staleWhileRevalidate(request, cacheName) {
 // === Push Notifications ===
 
 self.addEventListener('push', (event) => {
-  let data = { title: 'Risment', body: 'Новое уведомление', url: '/cabinet/dashboard' };
+  let data = { title: 'Risment', body: 'Новое уведомление', url: '/cabinet' };
 
   if (event.data) {
     try {
@@ -188,7 +188,7 @@ self.addEventListener('push', (event) => {
     icon: '/icons/icon-192x192.png',
     badge: '/icons/icon-72x72.png',
     vibrate: [100, 50, 100],
-    data: { url: data.url || '/cabinet/dashboard' },
+    data: { url: data.url || '/cabinet' },
     actions: data.actions || [],
   };
 
@@ -200,7 +200,7 @@ self.addEventListener('push', (event) => {
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
 
-  const url = event.notification.data?.url || '/cabinet/dashboard';
+  const url = event.notification.data?.url || '/cabinet';
 
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
