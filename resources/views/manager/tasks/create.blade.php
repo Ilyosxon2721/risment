@@ -8,6 +8,8 @@
     <p class="text-text-muted mt-1">{{ __('Record a completed warehouse operation') }}</p>
 </div>
 
+@include('components.offline-form-warning')
+
 <div class="bg-white rounded-card border border-brand-border p-6 max-w-2xl">
     <form method="POST" action="{{ route('manager.tasks.store') }}">
         @csrf

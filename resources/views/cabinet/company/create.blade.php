@@ -9,6 +9,8 @@
         <p class="text-body-m text-text-muted mt-2">{{ __('To access the cabinet, you need to create or join a company.') }}</p>
     </div>
 
+    @include('components.offline-form-warning')
+
     <div class="card">
         <form action="{{ route('cabinet.company.store') }}" method="POST">
             @csrf

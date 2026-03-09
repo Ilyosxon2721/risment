@@ -15,6 +15,8 @@
     </div>
 </div>
 
+@include('components.offline-form-warning')
+
 <form action="{{ route('cabinet.shipments.store') }}" method="POST" x-data="shipmentForm()">
     @csrf
     

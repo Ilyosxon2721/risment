@@ -15,6 +15,8 @@
     </div>
 </div>
 
+@include('components.offline-form-warning')
+
 <form action="{{ route('cabinet.tickets.store') }}" method="POST" enctype="multipart/form-data">
     @csrf
     

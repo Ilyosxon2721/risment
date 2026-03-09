@@ -12,6 +12,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Risment">
     <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+    @if(config('webpush.vapid.public_key'))
+    <meta name="vapid-public-key" content="{{ config('webpush.vapid.public_key') }}">
+    @endif
 
     <title>@yield('title', 'Manager') - RISMENT</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
