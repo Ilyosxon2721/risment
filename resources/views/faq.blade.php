@@ -217,7 +217,7 @@
                     </svg>
                 </button>
                 <div id="faq-{{ $index }}" class="faq-answer hidden mt-4 text-body-m text-text-muted">
-                    {!! $faq['a'] !!}
+                    {!! strip_tags($faq['a'], '<p><br><a><strong><em><b><i><ul><ol><li><span>') !!}
                 </div>
             </div>
             @endforeach

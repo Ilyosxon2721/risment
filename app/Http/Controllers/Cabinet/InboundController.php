@@ -101,8 +101,13 @@ class InboundController extends Controller
             ->with('success', 'Поставка отправлена на склад');
     }
 
-    public function confirm(Inbound $inbound, InventoryService $inventoryService)
+    public function confirm(Request $request, Inbound $inbound, InventoryService $inventoryService)
     {
+        $company = $request->attributes->get('currentCompany');
+        if ($inbound->company_id !== $company->id) {
+            abort(403);
+        }
+
         if ($inbound->status !== 'completed' || !$inbound->has_discrepancies) {
             return back()->with('error', 'Эта поставка не требует подтверждения');
         }

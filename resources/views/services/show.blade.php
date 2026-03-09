@@ -24,7 +24,7 @@
             <!-- Main Content -->
             <div class="lg:col-span-2">
                 <div class="prose max-w-none">
-                    {!! $service->{'content_' . app()->getLocale()} !!}
+                    {!! strip_tags($service->{'content_' . app()->getLocale()}, '<p><br><h1><h2><h3><h4><h5><h6><ul><ol><li><a><strong><em><b><i><span><div><table><thead><tbody><tr><th><td><img><blockquote><hr><pre><code>') !!}
                 </div>
                 
                 <!-- CTA -->
