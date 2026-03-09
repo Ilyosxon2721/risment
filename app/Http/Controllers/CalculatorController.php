@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Mail\CalculatorResultMail;
+use App\Models\CalculatorResult;
 use App\Services\PricingService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
 
@@ -159,5 +161,47 @@ class CalculatorController extends Controller
 
         return redirect()->route('calculator', ['locale' => app()->getLocale()])
             ->with('success', __('Calculator history cleared'));
+    }
+
+    public function saveResult(Request $request)
+    {
+        $validated = $request->validate([
+            'micro_count' => 'required|integer|min:0',
+            'mgt_count' => 'required|integer|min:0',
+            'sgt_count' => 'required|integer|min:0',
+            'kgt_count' => 'required|integer|min:0',
+            'storage_box_days' => 'required|integer|min:0',
+            'storage_bag_days' => 'required|integer|min:0',
+            'inbound_boxes' => 'required|integer|min:0',
+            'avg_items_per_order' => 'nullable|numeric|min:1|max:10',
+            'recommended_plan' => 'nullable|string|max:255',
+            'total_cost' => 'required|integer|min:0',
+            'result_data' => 'required|string',
+            'name' => 'nullable|string|max:255',
+        ]);
+
+        $avgItemsPerOrder = $validated['avg_items_per_order'] ?? 1.0;
+
+        $calculationData = [
+            'micro_count' => $validated['micro_count'],
+            'mgt_count' => $validated['mgt_count'],
+            'sgt_count' => $validated['sgt_count'],
+            'kgt_count' => $validated['kgt_count'],
+            'storage_box_days' => $validated['storage_box_days'],
+            'storage_bag_days' => $validated['storage_bag_days'],
+            'inbound_boxes' => $validated['inbound_boxes'],
+            'avg_items_per_order' => $avgItemsPerOrder,
+        ];
+
+        CalculatorResult::create([
+            'user_id' => Auth::id(),
+            'calculation_data' => $calculationData,
+            'result_data' => json_decode($validated['result_data'], true),
+            'recommended_plan' => $validated['recommended_plan'],
+            'total_cost' => $validated['total_cost'],
+            'name' => $validated['name'],
+        ]);
+
+        return back()->with('success', __('Calculation saved successfully.'));
     }
 }

@@ -23,6 +23,7 @@ use App\Http\Controllers\Cabinet\IntegrationsController;
 use App\Http\Controllers\Cabinet\SellermindLinkController;
 use App\Http\Controllers\Cabinet\MarketplaceCredentialController;
 use App\Http\Controllers\Cabinet\BillingReportController;
+use App\Http\Controllers\Cabinet\CalculatorResultController;
 use App\Http\Middleware\SetLocale;
 use App\Http\Middleware\EnsureUserHasCompany;
 use Illuminate\Support\Facades\Route;
@@ -137,6 +138,10 @@ Route::prefix('cabinet')->name('cabinet.')->middleware(['auth', \App\Http\Middle
     Route::get('/billing/transactions', [BillingReportController::class, 'transactions'])->name('billing.transactions');
     Route::get('/billing/charges', [BillingReportController::class, 'charges'])->name('billing.charges');
 
+    // Saved Calculations
+    Route::get('/calculations', [CalculatorResultController::class, 'index'])->name('calculations.index');
+    Route::delete('/calculations/{calculation}', [CalculatorResultController::class, 'destroy'])->name('calculations.destroy');
+
     // Profile
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -231,6 +236,7 @@ Route::prefix('{locale}')->middleware(SetLocale::class)->group(function () {
     Route::post('/calculator', [CalculatorController::class, 'calculate'])->name('calculator.calculate');
     Route::post('/calculator/send-email', [CalculatorController::class, 'sendResults'])->name('calculator.send-email')->middleware('throttle:5,1');
     Route::post('/calculator/clear-history', [CalculatorController::class, 'clearHistory'])->name('calculator.clear-history');
+    Route::post('/calculator/save', [CalculatorController::class, 'saveResult'])->name('calculator.save')->middleware('auth');
     
     // Content Pages
     Route::get('/sla', [PageController::class, 'sla'])->name('sla');
