@@ -97,9 +97,14 @@ Route::prefix('cabinet')->name('cabinet.')->middleware(['auth', \App\Http\Middle
     // Finance
     Route::get('/finance', [FinanceController::class, 'index'])->name('finance.index');
     Route::get('/finance/invoices', [FinanceController::class, 'invoices'])->name('finance.invoices.index');
-    Route::get('/finance/invoices/{invoice}', [FinanceController::class, 'show'])->name('finance.invoices.show');
     Route::get('/finance/payments', [FinanceController::class, 'payments'])->name('finance.payments');
-    
+
+    // Payment result pages (must be before {invoice} wildcard)
+    Route::get('/finance/invoices/payment-success', [InvoicePaymentController::class, 'paymentSuccess'])->name('finance.invoices.payment-success');
+    Route::get('/finance/invoices/payment-failed', [InvoicePaymentController::class, 'paymentFailed'])->name('finance.invoices.payment-failed');
+
+    Route::get('/finance/invoices/{invoice}', [FinanceController::class, 'show'])->name('finance.invoices.show');
+
     // Invoice payment routes
     Route::get('/finance/invoices/{invoice}/pay', [InvoicePaymentController::class, 'pay'])->name('finance.invoices.pay');
     Route::post('/finance/invoices/{invoice}/pay/click', [InvoicePaymentController::class, 'initiateClick'])->name('finance.invoices.pay.click');

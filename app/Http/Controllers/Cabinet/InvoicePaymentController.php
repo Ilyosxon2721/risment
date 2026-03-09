@@ -85,7 +85,23 @@ class InvoicePaymentController extends Controller
             $invoice->id,
             $invoice->total
         );
-        
+
         return redirect($paymentUrl);
+    }
+
+    /**
+     * Show payment success page
+     */
+    public function paymentSuccess()
+    {
+        return view('cabinet.finance.invoices.payment-success');
+    }
+
+    /**
+     * Show payment failed page
+     */
+    public function paymentFailed()
+    {
+        return view('cabinet.finance.invoices.payment-failed');
     }
 }
