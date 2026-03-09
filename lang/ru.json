@@ -610,5 +610,8 @@
     "View": "Просмотр",
     "This invoice is already paid": "Этот счёт уже оплачен",
     "Payment completed successfully!": "Оплата завершена успешно!",
-    "Payment failed": "Оплата не удалась"
+    "Payment failed": "Оплата не удалась",
+    "Live Chat": "Чат поддержки",
+    "Close": "Закрыть",
+    "Hello! I have a question about RISMENT.": "Здравствуйте! У меня вопрос о RISMENT."
 }

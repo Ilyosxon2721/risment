@@ -47,10 +47,11 @@ return [
         'enabled' => env('TELEGRAM_ENABLED', false),
         'bot_token' => env('TELEGRAM_BOT_TOKEN'),
         'chat_id' => env('TELEGRAM_CHAT_ID'),
+        'support_url' => env('TELEGRAM_SUPPORT_URL', 'https://t.me/risment_support'),
     ],
 
     'whatsapp' => [
-        'phone' => env('WHATSAPP_PHONE', '+998901234567'),
+        'phone' => env('WHATSAPP_SUPPORT_NUMBER', '+998901234567'),
     ],
 
 ];

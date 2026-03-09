@@ -69,26 +69,27 @@
 </head>
 <body class="font-body antialiased bg-bg">
     <!-- Header -->
-    <header class="sticky top-0 z-50 bg-white border-b border-brand-border">
+    <header class="sticky top-0 z-50 bg-white border-b border-brand-border" x-data="{ mobileMenuOpen: false }">
         <div class="container-risment flex justify-between items-center py-4">
-            <a href="{{ route('home', ['locale' => app()->getLocale()]) }}" class="flex items-center">
+            <a href="{{ route('home', ['locale' => app()->getLocale()]) }}" class="flex items-center flex-shrink-0">
                 @php $headerSettings = \App\Models\CompanySettings::current(); @endphp
                 @if($headerSettings && $headerSettings->company_logo)
-                    <img src="{{ $headerSettings->getLogoUrl() }}" alt="{{ $headerSettings->company_name ?? 'RISMENT' }}" class="h-10">
+                    <img src="{{ $headerSettings->getLogoUrl() }}" alt="{{ $headerSettings->company_name ?? 'RISMENT' }}" class="h-10 max-w-full">
                 @else
                     <span class="text-h3 font-heading text-brand font-bold">RISMENT</span>
                 @endif
             </a>
-            
-            <nav class="flex gap-8">
+
+            <!-- Desktop Navigation -->
+            <nav class="hidden lg:flex gap-8">
                 <a href="{{ route('services.index', ['locale' => app()->getLocale()]) }}" class="text-body-m hover:text-brand transition">{{ __('Services') }}</a>
                 <a href="{{ route('pricing', ['locale' => app()->getLocale()]) }}" class="text-body-m hover:text-brand transition">{{ __('Pricing') }}</a>
                 <a href="{{ route('calculator', ['locale' => app()->getLocale()]) }}" class="text-body-m hover:text-brand transition">{{ __('Calculator') }}</a>
                 <a href="{{ route('faq', ['locale' => app()->getLocale()]) }}" class="text-body-m hover:text-brand transition">{{ __('FAQ') }}</a>
                 <a href="{{ route('contacts', ['locale' => app()->getLocale()]) }}" class="text-body-m hover:text-brand transition">{{ __('Contacts') }}</a>
             </nav>
-            
-            <div class="flex items-center gap-4">
+
+            <div class="hidden lg:flex items-center gap-4">
                 <!-- Locale Switcher -->
                 <div class="flex gap-2">
                     <a href="{{ route(Route::currentRouteName(), array_merge(request()->route()->parameters(), ['locale' => 'ru'])) }}"
@@ -104,33 +105,107 @@
                         EN
                     </a>
                 </div>
-                
-            <!-- Auth buttons -->
+
+                <!-- Auth buttons -->
+                @php
+                    $navUser = Auth::user() ?? Auth::guard('manager')->user();
+                @endphp
+                <div class="flex items-center gap-3">
+                    @if($navUser)
+                        @if($navUser->hasAnyRole(['manager', 'admin']))
+                        <a href="/manager/" class="btn btn-secondary text-sm">
+                            {{ __('Manager') }}
+                        </a>
+                        @endif
+                        @if($navUser->hasRole('admin'))
+                        <a href="/admin/" class="btn btn-secondary text-sm">
+                            {{ __('Admin') }}
+                        </a>
+                        @endif
+                        @if(Auth::check())
+                        <a href="{{ route('cabinet.dashboard') }}" class="btn btn-primary text-sm">
+                            {{ __('Cabinet') }}
+                        </a>
+                        @endif
+                    @else
+                        <a href="{{ route('login', ['locale' => app()->getLocale()]) }}" class="btn btn-secondary text-sm">
+                            {{ __('Login') }}
+                        </a>
+                        <a href="{{ route('register', ['locale' => app()->getLocale()]) }}" class="btn btn-primary text-sm">
+                            {{ __('Register') }}
+                        </a>
+                    @endif
+                </div>
+            </div>
+
+            <!-- Mobile Hamburger Button -->
+            <button @click="mobileMenuOpen = !mobileMenuOpen" class="lg:hidden p-2 -mr-2 rounded-btn hover:bg-bg-soft min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Toggle menu">
+                <svg x-show="!mobileMenuOpen" class="w-6 h-6 text-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+                <svg x-show="mobileMenuOpen" x-cloak class="w-6 h-6 text-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div
+            x-show="mobileMenuOpen"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 -translate-y-2"
+            x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 translate-y-0"
+            x-transition:leave-end="opacity-0 -translate-y-2"
+            x-cloak
+            class="lg:hidden border-t border-brand-border bg-white"
+        >
+            <nav class="container-risment py-4 space-y-1">
+                <a href="{{ route('services.index', ['locale' => app()->getLocale()]) }}" class="block px-4 py-3 rounded-btn text-body-m hover:bg-bg-soft transition min-h-[44px] flex items-center">{{ __('Services') }}</a>
+                <a href="{{ route('pricing', ['locale' => app()->getLocale()]) }}" class="block px-4 py-3 rounded-btn text-body-m hover:bg-bg-soft transition min-h-[44px] flex items-center">{{ __('Pricing') }}</a>
+                <a href="{{ route('calculator', ['locale' => app()->getLocale()]) }}" class="block px-4 py-3 rounded-btn text-body-m hover:bg-bg-soft transition min-h-[44px] flex items-center">{{ __('Calculator') }}</a>
+                <a href="{{ route('faq', ['locale' => app()->getLocale()]) }}" class="block px-4 py-3 rounded-btn text-body-m hover:bg-bg-soft transition min-h-[44px] flex items-center">{{ __('FAQ') }}</a>
+                <a href="{{ route('contacts', ['locale' => app()->getLocale()]) }}" class="block px-4 py-3 rounded-btn text-body-m hover:bg-bg-soft transition min-h-[44px] flex items-center">{{ __('Contacts') }}</a>
+            </nav>
+
+            <!-- Mobile Locale Switcher -->
+            <div class="container-risment pb-4 flex gap-2">
+                <a href="{{ route(Route::currentRouteName(), array_merge(request()->route()->parameters(), ['locale' => 'ru'])) }}"
+                   class="px-3 py-2 rounded-btn min-h-[44px] flex items-center justify-center {{ app()->getLocale() === 'ru' ? 'bg-brand text-white' : 'bg-bg-soft' }}">
+                    RU
+                </a>
+                <a href="{{ route(Route::currentRouteName(), array_merge(request()->route()->parameters(), ['locale' => 'uz'])) }}"
+                   class="px-3 py-2 rounded-btn min-h-[44px] flex items-center justify-center {{ app()->getLocale() === 'uz' ? 'bg-brand text-white' : 'bg-bg-soft' }}">
+                    UZ
+                </a>
+                <a href="{{ route(Route::currentRouteName(), array_merge(request()->route()->parameters(), ['locale' => 'en'])) }}"
+                   class="px-3 py-2 rounded-btn min-h-[44px] flex items-center justify-center {{ app()->getLocale() === 'en' ? 'bg-brand text-white' : 'bg-bg-soft' }}">
+                    EN
+                </a>
+            </div>
+
+            <!-- Mobile Auth buttons -->
             @php
-                $navUser = Auth::user() ?? Auth::guard('manager')->user();
+                $navUser = $navUser ?? Auth::user() ?? Auth::guard('manager')->user();
             @endphp
-            <div class="flex items-center gap-3">
+            <div class="container-risment pb-4 flex flex-col gap-2">
                 @if($navUser)
                     @if($navUser->hasAnyRole(['manager', 'admin']))
-                    <a href="/manager/" class="btn btn-secondary text-sm">
+                    <a href="/manager/" class="btn btn-secondary text-sm w-full text-center min-h-[44px] flex items-center justify-center">
                         {{ __('Manager') }}
                     </a>
                     @endif
-                    @if($navUser->hasRole('admin'))
-                    <a href="/admin/" class="btn btn-secondary text-sm">
-                        {{ __('Admin') }}
-                    </a>
-                    @endif
                     @if(Auth::check())
-                    <a href="{{ route('cabinet.dashboard') }}" class="btn btn-primary text-sm">
+                    <a href="{{ route('cabinet.dashboard') }}" class="btn btn-primary text-sm w-full text-center min-h-[44px] flex items-center justify-center">
                         {{ __('Cabinet') }}
                     </a>
                     @endif
                 @else
-                    <a href="{{ route('login', ['locale' => app()->getLocale()]) }}" class="btn btn-secondary text-sm">
+                    <a href="{{ route('login', ['locale' => app()->getLocale()]) }}" class="btn btn-secondary text-sm w-full text-center min-h-[44px] flex items-center justify-center">
                         {{ __('Login') }}
                     </a>
-                    <a href="{{ route('register', ['locale' => app()->getLocale()]) }}" class="btn btn-primary text-sm">
+                    <a href="{{ route('register', ['locale' => app()->getLocale()]) }}" class="btn btn-primary text-sm w-full text-center min-h-[44px] flex items-center justify-center">
                         {{ __('Register') }}
                     </a>
                 @endif
@@ -182,8 +257,8 @@
         </div>
     </footer>
     
-    <!-- Chat Widget -->
-    <x-chat-widget />
+    <!-- Live Chat Widget -->
+    <x-live-chat-widget />
     
     <!-- Alpine.js for interactive components -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>

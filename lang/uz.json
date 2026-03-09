@@ -610,5 +610,8 @@
     "View": "Ko'rish",
     "This invoice is already paid": "Bu hisob-faktura allaqachon to'langan",
     "Payment completed successfully!": "To'lov muvaffaqiyatli yakunlandi!",
-    "Payment failed": "To'lov amalga oshmadi"
+    "Payment failed": "To'lov amalga oshmadi",
+    "Live Chat": "Jonli chat",
+    "Close": "Yopish",
+    "Hello! I have a question about RISMENT.": "Salom! RISMENT haqida savolim bor."
 }

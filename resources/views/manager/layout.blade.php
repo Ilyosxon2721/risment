@@ -182,6 +182,7 @@
     </script>
     @stack('scripts')
     @include('components.bottom-nav-manager')
+    <x-live-chat-widget />
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
