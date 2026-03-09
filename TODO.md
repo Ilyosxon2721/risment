@@ -1,6 +1,6 @@
 # RISMENT - TODO & Roadmap
 
-## 🎯 Текущий статус проекта: 97% готов к production
+## 🎯 Текущий статус проекта: 98% готов к production
 
 ---
 
@@ -64,7 +64,7 @@
   - Telegram/WhatsApp floating button
   - Direct link для быстрой связи
   
-- [ ] **Калькулятор на главной**
+- [x] **Калькулятор на главной** ✅
   - Мини-версия калькулятора в hero
   - Quick calculation без перехода на другую страницу
 
@@ -72,7 +72,7 @@
   - Отправка расчета на email
   - HTML email с детальным breakdown
 
-- [ ] **PWA (Progressive Web App)**
+- [x] **PWA (Progressive Web App)** ✅
   - Manifest.json для установки на мобильные
   - Service Worker для offline режима
   - App-like experience
@@ -84,11 +84,11 @@
   - Doughnut chart: распределение затрат
   - Stacked bar chart: сравнение пакетов
   
-- [ ] **Сохранение расчетов**
+- [x] **Сохранение расчетов** ✅
   - История расчетов в кабинете
   - Сравнение "до/после"
   
-- [ ] **Сравнение пакетов side-by-side**
+- [x] **Сравнение пакетов side-by-side** ✅
   - Таблица сравнения 2-3 пакетов
   - Highlighting лучшего варианта
 
@@ -114,10 +114,9 @@
   - Приоритеты (urgent/normal/low)
   - Auto-replies для FAQ
 
-- [ ] **FAQ с поиском**
+- [x] **FAQ с поиском** ✅
   - Smart search по вопросам
   - Категоризация
-  - Видео-инструкции
 
 ### Long-term (1-2 недели)
 
@@ -195,10 +194,10 @@
 - [x] Security audit ✅
 - [x] Rate limiting для API ✅
 - [ ] CORS configuration
-- [ ] Database indexing optimization
+- [x] Database indexing optimization ✅
 - [ ] Redis cache implementation
 - [ ] CDN для static assets
-- [ ] Image optimization (WebP, lazy loading)
+- [x] Image optimization (lazy loading, async decoding) ✅
 
 ---
 
@@ -268,4 +267,4 @@
 
 **Последнее обновление:** 09.03.2026
 **Версия:** 1.0-rc2 (Release Candidate 2)
-**Готовность к production:** 97%
+**Готовность к production:** 98%
