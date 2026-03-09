@@ -56,8 +56,9 @@ Route::prefix('cabinet')->name('cabinet.')->middleware(['auth', \App\Http\Middle
     Route::get('/company', [\App\Http\Controllers\Cabinet\CompanyController::class, 'show'])->name('company.show');
     Route::get('/company/edit', [\App\Http\Controllers\Cabinet\CompanyController::class, 'edit'])->name('company.edit');
     Route::put('/company', [\App\Http\Controllers\Cabinet\CompanyController::class, 'update'])->name('company.update');
-    
+
     // Dashboard
+    Route::get('/dashboard', fn () => redirect()->route('cabinet.dashboard'));
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/calculator/estimate', [DashboardController::class, 'estimate'])->name('calculator.estimate');
     
