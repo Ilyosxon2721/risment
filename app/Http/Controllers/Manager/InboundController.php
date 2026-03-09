@@ -15,7 +15,7 @@ class InboundController extends Controller
         $company = $request->attributes->get('managerCompany');
 
         $query = Inbound::where('company_id', $company->id)
-            ->with('items.sku');
+            ->with('items');
 
         // Status filter
         if ($request->filled('status')) {
@@ -39,7 +39,7 @@ class InboundController extends Controller
         $company = $request->attributes->get('managerCompany');
         abort_unless($inbound->company_id === $company->id, 403);
 
-        $inbound->load('items.sku');
+        $inbound->load('items.variant.product');
 
         return view('manager.inbounds.show', compact('inbound'));
     }

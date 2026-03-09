@@ -18,7 +18,7 @@ class TaskController extends Controller
     {
         $company = $request->attributes->get('managerCompany');
 
-        $query = ManagerTask::forCompany($company->id)->with('creator');
+        $query = ManagerTask::forCompany($company->id)->with('creator')->withSum('billingItems', 'amount');
 
         if ($request->filled('task_type')) {
             $query->where('task_type', $request->task_type);

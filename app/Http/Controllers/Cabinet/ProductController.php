@@ -316,6 +316,7 @@ class ProductController extends Controller
         
         try {
             // Delete all variant images from storage
+            $product->load('variants.images');
             foreach ($product->variants as $variant) {
                 foreach ($variant->images as $image) {
                     Storage::disk('public')->delete($image->image_path);
