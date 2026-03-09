@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class TariffCategory extends Model
 {
-    //
+    protected $guarded = ['id'];
 }

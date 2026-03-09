@@ -4,20 +4,20 @@
 
 @section('content')
 <!-- Hero Section -->
-<section class="gradient-brand text-white py-20">
+<section class="gradient-brand text-white py-12 sm:py-20">
     <div class="container-risment">
         <div class="max-w-3xl">
-            <h1 class="text-h1 font-heading mb-6">
+            <h1 class="text-2xl sm:text-h1 font-heading mb-4 sm:mb-6">
                 {{ __('Fulfillment for Uzbekistan Marketplaces') }}
             </h1>
-            <p class="text-body-l mb-8 opacity-90">
+            <p class="text-base sm:text-body-l mb-6 sm:mb-8 opacity-90">
                 {{ __('Professional storage, packaging and delivery for Uzum, Wildberries, Ozon, Yandex Market') }}
             </p>
-            <div class="flex gap-4">
-                <a href="{{ route('calculator', ['locale' => app()->getLocale()]) }}" class="btn btn-primary bg-white text-brand hover:bg-gray-100">
+            <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                <a href="{{ route('calculator', ['locale' => app()->getLocale()]) }}" class="btn btn-primary bg-white text-brand hover:bg-gray-100 min-h-[44px] text-center">
                     {{ __('Calculate') }}
                 </a>
-                <a href="{{ route('contacts', ['locale' => app()->getLocale()]) }}" class="btn btn-secondary border-white text-white hover:bg-white/10">
+                <a href="{{ route('contacts', ['locale' => app()->getLocale()]) }}" class="btn btn-secondary border-white text-white hover:bg-white/10 min-h-[44px] text-center">
                     {{ __('Leave Request') }}
                 </a>
             </div>
@@ -136,22 +136,22 @@
 <section class="py-16 bg-gradient-to-br from-brand/5 to-bg-soft">
     <div class="container-risment">
     <h2 class="text-h2 font-heading text-center mb-12">{{ __('Company in Numbers') }}</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             <div class="card text-center bg-white">
-                <div class="text-h1 text-brand mb-2">10K+</div>
-                <div class="text-body-m text-text-muted">{{ __('Orders processed') }}</div>
+                <div class="text-2xl sm:text-h1 text-brand mb-2">10K+</div>
+                <div class="text-body-s sm:text-body-m text-text-muted">{{ __('Orders processed') }}</div>
             </div>
             <div class="card text-center bg-white">
-                <div class="text-h1 text-success mb-2">99%</div>
-                <div class="text-body-m text-text-muted">{{ __('SLA compliance') }}</div>
+                <div class="text-2xl sm:text-h1 text-success mb-2">99%</div>
+                <div class="text-body-s sm:text-body-m text-text-muted">{{ __('SLA compliance') }}</div>
             </div>
             <div class="card text-center bg-white">
-                <div class="text-h1 text-brand mb-2">24/7</div>
-                <div class="text-body-m text-text-muted">{{ __('Support available') }}</div>
+                <div class="text-2xl sm:text-h1 text-brand mb-2">24/7</div>
+                <div class="text-body-s sm:text-body-m text-text-muted">{{ __('Support available') }}</div>
             </div>
             <div class="card text-center bg-white">
-                <div class="text-h1 text-brand mb-2">5K+</div>
-                <div class="text-body-m text-text-muted">{{ __('m² warehouse space') }}</div>
+                <div class="text-2xl sm:text-h1 text-brand mb-2">5K+</div>
+                <div class="text-body-s sm:text-body-m text-text-muted">{{ __('m² warehouse space') }}</div>
             </div>
         </div>
     </div>
@@ -161,11 +161,11 @@
 <section class="py-16 bg-bg-soft">
     <div class="container-risment">
     <h2 class="text-h2 font-heading text-center mb-12">{{ __('We work with') }}</h2>
-        <div class="flex flex-wrap justify-center items-center gap-12">
-            <img src="{{ asset('images/logos/uzum.png') }}" alt="Uzum" class="h-16 object-contain">
-            <img src="{{ asset('images/logos/wildberries.svg') }}" alt="Wildberries" class="h-16 object-contain">
-            <img src="{{ asset('images/logos/ozon.svg') }}" alt="Ozon" class="h-16 object-contain">
-            <img src="{{ asset('images/logos/yandex.svg') }}" alt="Yandex Market" class="h-16 object-contain">
+        <div class="flex flex-wrap justify-center items-center gap-8 sm:gap-12">
+            <img src="{{ asset('images/logos/uzum.png') }}" alt="Uzum" class="h-10 sm:h-16 object-contain max-w-full">
+            <img src="{{ asset('images/logos/wildberries.svg') }}" alt="Wildberries" class="h-10 sm:h-16 object-contain max-w-full">
+            <img src="{{ asset('images/logos/ozon.svg') }}" alt="Ozon" class="h-10 sm:h-16 object-contain max-w-full">
+            <img src="{{ asset('images/logos/yandex.svg') }}" alt="Yandex Market" class="h-10 sm:h-16 object-contain max-w-full">
         </div>
     </div>
 </section>
@@ -324,14 +324,14 @@
 <!-- CTA -->
 <section class="py-16 bg-bg-soft">
     <div class="container-risment">
-        <div class="card gradient-brand text-white text-center p-12">
-            <h2 class="text-h2 font-heading mb-4">{{ __('Ready to start?') }}</h2>
-            <p class="text-body-l mb-6 opacity-90">{{ __('Calculate the cost or contact us') }}</p>
-            <div class="flex gap-4 justify-center">
-                <a href="{{ route('calculator', ['locale' => app()->getLocale()]) }}" class="btn btn-primary bg-white text-brand hover:bg-gray-100">
+        <div class="card gradient-brand text-white text-center p-6 sm:p-12">
+            <h2 class="text-xl sm:text-h2 font-heading mb-4">{{ __('Ready to start?') }}</h2>
+            <p class="text-base sm:text-body-l mb-6 opacity-90">{{ __('Calculate the cost or contact us') }}</p>
+            <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+                <a href="{{ route('calculator', ['locale' => app()->getLocale()]) }}" class="btn btn-primary bg-white text-brand hover:bg-gray-100 min-h-[44px] text-center">
                     {{ __('Calculate') }}
                 </a>
-                <a href="{{ route('contacts', ['locale' => app()->getLocale()]) }}" class="btn btn-secondary border-white text-white hover:bg-white/10">
+                <a href="{{ route('contacts', ['locale' => app()->getLocale()]) }}" class="btn btn-secondary border-white text-white hover:bg-white/10 min-h-[44px] text-center">
                     {{ __('Contacts') }}
                 </a>
             </div>

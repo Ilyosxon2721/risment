@@ -13,6 +13,7 @@ use App\Models\ProductVariantImage;
 use App\Models\MarketplaceProductLink;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -153,10 +154,11 @@ class ProductController extends Controller
                 
         } catch (\Exception $e) {
             DB::rollBack();
-            
+            Log::error('Error creating product', ['error' => $e->getMessage()]);
+
             return back()
                 ->withInput()
-                ->with('error', __('Error creating product: ') . $e->getMessage());
+                ->with('error', __('Error creating product. Please try again.'));
         }
     }
 
@@ -165,12 +167,17 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
+        $company = auth()->user()->companies()->first();
+        if (!$company || $product->company_id !== $company->id) {
+            abort(403);
+        }
+
         $product->load([
             'variants.images',
             'variants.attributes',
             'variants.marketplaceLinks'
         ]);
-        
+
         $marketplaces = ['uzum', 'wildberries', 'ozon', 'yandex'];
         $attributeCatalog = \App\Models\AttributeCatalog::active()->ordered()->get();
         
@@ -182,7 +189,11 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, Product $product)
     {
-        
+        $company = auth()->user()->companies()->first();
+        if (!$company || $product->company_id !== $company->id) {
+            abort(403);
+        }
+
         DB::beginTransaction();
         
         try {
@@ -299,10 +310,11 @@ class ProductController extends Controller
                 
         } catch (\Exception $e) {
             DB::rollBack();
-            
+            Log::error('Error updating product', ['product_id' => $product->id, 'error' => $e->getMessage()]);
+
             return back()
                 ->withInput()
-                ->with('error', __('Error updating product: ') . $e->getMessage());
+                ->with('error', __('Error updating product. Please try again.'));
         }
     }
 
@@ -311,7 +323,11 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        
+        $company = auth()->user()->companies()->first();
+        if (!$company || $product->company_id !== $company->id) {
+            abort(403);
+        }
+
         DB::beginTransaction();
         
         try {
@@ -333,9 +349,10 @@ class ProductController extends Controller
                 
         } catch (\Exception $e) {
             DB::rollBack();
-            
+            Log::error('Error deleting product', ['product_id' => $product->id, 'error' => $e->getMessage()]);
+
             return back()
-                ->with('error', __('Error deleting product: ') . $e->getMessage());
+                ->with('error', __('Error deleting product. Please try again.'));
         }
     }
 
