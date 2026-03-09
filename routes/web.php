@@ -224,6 +224,7 @@ Route::prefix('{locale}')->middleware(SetLocale::class)->group(function () {
     Route::get('/pricing', [PricingController::class, 'index'])->name('pricing');
     Route::get('/calculator', [CalculatorController::class, 'index'])->name('calculator');
     Route::post('/calculator', [CalculatorController::class, 'calculate'])->name('calculator.calculate');
+    Route::post('/calculator/send-email', [CalculatorController::class, 'sendResults'])->name('calculator.send-email')->middleware('throttle:5,1');
     Route::post('/calculator/clear-history', [CalculatorController::class, 'clearHistory'])->name('calculator.clear-history');
     
     // Content Pages
