@@ -45,8 +45,8 @@
     <div class="p-6 border-b border-brand-border">
         <h3 class="text-h4 font-heading">{{ __('Recent charges') }}</h3>
     </div>
-    <div class="overflow-x-auto">
-        <table class="w-full">
+    <div class="table-responsive relative">
+        <table class="w-full responsive-table">
             <thead class="bg-bg-soft">
                 <tr>
                     <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">{{ __('Date') }}</th>
@@ -60,16 +60,16 @@
             <tbody class="divide-y divide-brand-border">
                 @forelse($recentItems as $item)
                 <tr class="hover:bg-bg-soft">
-                    <td class="px-6 py-4 text-body-s">{{ $item->created_at->format('d.m.Y') }}</td>
-                    <td class="px-6 py-4 text-body-s">{{ $item->title_ru }}</td>
-                    <td class="px-6 py-4 text-body-s">
+                    <td class="px-6 py-4 text-body-s" data-label="{{ __('Date') }}">{{ $item->created_at->format('d.m.Y') }}</td>
+                    <td class="px-6 py-4 text-body-s" data-label="{{ __('Description') }}">{{ $item->title_ru }}</td>
+                    <td class="px-6 py-4 text-body-s" data-label="{{ __('Section') }}">
                         <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
                             {{ $scopes[$item->scope] ?? $item->scope }}
                         </span>
                     </td>
-                    <td class="px-6 py-4 text-body-s text-right">{{ number_format($item->unit_price, 0, '', ' ') }}</td>
-                    <td class="px-6 py-4 text-body-s text-right">{{ $item->qty }}</td>
-                    <td class="px-6 py-4 text-body-s text-right font-semibold">{{ number_format($item->amount, 0, '', ' ') }}</td>
+                    <td class="px-6 py-4 text-body-s text-right" data-label="{{ __('Price') }}">{{ number_format($item->unit_price, 0, '', ' ') }}</td>
+                    <td class="px-6 py-4 text-body-s text-right" data-label="{{ __('Qty') }}">{{ $item->qty }}</td>
+                    <td class="px-6 py-4 text-body-s text-right font-semibold" data-label="{{ __('Amount') }}">{{ number_format($item->amount, 0, '', ' ') }}</td>
                 </tr>
                 @empty
                 <tr>
