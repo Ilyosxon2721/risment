@@ -631,5 +631,21 @@
     "Enter your email": "Emailingizni kiriting",
     "Send to email": "Emailga yuborish",
     "Calculator results have been sent to your email.": "Kalkulyator natijalari elektron pochtangizga yuborildi.",
-    "Too many attempts. Please try again in :seconds seconds.": "Juda ko'p urinishlar. Iltimos, :seconds soniyadan keyin qayta urinib ko'ring."
+    "Too many attempts. Please try again in :seconds seconds.": "Juda ko'p urinishlar. Iltimos, :seconds soniyadan keyin qayta urinib ko'ring.",
+
+    "Quick Cost Estimate": "Tezkor narx baholash",
+    "Enter your monthly shipment volumes to get an instant estimate": "Bir zumda baholash uchun oylik jo'natmalar hajmini kiriting",
+    "Small": "Kichik",
+    "up to 60 cm": "60 sm gacha",
+    "Medium": "O'rtacha",
+    "Large": "Katta",
+    "Dimensions = sum of length + width + height in cm": "O'lchamlar = uzunlik + kenglik + balandlik yig'indisi (sm)",
+    "Recommended plan": "Tavsiya etilgan tarif",
+    "Savings": "Tejamkorlik",
+    "See detailed breakdown": "Batafsil hisob-kitob",
+
+    "Offline": "Oflayn",
+    "No internet connection": "Internetga ulanish yo'q",
+    "Check your connection and try again. Previously visited pages may be available from cache.": "Aloqani tekshiring va qaytadan urinib ko'ring. Oldin ko'rilgan sahifalar keshdan mavjud bo'lishi mumkin.",
+    "Retry": "Qayta urinish"
 }

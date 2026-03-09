@@ -631,5 +631,21 @@
     "Enter your email": "Введите ваш email",
     "Send to email": "Отправить на email",
     "Calculator results have been sent to your email.": "Результаты расчёта отправлены на вашу электронную почту.",
-    "Too many attempts. Please try again in :seconds seconds.": "Слишком много попыток. Пожалуйста, попробуйте снова через :seconds секунд."
+    "Too many attempts. Please try again in :seconds seconds.": "Слишком много попыток. Пожалуйста, попробуйте снова через :seconds секунд.",
+
+    "Quick Cost Estimate": "Быстрая оценка стоимости",
+    "Enter your monthly shipment volumes to get an instant estimate": "Введите объёмы отправлений в месяц для мгновенной оценки",
+    "Small": "Малые",
+    "up to 60 cm": "до 60 см",
+    "Medium": "Средние",
+    "Large": "Крупные",
+    "Dimensions = sum of length + width + height in cm": "Габариты = сумма длины + ширины + высоты в см",
+    "Recommended plan": "Рекомендуемый тариф",
+    "Savings": "Экономия",
+    "See detailed breakdown": "Подробный расчёт",
+
+    "Offline": "Офлайн",
+    "No internet connection": "Нет подключения к интернету",
+    "Check your connection and try again. Previously visited pages may be available from cache.": "Проверьте соединение и попробуйте снова. Ранее посещённые страницы могут быть доступны из кэша.",
+    "Retry": "Повторить"
 }
