@@ -52,8 +52,8 @@
 
 <!-- Shipments Table -->
 <div class="bg-white rounded-card border border-brand-border">
-    <div class="overflow-x-auto">
-        <table class="w-full">
+    <div class="table-responsive relative">
+        <table class="w-full responsive-table">
             <thead class="bg-bg-soft">
                 <tr>
                     <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">#</th>
@@ -88,14 +88,14 @@
                     ];
                 @endphp
                 <tr class="hover:bg-bg-soft">
-                    <td class="px-6 py-4 text-body-s font-mono">#{{ $shipment->id }}</td>
-                    <td class="px-6 py-4 text-body-s">{{ $shipment->created_at->format('d.m.Y H:i') }}</td>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 text-body-s font-mono" data-label="#">#{{ $shipment->id }}</td>
+                    <td class="px-6 py-4 text-body-s" data-label="{{ __('Date') }}">{{ $shipment->created_at->format('d.m.Y H:i') }}</td>
+                    <td class="px-6 py-4" data-label="{{ __('Marketplace') }}">
                         <span class="uppercase text-body-s font-semibold">{{ $shipment->marketplace }}</span>
                     </td>
-                    <td class="px-6 py-4 text-body-s">{{ $shipment->warehouse_name ?? '-' }}</td>
-                    <td class="px-6 py-4 text-body-s">{{ $shipment->items->sum('qty') }}</td>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 text-body-s" data-label="{{ __('Warehouse') }}">{{ $shipment->warehouse_name ?? '-' }}</td>
+                    <td class="px-6 py-4 text-body-s" data-label="{{ __('Products') }}">{{ $shipment->items->sum('qty') }}</td>
+                    <td class="px-6 py-4" data-label="{{ __('Status') }}">
                         <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-{{ $statusColors[$shipment->status] ?? 'gray' }}-100 text-{{ $statusColors[$shipment->status] ?? 'gray' }}-800">
                             {{ $statusLabels[$shipment->status] ?? $shipment->status }}
                         </span>

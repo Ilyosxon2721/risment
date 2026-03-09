@@ -15,6 +15,8 @@
         <h1 class="text-h2 font-heading">{{ __('Create Product') }}</h1>
     </div>
 
+    @include('components.offline-form-warning')
+
     <form method="POST" action="{{ route('cabinet.products.store') }}" enctype="multipart/form-data">
         @csrf
 

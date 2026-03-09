@@ -15,6 +15,8 @@
     </div>
 </div>
 
+@include('components.offline-form-warning')
+
 <div class="max-w-2xl">
     <div class="card">
         <form action="{{ route('cabinet.company.update') }}" method="POST">

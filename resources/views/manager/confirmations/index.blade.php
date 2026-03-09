@@ -9,8 +9,8 @@
 </div>
 
 <div class="bg-white rounded-card border border-brand-border">
-    <div class="overflow-x-auto">
-        <table class="w-full">
+    <div class="table-responsive relative">
+        <table class="w-full responsive-table">
             <thead class="bg-bg-soft">
                 <tr>
                     <th class="px-6 py-3 text-left text-body-s font-semibold text-text-muted">{{ __('Date') }}</th>
@@ -23,9 +23,9 @@
             <tbody class="divide-y divide-brand-border">
                 @forelse($tasks as $task)
                 <tr class="hover:bg-bg-soft">
-                    <td class="px-6 py-4 text-body-s">{{ $task->task_date->format('d.m.Y') }}</td>
-                    <td class="px-6 py-4 text-body-s">{{ $task->task_type_label }}</td>
-                    <td class="px-6 py-4 text-body-s">
+                    <td class="px-6 py-4 text-body-s" data-label="{{ __('Date') }}">{{ $task->task_date->format('d.m.Y') }}</td>
+                    <td class="px-6 py-4 text-body-s" data-label="{{ __('Type') }}">{{ $task->task_type_label }}</td>
+                    <td class="px-6 py-4 text-body-s" data-label="{{ __('Details') }}">
                         @if($task->details)
                             @if(isset($task->details['sellermind_order_id']))
                                 {{ __('Order') }} SM#{{ $task->details['sellermind_order_id'] }}
@@ -40,8 +40,8 @@
                             -
                         @endif
                     </td>
-                    <td class="px-6 py-4 text-body-s text-text-muted">{{ $task->created_at->format('d.m.Y H:i') }}</td>
-                    <td class="px-6 py-4 text-right">
+                    <td class="px-6 py-4 text-body-s text-text-muted" data-label="{{ __('Created') }}">{{ $task->created_at->format('d.m.Y H:i') }}</td>
+                    <td class="px-6 py-4 text-right" data-label="{{ __('Actions') }}">
                         <div class="flex justify-end gap-2">
                             <form method="POST" action="{{ route('manager.confirmations.confirm', $task) }}" class="inline">
                                 @csrf
