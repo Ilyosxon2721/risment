@@ -338,6 +338,292 @@
             </div>
         </details>
         
+        {{-- Step 3.5: Side-by-Side Plan Comparison --}}
+        <div class="card mb-6" id="compare-plans">
+            <h3 class="text-h3 font-heading mb-2 flex items-center gap-2">
+                <span>📊</span>
+                <span>{{ __('Compare Plans') }}</span>
+            </h3>
+            <p class="text-body-s text-text-muted mb-6">{{ __('Side-by-side comparison of all available plans based on your volumes') }}</p>
+
+            @php
+                $planOptions = collect($result['comparison']['all_options'])->where('type', 'plan')->values();
+                $perUnitOpt = collect($result['comparison']['all_options'])->where('type', 'per_unit')->first();
+                $recommendedType = $result['comparison']['recommended']['type'];
+                $recommendedCode = $recommendedType === 'plan' ? $result['comparison']['recommended']['plan']->code : null;
+                $overageRatesCompare = $pricingService->getOverageRates();
+            @endphp
+
+            {{-- Desktop: horizontal scroll table --}}
+            <div class="hidden md:block overflow-x-auto -mx-2 px-2">
+                <table class="w-full text-body-s">
+                    <thead>
+                        <tr class="border-b-2 border-brand-border">
+                            <th class="px-3 py-3 text-left text-body-m font-semibold min-w-[160px]">{{ __('Feature') }}</th>
+                            @foreach($planOptions as $opt)
+                            <th class="px-3 py-3 text-center min-w-[140px] {{ $recommendedCode === $opt['plan']->code ? 'bg-brand/5' : '' }}">
+                                <div class="flex flex-col items-center gap-1">
+                                    @if($recommendedCode === $opt['plan']->code)
+                                    <span class="inline-block px-2 py-0.5 bg-brand text-white text-body-xs rounded-full">{{ __('Best value') }}</span>
+                                    @endif
+                                    <span class="text-body-m font-heading">{{ $opt['plan']->getName() }}</span>
+                                </div>
+                            </th>
+                            @endforeach
+                            <th class="px-3 py-3 text-center min-w-[140px] {{ $recommendedType === 'per_unit' ? 'bg-brand/5' : '' }}">
+                                <div class="flex flex-col items-center gap-1">
+                                    @if($recommendedType === 'per_unit')
+                                    <span class="inline-block px-2 py-0.5 bg-brand text-white text-body-xs rounded-full">{{ __('Best value') }}</span>
+                                    @endif
+                                    <span class="text-body-m font-heading">{{ __('Per-unit rate') }}</span>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-brand-border">
+                        {{-- Monthly fee --}}
+                        <tr>
+                            <td class="px-3 py-3 font-semibold">{{ __('Monthly fee') }}</td>
+                            @foreach($planOptions as $opt)
+                            <td class="px-3 py-3 text-center {{ $recommendedCode === $opt['plan']->code ? 'bg-brand/5' : '' }}">
+                                {{ number_format($opt['plan']->price_month, 0, '', ' ') }} {{ __('сум') }}
+                            </td>
+                            @endforeach
+                            <td class="px-3 py-3 text-center {{ $recommendedType === 'per_unit' ? 'bg-brand/5' : '' }}">
+                                0 {{ __('сум') }}
+                            </td>
+                        </tr>
+                        {{-- FBS included --}}
+                        <tr>
+                            <td class="px-3 py-3 font-semibold">{{ __('FBS shipments included') }}</td>
+                            @foreach($planOptions as $opt)
+                            <td class="px-3 py-3 text-center {{ $recommendedCode === $opt['plan']->code ? 'bg-brand/5' : '' }}">
+                                {{ $opt['plan']->fbs_shipments_included ?? '—' }} {{ __('pcs') }}
+                            </td>
+                            @endforeach
+                            <td class="px-3 py-3 text-center {{ $recommendedType === 'per_unit' ? 'bg-brand/5' : '' }}">
+                                —
+                            </td>
+                        </tr>
+                        {{-- Price per MICRO --}}
+                        <tr>
+                            <td class="px-3 py-3 font-semibold">{{ __('MICRO shipment price') }}</td>
+                            @foreach($planOptions as $opt)
+                            <td class="px-3 py-3 text-center {{ $recommendedCode === $opt['plan']->code ? 'bg-brand/5' : '' }}">
+                                {{ number_format($overageRatesCompare['shipments']['micro_fee'], 0, '', ' ') }} {{ __('сум') }}
+                            </td>
+                            @endforeach
+                            <td class="px-3 py-3 text-center {{ $recommendedType === 'per_unit' ? 'bg-brand/5' : '' }}">
+                                {{ number_format($perUnitOpt['breakdown']['micro']['rate_per_shipment'] ?? $overageRatesCompare['shipments']['micro_fee'], 0, '', ' ') }} {{ __('сум') }}
+                            </td>
+                        </tr>
+                        {{-- Price per MGT --}}
+                        <tr>
+                            <td class="px-3 py-3 font-semibold">{{ __('MGT shipment price') }}</td>
+                            @foreach($planOptions as $opt)
+                            <td class="px-3 py-3 text-center {{ $recommendedCode === $opt['plan']->code ? 'bg-brand/5' : '' }}">
+                                {{ number_format($overageRatesCompare['shipments']['mgt_fee'], 0, '', ' ') }} {{ __('сум') }}
+                            </td>
+                            @endforeach
+                            <td class="px-3 py-3 text-center {{ $recommendedType === 'per_unit' ? 'bg-brand/5' : '' }}">
+                                {{ number_format($perUnitOpt['breakdown']['mgt']['rate_per_shipment'] ?? $overageRatesCompare['shipments']['mgt_fee'], 0, '', ' ') }} {{ __('сум') }}
+                            </td>
+                        </tr>
+                        {{-- Price per SGT --}}
+                        <tr>
+                            <td class="px-3 py-3 font-semibold">{{ __('SGT shipment price') }}</td>
+                            @foreach($planOptions as $opt)
+                            <td class="px-3 py-3 text-center {{ $recommendedCode === $opt['plan']->code ? 'bg-brand/5' : '' }}">
+                                {{ number_format($overageRatesCompare['shipments']['sgt_fee'], 0, '', ' ') }} {{ __('сум') }}
+                            </td>
+                            @endforeach
+                            <td class="px-3 py-3 text-center {{ $recommendedType === 'per_unit' ? 'bg-brand/5' : '' }}">
+                                {{ number_format($perUnitOpt['breakdown']['sgt']['rate_per_shipment'] ?? $overageRatesCompare['shipments']['sgt_fee'], 0, '', ' ') }} {{ __('сум') }}
+                            </td>
+                        </tr>
+                        {{-- Price per KGT --}}
+                        <tr>
+                            <td class="px-3 py-3 font-semibold">{{ __('KGT shipment price') }}</td>
+                            @foreach($planOptions as $opt)
+                            <td class="px-3 py-3 text-center {{ $recommendedCode === $opt['plan']->code ? 'bg-brand/5' : '' }}">
+                                {{ number_format($overageRatesCompare['shipments']['kgt_fee'], 0, '', ' ') }} {{ __('сум') }}
+                            </td>
+                            @endforeach
+                            <td class="px-3 py-3 text-center {{ $recommendedType === 'per_unit' ? 'bg-brand/5' : '' }}">
+                                {{ number_format($perUnitOpt['breakdown']['kgt']['rate_per_shipment'] ?? $overageRatesCompare['shipments']['kgt_fee'], 0, '', ' ') }} {{ __('сум') }}
+                            </td>
+                        </tr>
+                        {{-- Total cost --}}
+                        <tr class="bg-bg-soft font-semibold">
+                            <td class="px-3 py-3 text-body-m">{{ __('Total cost for your volumes') }}</td>
+                            @foreach($planOptions as $opt)
+                            <td class="px-3 py-3 text-center text-brand text-body-m {{ $recommendedCode === $opt['plan']->code ? 'bg-brand/10' : '' }}">
+                                {{ number_format($opt['total'], 0, '', ' ') }} {{ __('сум') }}
+                            </td>
+                            @endforeach
+                            <td class="px-3 py-3 text-center text-brand text-body-m {{ $recommendedType === 'per_unit' ? 'bg-brand/10' : '' }}">
+                                {{ number_format($perUnitOpt['total'], 0, '', ' ') }} {{ __('сум') }}
+                            </td>
+                        </tr>
+                        {{-- Savings vs per-unit --}}
+                        <tr>
+                            <td class="px-3 py-3 font-semibold">{{ __('Savings vs per-unit') }}</td>
+                            @foreach($planOptions as $opt)
+                            <td class="px-3 py-3 text-center {{ $recommendedCode === $opt['plan']->code ? 'bg-brand/5' : '' }}">
+                                @if($opt['savings_vs_per_unit'] > 0)
+                                    <span class="text-green-600 font-semibold">-{{ number_format($opt['savings_vs_per_unit'], 0, '', ' ') }} {{ __('сум') }}</span>
+                                    <div class="text-body-xs text-green-600">({{ number_format($opt['savings_percent'], 1) }}%)</div>
+                                @elseif($opt['savings_vs_per_unit'] < 0)
+                                    <span class="text-red-500">+{{ number_format(abs($opt['savings_vs_per_unit']), 0, '', ' ') }} {{ __('сум') }}</span>
+                                @else
+                                    <span class="text-text-muted">—</span>
+                                @endif
+                            </td>
+                            @endforeach
+                            <td class="px-3 py-3 text-center {{ $recommendedType === 'per_unit' ? 'bg-brand/5' : '' }}">
+                                <span class="text-text-muted">—</span>
+                            </td>
+                        </tr>
+                        {{-- Features: Priority processing --}}
+                        <tr>
+                            <td class="px-3 py-3 font-semibold">{{ __('Priority processing') }}</td>
+                            @foreach($planOptions as $opt)
+                            <td class="px-3 py-3 text-center {{ $recommendedCode === $opt['plan']->code ? 'bg-brand/5' : '' }}">
+                                @if($opt['plan']->priority_processing)
+                                    <span class="text-green-500 text-lg">✅</span>
+                                @else
+                                    <span class="text-text-muted">—</span>
+                                @endif
+                            </td>
+                            @endforeach
+                            <td class="px-3 py-3 text-center {{ $recommendedType === 'per_unit' ? 'bg-brand/5' : '' }}">
+                                <span class="text-text-muted">—</span>
+                            </td>
+                        </tr>
+                        {{-- Features: Personal manager --}}
+                        <tr>
+                            <td class="px-3 py-3 font-semibold">{{ __('Personal manager') }}</td>
+                            @foreach($planOptions as $opt)
+                            <td class="px-3 py-3 text-center {{ $recommendedCode === $opt['plan']->code ? 'bg-brand/5' : '' }}">
+                                @if($opt['plan']->personal_manager)
+                                    <span class="text-green-500 text-lg">✅</span>
+                                @else
+                                    <span class="text-text-muted">—</span>
+                                @endif
+                            </td>
+                            @endforeach
+                            <td class="px-3 py-3 text-center {{ $recommendedType === 'per_unit' ? 'bg-brand/5' : '' }}">
+                                <span class="text-text-muted">—</span>
+                            </td>
+                        </tr>
+                        {{-- Storage included --}}
+                        <tr>
+                            <td class="px-3 py-3 font-semibold">{{ __('Storage included') }}</td>
+                            @foreach($planOptions as $opt)
+                            <td class="px-3 py-3 text-center {{ $recommendedCode === $opt['plan']->code ? 'bg-brand/5' : '' }}">
+                                @if($opt['plan']->storage_included_boxes || $opt['plan']->storage_included_bags)
+                                    @if($opt['plan']->storage_included_boxes)
+                                        {{ $opt['plan']->storage_included_boxes }} {{ __('Boxes') }}
+                                    @endif
+                                    @if($opt['plan']->storage_included_bags)
+                                        {{ $opt['plan']->storage_included_bags }} {{ __('Bags') }}
+                                    @endif
+                                @else
+                                    <span class="text-text-muted">—</span>
+                                @endif
+                            </td>
+                            @endforeach
+                            <td class="px-3 py-3 text-center {{ $recommendedType === 'per_unit' ? 'bg-brand/5' : '' }}">
+                                <span class="text-text-muted">—</span>
+                            </td>
+                        </tr>
+                        {{-- Inbound included --}}
+                        <tr>
+                            <td class="px-3 py-3 font-semibold">{{ __('Receiving included') }}</td>
+                            @foreach($planOptions as $opt)
+                            <td class="px-3 py-3 text-center {{ $recommendedCode === $opt['plan']->code ? 'bg-brand/5' : '' }}">
+                                @if($opt['plan']->inbound_included_boxes)
+                                    {{ $opt['plan']->inbound_included_boxes }} {{ __('Boxes') }}
+                                @else
+                                    <span class="text-text-muted">—</span>
+                                @endif
+                            </td>
+                            @endforeach
+                            <td class="px-3 py-3 text-center {{ $recommendedType === 'per_unit' ? 'bg-brand/5' : '' }}">
+                                <span class="text-text-muted">—</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            {{-- Mobile: card layout --}}
+            <div class="md:hidden space-y-4">
+                @foreach($planOptions as $opt)
+                <div class="rounded-btn border {{ $recommendedCode === $opt['plan']->code ? 'border-2 border-brand shadow-lg' : 'border-brand-border' }} p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <h4 class="text-body-l font-heading">{{ $opt['plan']->getName() }}</h4>
+                        @if($recommendedCode === $opt['plan']->code)
+                        <span class="px-2 py-0.5 bg-brand text-white text-body-xs rounded-full">{{ __('Best value') }}</span>
+                        @endif
+                    </div>
+                    <div class="text-h4 text-brand font-bold mb-3">{{ number_format($opt['total'], 0, '', ' ') }} {{ __('сум/мес') }}</div>
+                    <dl class="space-y-2 text-body-s">
+                        <div class="flex justify-between">
+                            <dt class="text-text-muted">{{ __('Monthly fee') }}</dt>
+                            <dd class="font-semibold">{{ number_format($opt['plan']->price_month, 0, '', ' ') }} {{ __('сум') }}</dd>
+                        </div>
+                        <div class="flex justify-between">
+                            <dt class="text-text-muted">{{ __('FBS shipments included') }}</dt>
+                            <dd class="font-semibold">{{ $opt['plan']->fbs_shipments_included ?? '—' }} {{ __('pcs') }}</dd>
+                        </div>
+                        @if($opt['savings_vs_per_unit'] > 0)
+                        <div class="flex justify-between">
+                            <dt class="text-text-muted">{{ __('Savings vs per-unit') }}</dt>
+                            <dd class="text-green-600 font-semibold">-{{ number_format($opt['savings_vs_per_unit'], 0, '', ' ') }} ({{ number_format($opt['savings_percent'], 1) }}%)</dd>
+                        </div>
+                        @endif
+                        <div class="flex justify-between items-center">
+                            <dt class="text-text-muted">{{ __('Priority processing') }}</dt>
+                            <dd>{{ $opt['plan']->priority_processing ? '✅' : '—' }}</dd>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <dt class="text-text-muted">{{ __('Personal manager') }}</dt>
+                            <dd>{{ $opt['plan']->personal_manager ? '✅' : '—' }}</dd>
+                        </div>
+                    </dl>
+                </div>
+                @endforeach
+
+                {{-- Per-unit card --}}
+                <div class="rounded-btn border {{ $recommendedType === 'per_unit' ? 'border-2 border-brand shadow-lg' : 'border-brand-border' }} p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <h4 class="text-body-l font-heading">{{ __('Per-unit rate') }}</h4>
+                        @if($recommendedType === 'per_unit')
+                        <span class="px-2 py-0.5 bg-brand text-white text-body-xs rounded-full">{{ __('Best value') }}</span>
+                        @endif
+                    </div>
+                    <div class="text-h4 text-brand font-bold mb-3">{{ number_format($perUnitOpt['total'], 0, '', ' ') }} {{ __('сум/мес') }}</div>
+                    <dl class="space-y-2 text-body-s">
+                        <div class="flex justify-between">
+                            <dt class="text-text-muted">{{ __('Monthly fee') }}</dt>
+                            <dd class="font-semibold">0 {{ __('сум') }}</dd>
+                        </div>
+                        <div class="flex justify-between">
+                            <dt class="text-text-muted">{{ __('FBS shipments included') }}</dt>
+                            <dd class="font-semibold">—</dd>
+                        </div>
+                        @if($perUnitOpt['breakdown']['surcharge_percent'] > 0)
+                        <div class="flex justify-between">
+                            <dt class="text-text-muted">{{ __('Surcharge') }}</dt>
+                            <dd class="text-warning font-semibold">+{{ number_format($perUnitOpt['breakdown']['surcharge_percent'], 0) }}%</dd>
+                        </div>
+                        @endif
+                    </dl>
+                </div>
+            </div>
+        </div>
+
         {{-- Step 4: Detailed Breakdown (Collapsible) --}}
         <details class="card" id="package-details">
             <summary class="cursor-pointer font-heading text-h4 flex items-center gap-2 hover:text-brand transition">
@@ -516,6 +802,43 @@
                 </div>
             </div>
         </div>
+
+        {{-- Save to Account (authenticated users only) --}}
+        @auth
+        <div class="card mt-6">
+            <div class="flex items-start gap-3">
+                <div class="text-2xl">💾</div>
+                <div class="flex-1">
+                    <h3 class="text-h4 font-heading mb-2">{{ __('Save to account') }}</h3>
+                    <p class="text-body-s text-text-muted mb-4">{{ __('Save this calculation to your account for future reference') }}</p>
+
+                    @if(session('success'))
+                    <div class="p-3 bg-green-50 border border-green-300 rounded-btn text-green-700 text-body-m mb-4">
+                        {{ session('success') }}
+                    </div>
+                    @endif
+
+                    <form method="POST" action="{{ route('calculator.save', ['locale' => app()->getLocale()]) }}" class="flex flex-col sm:flex-row gap-3">
+                        @csrf
+                        <input type="hidden" name="micro_count" value="{{ $result['usage']['micro_count'] ?? 0 }}">
+                        <input type="hidden" name="mgt_count" value="{{ $result['usage']['mgt_count'] ?? 0 }}">
+                        <input type="hidden" name="sgt_count" value="{{ $result['usage']['sgt_count'] ?? 0 }}">
+                        <input type="hidden" name="kgt_count" value="{{ $result['usage']['kgt_count'] ?? 0 }}">
+                        <input type="hidden" name="storage_box_days" value="{{ $result['usage']['storage_box_days'] ?? 0 }}">
+                        <input type="hidden" name="storage_bag_days" value="{{ $result['usage']['storage_bag_days'] ?? 0 }}">
+                        <input type="hidden" name="inbound_boxes" value="{{ $result['usage']['inbound_boxes'] ?? 0 }}">
+                        <input type="hidden" name="avg_items_per_order" value="{{ $result['usage']['avg_items_per_order'] ?? 1.0 }}">
+                        <input type="hidden" name="recommended_plan" value="{{ $result['comparison']['recommended']['type'] === 'plan' ? $result['comparison']['recommended']['plan']->getName() : '' }}">
+                        <input type="hidden" name="total_cost" value="{{ (int) ($result['comparison']['recommended']['total'] ?? 0) }}">
+                        <input type="hidden" name="result_data" value="{{ json_encode($result['comparison']['recommended']) }}">
+
+                        <input type="text" name="name" class="input flex-1" placeholder="{{ __('Calculation name (optional)') }}" maxlength="255">
+                        <button type="submit" class="btn btn-primary whitespace-nowrap">{{ __('Save calculation') }}</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        @endauth
 
         {{-- Step 5: Visual Charts --}}
         <div class="card mt-6" id="charts-section">
