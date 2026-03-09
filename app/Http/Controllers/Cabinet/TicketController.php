@@ -16,6 +16,7 @@ class TicketController extends Controller
         $company = $request->attributes->get('currentCompany');
         
         $tickets = Ticket::where('company_id', $company->id)
+            ->orderByRaw("FIELD(priority, 'high', 'medium', 'low')")
             ->orderBy('created_at', 'desc')
             ->paginate(15);
         
@@ -35,10 +36,10 @@ class TicketController extends Controller
             'subject' => 'required|string|max:255',
             'priority' => 'required|in:low,medium,high',
             'message' => 'required|string',
-            'attachments' => 'nullable|array|max:5',
-            'attachments.*' => 'file|max:10240|mimes:jpg,jpeg,png,gif,pdf,doc,docx,xls,xlsx,txt,zip',
+            'attachments' => 'nullable|array|max:3',
+            'attachments.*' => 'file|max:5120|mimes:jpg,jpeg,png,gif,pdf',
         ]);
-        
+
         $ticket = Ticket::create([
             'company_id' => $company->id,
             'user_id' => auth()->id(),
@@ -46,18 +47,18 @@ class TicketController extends Controller
             'priority' => $validated['priority'],
             'status' => 'open',
         ]);
-        
+
         $ticketMessage = TicketMessage::create([
             'ticket_id' => $ticket->id,
             'user_id' => auth()->id(),
             'message' => $validated['message'],
             'is_internal' => false,
         ]);
-        
+
         // Handle file uploads
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {
-                $path = $file->store('tickets/' . $ticket->id, 'public');
+                $path = $file->store('ticket-attachments/' . $ticket->id, 'public');
                 
                 TicketAttachment::create([
                     'ticket_id' => $ticket->id,
@@ -98,21 +99,21 @@ class TicketController extends Controller
         
         $validated = $request->validate([
             'message' => 'required|string',
-            'attachments' => 'nullable|array|max:5',
-            'attachments.*' => 'file|max:10240|mimes:jpg,jpeg,png,gif,pdf,doc,docx,xls,xlsx,txt,zip',
+            'attachments' => 'nullable|array|max:3',
+            'attachments.*' => 'file|max:5120|mimes:jpg,jpeg,png,gif,pdf',
         ]);
-        
+
         $ticketMessage = TicketMessage::create([
             'ticket_id' => $ticket->id,
             'user_id' => auth()->id(),
             'message' => $validated['message'],
             'is_internal' => false,
         ]);
-        
+
         // Handle file uploads
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {
-                $path = $file->store('tickets/' . $ticket->id, 'public');
+                $path = $file->store('ticket-attachments/' . $ticket->id, 'public');
                 
                 TicketAttachment::create([
                     'ticket_id' => $ticket->id,

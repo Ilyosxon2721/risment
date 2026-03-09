@@ -94,7 +94,7 @@
                         id="attachments" 
                         name="attachments[]" 
                         multiple
-                        accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx,.txt,.zip"
+                        accept=".jpg,.jpeg,.png,.gif,.pdf"
                         class="block w-full text-body-m text-text-muted
                                file:mr-4 file:py-2 file:px-4
                                file:rounded-btn file:border-0
@@ -102,7 +102,7 @@
                                hover:file:bg-brand-dark
                                cursor-pointer"
                     >
-                    <p class="text-body-s text-text-muted mt-2">{{ __('Max 5 files, 10MB each. Allowed: images, PDF, DOC, XLS, TXT, ZIP') }}</p>
+                    <p class="text-body-s text-text-muted mt-2">{{ __('Max 3 files, 5MB each. Allowed: images, PDF') }}</p>
                     @error('attachments.*')
                         <p class="text-error text-body-s mt-1">{{ $message }}</p>
                     @enderror

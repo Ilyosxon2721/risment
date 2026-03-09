@@ -196,42 +196,103 @@
 @endif
 
 <!-- Stats Grid -->
-<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6 mb-8">
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 sm:gap-6 mb-8">
     <div class="card">
         <div class="text-body-s text-text-muted mb-2">{{ __('Total SKUs') }}</div>
         <div class="text-h2 font-heading text-brand">{{ number_format($stats['total_skus']) }}</div>
     </div>
-    
+
     <div class="card">
         <div class="text-body-s text-text-muted mb-2">{{ __('Total Inventory') }}</div>
         <div class="text-h2 font-heading text-brand">{{ number_format($stats['total_inventory']) }}</div>
     </div>
-    
+
+    <div class="card">
+        <div class="text-body-s text-text-muted mb-2">{{ __('Total Shipments') }}</div>
+        <div class="text-h2 font-heading text-brand">{{ number_format($stats['total_shipments']) }}</div>
+    </div>
+
+    <div class="card">
+        <div class="text-body-s text-text-muted mb-2">{{ __('Items Shipped') }}</div>
+        <div class="text-h2 font-heading text-brand">{{ number_format($stats['total_items_shipped']) }}</div>
+    </div>
+
     <div class="card">
         <div class="text-body-s text-text-muted mb-2">{{ __('Pending Inbounds') }}</div>
         <div class="text-h2 font-heading text-warning">{{ $stats['pending_inbounds'] }}</div>
     </div>
-    
+
     <div class="card">
         <div class="text-body-s text-text-muted mb-2">{{ __('Active Shipments') }}</div>
         <div class="text-h2 font-heading text-info">{{ $stats['active_shipments'] }}</div>
     </div>
-    
+
     <div class="card">
         <div class="text-body-s text-text-muted mb-2">{{ __('Open Tickets') }}</div>
         <div class="text-h2 font-heading text-error">{{ $stats['open_tickets'] }}</div>
     </div>
 </div>
 
-<!-- Activity Chart -->
+<!-- Analytics Charts -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+    <!-- Activity Overview (bar chart) -->
+    <div class="card">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-h3 font-heading">{{ __('Activity Overview') }}</h2>
+            <span class="text-body-s text-text-muted">{{ __('Last 6 months') }}</span>
+        </div>
+        <div class="h-64">
+            <canvas id="activityChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Items Shipped (line chart) -->
+    <div class="card">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-h3 font-heading">{{ __('Items Shipped') }}</h2>
+            <span class="text-body-s text-text-muted">{{ __('Last 6 months') }}</span>
+        </div>
+        <div class="h-64">
+            <canvas id="itemsShippedChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Top-10 Products by Shipment Volume -->
 <div class="card mb-8">
     <div class="flex justify-between items-center mb-6">
-        <h2 class="text-h3 font-heading">{{ __('Activity Overview') }}</h2>
-        <span class="text-body-s text-text-muted">{{ __('Last 6 months') }}</span>
+        <h2 class="text-h3 font-heading">{{ __('Top Products by Shipments') }}</h2>
+        <span class="text-body-s text-text-muted">{{ __('Top 10') }}</span>
     </div>
-    <div class="h-64">
-        <canvas id="activityChart"></canvas>
+
+    @if($topProducts->isNotEmpty())
+    <div class="overflow-x-auto">
+        <table class="w-full text-left">
+            <thead>
+                <tr class="border-b border-brand-border">
+                    <th class="pb-3 text-body-s text-text-muted font-semibold">#</th>
+                    <th class="pb-3 text-body-s text-text-muted font-semibold">{{ __('SKU') }}</th>
+                    <th class="pb-3 text-body-s text-text-muted font-semibold">{{ __('Product') }}</th>
+                    <th class="pb-3 text-body-s text-text-muted font-semibold text-right">{{ __('Items Shipped') }}</th>
+                    <th class="pb-3 text-body-s text-text-muted font-semibold text-right">{{ __('Shipments') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($topProducts as $index => $item)
+                <tr class="border-b border-brand-border/50 hover:bg-bg-soft transition">
+                    <td class="py-3 text-body-s text-text-muted">{{ $index + 1 }}</td>
+                    <td class="py-3 font-mono text-body-s">{{ $item->sku->sku_code ?? '—' }}</td>
+                    <td class="py-3 text-body-s">{{ $item->sku->title ?? __('No name') }}</td>
+                    <td class="py-3 text-body-s font-semibold text-brand text-right">{{ number_format($item->total_qty) }}</td>
+                    <td class="py-3 text-body-s text-text-muted text-right">{{ number_format($item->shipment_count) }}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
     </div>
+    @else
+    <p class="text-text-muted text-center py-8">{{ __('No shipment data yet') }}</p>
+    @endif
 </div>
 
 <!-- Recent Activity -->
