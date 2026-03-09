@@ -12,6 +12,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        // Explicitly set lang path to lang/ directory (not resources/lang/)
+        // This ensures translations load from the correct location on all servers
+        $this->app->useLangPath(base_path('lang'));
+
         // Register TelegramService as singleton
         $this->app->singleton(\App\Services\TelegramService::class);
 
