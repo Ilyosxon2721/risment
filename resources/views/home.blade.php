@@ -406,54 +406,50 @@ function miniCalculator() {
 
 <!-- FAQ -->
 <section class="py-16">
-    <div class="container-risment max-w-3xl">
+    <div class="container-risment max-w-3xl" x-data="{ openFaq: null }">
         <h2 class="text-h2 font-heading text-center mb-12">{{ __('FAQ') }}</h2>
         <div class="space-y-4">
-            <details class="card group">
-                <summary class="cursor-pointer font-semibold text-body-l flex justify-between items-center">
-                    {{ __('What is fulfillment?') }}
-                    <svg class="w-5 h-5 text-brand transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            @php
+                $homeFaqs = [
+                    ['q' => __('What is fulfillment?'), 'a' => __('Fulfillment is a comprehensive service including storage, packaging and delivery of goods for online stores and marketplace sellers.')],
+                    ['q' => __('What marketplaces do you work with?'), 'a' => __('We work with Uzum, Wildberries, Ozon and Yandex Market.')],
+                    ['q' => __('What is FBS?'), 'a' => __('FBS (Fulfillment by Seller) means the seller stores goods in our warehouse, and we handle assembly and delivery to the marketplace.')],
+                    ['q' => __('How quickly do you process orders?'), 'a' => __('Orders are assembled on the same day. Delivery to the marketplace warehouse takes 1-2 business days.')],
+                    ['q' => __('How do I start working with you?'), 'a' => __('Leave a request on our website or call us. We will discuss terms, sign the contract and you can start delivering goods to our warehouse.')],
+                ];
+            @endphp
+            @foreach($homeFaqs as $i => $faq)
+            <div class="card">
+                <button type="button"
+                        class="w-full text-left cursor-pointer font-semibold text-body-l flex justify-between items-center min-h-[44px]"
+                        @click="openFaq = openFaq === {{ $i }} ? null : {{ $i }}">
+                    <span class="pr-4">{{ $faq['q'] }}</span>
+                    <svg class="w-5 h-5 text-brand flex-shrink-0 transition-transform duration-300"
+                         :class="openFaq === {{ $i }} ? 'rotate-180' : ''"
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
-                </summary>
-                <p class="text-body-s text-text-muted mt-3 pt-3 border-t border-brand-border">{{ __('Fulfillment is a comprehensive service including storage, packaging and delivery of goods for online stores and marketplace sellers.') }}</p>
-            </details>
-            <details class="card group">
-                <summary class="cursor-pointer font-semibold text-body-l flex justify-between items-center">
-                    {{ __('What marketplaces do you work with?') }}
-                    <svg class="w-5 h-5 text-brand transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                </summary>
-                <p class="text-body-s text-text-muted mt-3 pt-3 border-t border-brand-border">{{ __('We work with Uzum, Wildberries, Ozon and Yandex Market.') }}</p>
-            </details>
-            <details class="card group">
-                <summary class="cursor-pointer font-semibold text-body-l flex justify-between items-center">
-                    {{ __('What is FBS?') }}
-                    <svg class="w-5 h-5 text-brand transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                </summary>
-                <p class="text-body-s text-text-muted mt-3 pt-3 border-t border-brand-border">{{ __('FBS (Fulfillment by Seller) means the seller stores goods in our warehouse, and we handle assembly and delivery to the marketplace.') }}</p>
-            </details>
-            <details class="card group">
-                <summary class="cursor-pointer font-semibold text-body-l flex justify-between items-center">
-                    {{ __('How quickly do you process orders?') }}
-                    <svg class="w-5 h-5 text-brand transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                </summary>
-                <p class="text-body-s text-text-muted mt-3 pt-3 border-t border-brand-border">{{ __('Orders are assembled on the same day. Delivery to the marketplace warehouse takes 1-2 business days.') }}</p>
-            </details>
-            <details class="card group">
-                <summary class="cursor-pointer font-semibold text-body-l flex justify-between items-center">
-                    {{ __('How do I start working with you?') }}
-                    <svg class="w-5 h-5 text-brand transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                </summary>
-                <p class="text-body-s text-text-muted mt-3 pt-3 border-t border-brand-border">{{ __('Leave a request on our website or call us. We will discuss terms, sign the contract and you can start delivering goods to our warehouse.') }}</p>
-            </details>
+                </button>
+                <div x-show="openFaq === {{ $i }}"
+                     x-transition:enter="transition ease-out duration-300"
+                     x-transition:enter-start="opacity-0 max-h-0"
+                     x-transition:enter-end="opacity-100 max-h-[300px]"
+                     x-transition:leave="transition ease-in duration-200"
+                     x-transition:leave-start="opacity-100 max-h-[300px]"
+                     x-transition:leave-end="opacity-0 max-h-0"
+                     class="overflow-hidden">
+                    <p class="text-body-s text-text-muted mt-3 pt-3 border-t border-brand-border">{{ $faq['a'] }}</p>
+                </div>
+            </div>
+            @endforeach
+        </div>
+        <div class="text-center mt-8">
+            <a href="{{ route('faq', ['locale' => app()->getLocale()]) }}" class="inline-flex items-center gap-1.5 text-brand font-semibold hover:underline text-body-m">
+                {{ __('View all FAQ') }}
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+            </a>
         </div>
     </div>
 </section>
