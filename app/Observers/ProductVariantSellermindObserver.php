@@ -30,7 +30,7 @@ class ProductVariantSellermindObserver
             return;
         }
 
-        (new PushProductToSellermind($product->id, $product->company_id))->handle();
+        PushProductToSellermind::dispatch($product->id, $product->company_id);
     }
 
     private function shouldSync(int $companyId): bool

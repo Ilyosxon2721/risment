@@ -4,11 +4,17 @@ namespace App\Jobs\Sellermind;
 
 use App\Models\Inventory;
 use App\Models\SellermindAccountLink;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Log;
 
-class PushStockToSellermind
+class PushStockToSellermind implements ShouldQueue
 {
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     public function __construct(
         protected int $companyId,
         protected ?int $productVariantId = null,

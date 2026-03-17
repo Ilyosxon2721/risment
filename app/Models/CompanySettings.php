@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 class CompanySettings extends Model
@@ -25,16 +26,23 @@ class CompanySettings extends Model
         'stat_warehouse_size',
     ];
 
-    // Singleton pattern - only one record allowed
+    // Singleton pattern - only one record allowed, cached for 1 hour
     public static function current()
     {
-        return static::firstOrCreate([], [
-            'company_name' => 'RISMENT',
-            'stat_orders' => '10 000+',
-            'stat_sla' => '99%',
-            'stat_support' => '24/7',
-            'stat_warehouse_size' => '5 000+',
-        ]);
+        return Cache::remember('company_settings', 3600, function () {
+            return static::firstOrCreate([], [
+                'company_name' => 'RISMENT',
+                'stat_orders' => '10 000+',
+                'stat_sla' => '99%',
+                'stat_support' => '24/7',
+                'stat_warehouse_size' => '5 000+',
+            ]);
+        });
+    }
+
+    protected static function booted(): void
+    {
+        static::saved(fn () => Cache::forget('company_settings'));
     }
 
     /**
