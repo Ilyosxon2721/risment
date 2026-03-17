@@ -38,7 +38,7 @@ class InventorySellermindObserver
             return;
         }
 
-        (new PushStockToSellermind($product->company_id, $variant->id))->handle();
+        PushStockToSellermind::dispatch($product->company_id, $variant->id);
     }
 
     private function shouldSync(int $companyId): bool
