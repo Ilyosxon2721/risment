@@ -116,6 +116,72 @@ class SellermindLinkController extends Controller
     }
 
     /**
+     * Check link status by reading pending confirmation from Redis queue.
+     */
+    public function checkStatus(Request $request)
+    {
+        $company = $request->attributes->get('currentCompany');
+
+        $link = SellermindAccountLink::where('company_id', $company->id)
+            ->where('status', 'pending')
+            ->first();
+
+        if (!$link) {
+            return redirect()->route('cabinet.integrations.sellermind')
+                ->with('info', __('integrations.no_pending_link'));
+        }
+
+        // Try to process any pending link confirmations from Redis
+        try {
+            $maxMessages = 50;
+            $confirmed = false;
+
+            for ($i = 0; $i < $maxMessages; $i++) {
+                $message = Redis::connection('integration')->lpop('risment:link');
+                if (!$message) {
+                    break;
+                }
+
+                $data = json_decode($message, true);
+                if (!$data) {
+                    continue;
+                }
+
+                $token = $data['link_token'] ?? null;
+                if (!$token) {
+                    continue;
+                }
+
+                $targetLink = SellermindAccountLink::where('link_token', $token)->first();
+                if (!$targetLink) {
+                    continue;
+                }
+
+                $targetLink->update([
+                    'sellermind_user_id' => $data['sellermind_user_id'] ?? null,
+                    'sellermind_company_id' => $data['sellermind_company_id'] ?? null,
+                    'status' => 'active',
+                    'linked_at' => now(),
+                ]);
+
+                if ($targetLink->company_id === $company->id) {
+                    $confirmed = true;
+                }
+            }
+
+            if ($confirmed) {
+                return redirect()->route('cabinet.integrations.sellermind')
+                    ->with('success', __('integrations.link_confirmed'));
+            }
+        } catch (\Exception $e) {
+            // Redis not available — fall through
+        }
+
+        return redirect()->route('cabinet.integrations.sellermind')
+            ->with('info', __('integrations.status_still_pending'));
+    }
+
+    /**
      * Disconnect SellerMind account.
      */
     public function disconnect(Request $request)

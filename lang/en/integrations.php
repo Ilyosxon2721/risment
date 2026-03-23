@@ -72,6 +72,10 @@ return [
     'settings_updated' => 'Sync settings updated.',
     'disconnected' => 'SellerMind account disconnected.',
     'sync_triggered' => 'Synchronization started.',
+    'check_status' => 'Check Status',
+    'link_confirmed' => 'Link confirmed! SellerMind is now connected.',
+    'status_still_pending' => 'Confirmation from SellerMind not received yet. Please try again later.',
+    'no_pending_link' => 'No pending links found.',
 
     // 1C
     '1c_name' => '1C Enterprise',

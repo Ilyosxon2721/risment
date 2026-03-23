@@ -72,6 +72,10 @@ return [
     'settings_updated' => 'Настройки синхронизации обновлены.',
     'disconnected' => 'Аккаунт SellerMind отключён.',
     'sync_triggered' => 'Синхронизация запущена.',
+    'check_status' => 'Проверить статус',
+    'link_confirmed' => 'Связка подтверждена! SellerMind подключён.',
+    'status_still_pending' => 'Подтверждение от SellerMind ещё не получено. Попробуйте позже.',
+    'no_pending_link' => 'Нет ожидающих подтверждения связок.',
 
     // 1C
     '1c_name' => '1C Предприятие',
