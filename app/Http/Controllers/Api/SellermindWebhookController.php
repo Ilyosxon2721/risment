@@ -48,4 +48,35 @@ class SellermindWebhookController extends Controller
             'risment_company_id' => $link->company_id,
         ]);
     }
+
+    /**
+     * Handle disconnect from SellerMind via HTTP webhook.
+     * SellerMind calls this endpoint when the user disconnects on their side.
+     */
+    public function disconnectLink(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'link_token' => 'required|string|size:64',
+        ]);
+
+        $link = SellermindAccountLink::where('link_token', $validated['link_token'])
+            ->where('status', 'active')
+            ->first();
+
+        if (!$link) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Active link not found.',
+            ], 404);
+        }
+
+        $link->update(['status' => 'disabled']);
+
+        Log::info("SellerMind link disconnected via webhook: company #{$link->company_id}");
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Link disconnected successfully.',
+        ]);
+    }
 }
