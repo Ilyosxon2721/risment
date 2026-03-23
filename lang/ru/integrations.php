@@ -76,6 +76,8 @@ return [
     'link_confirmed' => 'Связка подтверждена! SellerMind подключён.',
     'status_still_pending' => 'Подтверждение от SellerMind ещё не получено. Попробуйте позже.',
     'no_pending_link' => 'Нет ожидающих подтверждения связок.',
+    'sync_all_products' => 'Синхронизировать все товары',
+    'no_active_link' => 'Нет активной связки с SellerMind.',
 
     // 1C
     '1c_name' => '1C Предприятие',

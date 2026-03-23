@@ -76,6 +76,8 @@ return [
     'link_confirmed' => 'Link confirmed! SellerMind is now connected.',
     'status_still_pending' => 'Confirmation from SellerMind not received yet. Please try again later.',
     'no_pending_link' => 'No pending links found.',
+    'sync_all_products' => 'Sync All Products',
+    'no_active_link' => 'No active SellerMind link found.',
 
     // 1C
     '1c_name' => '1C Enterprise',

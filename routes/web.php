@@ -125,6 +125,7 @@ Route::prefix('cabinet')->name('cabinet.')->middleware(['auth', \App\Http\Middle
     Route::post('/integrations/sellermind/generate', [SellermindLinkController::class, 'generateToken'])->middleware('throttle:5,1')->name('integrations.sellermind.generate');
     Route::post('/integrations/sellermind/regenerate', [SellermindLinkController::class, 'regenerateToken'])->middleware('throttle:5,1')->name('integrations.sellermind.regenerate');
     Route::put('/integrations/sellermind/settings', [SellermindLinkController::class, 'updateSettings'])->name('integrations.sellermind.settings');
+    Route::post('/integrations/sellermind/sync-all', [SellermindLinkController::class, 'syncAll'])->middleware('throttle:5,1')->name('integrations.sellermind.sync-all');
     Route::post('/integrations/sellermind/check-status', [SellermindLinkController::class, 'checkStatus'])->middleware('throttle:10,1')->name('integrations.sellermind.check-status');
     Route::delete('/integrations/sellermind', [SellermindLinkController::class, 'disconnect'])->name('integrations.sellermind.disconnect');
 

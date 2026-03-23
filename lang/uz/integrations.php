@@ -76,6 +76,8 @@ return [
     'link_confirmed' => 'Ulanish tasdiqlandi! SellerMind ulandi.',
     'status_still_pending' => 'SellerMind dan tasdiqlash hali olinmadi. Keyinroq qayta urinib ko\'ring.',
     'no_pending_link' => 'Kutilayotgan ulanishlar topilmadi.',
+    'sync_all_products' => 'Barcha mahsulotlarni sinxronlash',
+    'no_active_link' => 'Faol SellerMind ulanishi topilmadi.',
 
     // 1C
     '1c_name' => '1C Korxona',
