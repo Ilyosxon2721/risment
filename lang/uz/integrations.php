@@ -72,6 +72,10 @@ return [
     'settings_updated' => 'Sinxronlash sozlamalari yangilandi.',
     'disconnected' => 'SellerMind akkaunt uzildi.',
     'sync_triggered' => 'Sinxronlash boshlandi.',
+    'check_status' => 'Holatni tekshirish',
+    'link_confirmed' => 'Ulanish tasdiqlandi! SellerMind ulandi.',
+    'status_still_pending' => 'SellerMind dan tasdiqlash hali olinmadi. Keyinroq qayta urinib ko\'ring.',
+    'no_pending_link' => 'Kutilayotgan ulanishlar topilmadi.',
 
     // 1C
     '1c_name' => '1C Korxona',

@@ -129,14 +129,18 @@
         </div>
 
         <div class="mt-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
-            <form method="POST" action="{{ route('cabinet.integrations.sellermind.disconnect') }}">
+            <form method="POST" action="{{ route('cabinet.integrations.sellermind.check-status') }}">
                 @csrf
-                @method('DELETE')
-                <button type="submit" class="btn btn-outline text-text-muted min-h-[44px] w-full sm:w-auto">{{ __('integrations.cancel') }}</button>
+                <button type="submit" class="btn btn-primary min-h-[44px] w-full sm:w-auto">{{ __('integrations.check_status') }}</button>
             </form>
             <form method="POST" action="{{ route('cabinet.integrations.sellermind.regenerate') }}">
                 @csrf
                 <button type="submit" class="btn btn-outline min-h-[44px] w-full sm:w-auto">{{ __('integrations.regenerate_token') }}</button>
+            </form>
+            <form method="POST" action="{{ route('cabinet.integrations.sellermind.disconnect') }}">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-outline text-text-muted min-h-[44px] w-full sm:w-auto">{{ __('integrations.cancel') }}</button>
             </form>
         </div>
     </div>
