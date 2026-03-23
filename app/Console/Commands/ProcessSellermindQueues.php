@@ -12,6 +12,7 @@ use App\Models\SellermindAccountLink;
 use App\Models\ShipmentFbo;
 use App\Models\ShipmentItem;
 use App\Jobs\Sellermind\PushStockToSellermind;
+use App\Jobs\Sellermind\SyncAllProductsToSellermind;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -350,6 +351,9 @@ class ProcessSellermindQueues extends Command
             'status' => 'active',
             'linked_at' => now(),
         ]);
+
+        // Sync all existing products to SellerMind
+        SyncAllProductsToSellermind::dispatch($link->company_id);
 
         $this->info("Account linked: company #{$link->company_id} ↔ SellerMind company #{$link->sellermind_company_id}");
     }

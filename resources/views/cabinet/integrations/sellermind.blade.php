@@ -32,13 +32,21 @@
                     <p><span class="text-text-muted">{{ __('integrations.sellermind_connected_at') }}:</span> <strong>{{ $link->linked_at?->format('d.m.Y H:i') }}</strong></p>
                 </div>
             </div>
-            <form method="POST" action="{{ route('cabinet.integrations.sellermind.disconnect') }}" onsubmit="return confirm('{{ __('integrations.sellermind_confirm_disconnect') }}')">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="btn btn-outline text-error border-error hover:bg-error hover:text-white">
-                    {{ __('integrations.disconnect') }}
-                </button>
-            </form>
+            <div class="flex items-center gap-3">
+                <form method="POST" action="{{ route('cabinet.integrations.sellermind.sync-all') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-primary">
+                        {{ __('integrations.sync_all_products') }}
+                    </button>
+                </form>
+                <form method="POST" action="{{ route('cabinet.integrations.sellermind.disconnect') }}" onsubmit="return confirm('{{ __('integrations.sellermind_confirm_disconnect') }}')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-outline text-error border-error hover:bg-error hover:text-white">
+                        {{ __('integrations.disconnect') }}
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\Sellermind\SyncAllProductsToSellermind;
 use App\Models\SellermindAccountLink;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -41,6 +42,9 @@ class SellermindWebhookController extends Controller
         ]);
 
         Log::info("SellerMind link confirmed via webhook: company #{$link->company_id}");
+
+        // Sync all existing products to SellerMind
+        SyncAllProductsToSellermind::dispatch($link->company_id);
 
         return response()->json([
             'success' => true,

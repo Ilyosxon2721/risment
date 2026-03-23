@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Cabinet;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\Sellermind\SyncAllProductsToSellermind;
 use App\Models\SellermindAccountLink;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
@@ -116,6 +117,28 @@ class SellermindLinkController extends Controller
     }
 
     /**
+     * Manually trigger sync of all products to SellerMind.
+     */
+    public function syncAll(Request $request)
+    {
+        $company = $request->attributes->get('currentCompany');
+
+        $link = SellermindAccountLink::where('company_id', $company->id)
+            ->where('status', 'active')
+            ->first();
+
+        if (!$link) {
+            return redirect()->route('cabinet.integrations.sellermind')
+                ->with('error', __('integrations.no_active_link'));
+        }
+
+        SyncAllProductsToSellermind::dispatch($company->id);
+
+        return redirect()->route('cabinet.integrations.sellermind')
+            ->with('success', __('integrations.sync_triggered'));
+    }
+
+    /**
      * Check link status by reading pending confirmation from Redis queue.
      */
     public function checkStatus(Request $request)
@@ -170,6 +193,8 @@ class SellermindLinkController extends Controller
             }
 
             if ($confirmed) {
+                SyncAllProductsToSellermind::dispatch($company->id);
+
                 return redirect()->route('cabinet.integrations.sellermind')
                     ->with('success', __('integrations.link_confirmed'));
             }
